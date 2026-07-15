@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cedar Tap — Revenue Model</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #1c1c1c;
+      --bg-card: #242424;
+      --bg-table-head: #2e2e2e;
+      --amber: #d4a43a;
+      --amber-light: #e8c46a;
+      --green: #5cdb5c;
+      --green-dim: rgba(92, 219, 92, 0.7);
+      --red: #f06060;
+      --cream: #f0e8d8;
+      --cream-muted: rgba(240, 232, 216, 0.55);
+      --border: rgba(212, 164, 58, 0.2);
+      --border-strong: rgba(212, 164, 58, 0.4);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--cream);
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      border-bottom: 2px solid var(--amber);
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+      font-size: clamp(1.1rem, 3vw, 1.6rem);
+      color: var(--amber);
+      font-family: 'Courier New', monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .page-header .meta {
+      font-size: 0.72rem;
+      color: var(--cream-muted);
+      margin-top: 0.3rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── SECTION HEADERS ── */
+    .section {
+      margin-bottom: 3rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .section-header h2 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--amber);
+    }
+
+    .section-header .keg-info {
+      font-size: 0.72rem;
+      color: var(--cream-muted);
+    }
+
+    .section-divider {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── DATA TABLES ── */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+
+    .data-table th {
+      background: var(--bg-table-head);
+      color: var(--amber);
+      padding: 0.5rem 0.7rem;
+      text-align: left;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.65rem;
+      border-bottom: 1px solid var(--border-strong);
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 0.4rem 0.7rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .data-table tr:hover td {
+      background: rgba(212, 164, 58, 0.04);
+    }
+
+    .data-table .highlight td {
+      background: rgba(92, 219, 92, 0.06);
+      color: var(--green);
+      font-weight: bold;
+    }
+
+    .data-table .total-row td {
+      border-top: 2px solid var(--border-strong);
+      font-weight: bold;
+      color: var(--amber-light);
+      background: rgba(212, 164, 58, 0.06);
+    }
+
+    /* number alignment */
+    .data-table td.num, .data-table th.num { text-align: right; }
+
+    /* color classes */
+    .green { color: var(--green); }
+    .amber { color: var(--amber); }
+    .red { color: var(--red); }
+    .muted { color: var(--cream-muted); }
+
+    /* ── COST BOX ── */
+    .cost-box {
+      display: inline-flex;
+      gap: 2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.8rem 1.2rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .cost-item { font-size: 0.75rem; }
+    .cost-label { color: var(--cream-muted); display: block; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; }
+    .cost-value { color: var(--amber); font-size: 1rem; font-weight: bold; }
+
+    /* ── RECOMMENDATION BOX ── */
+    .rec-box {
+      background: rgba(92, 219, 92, 0.05);
+      border: 1px solid rgba(92, 219, 92, 0.25);
+      border-radius: 6px;
+      padding: 0.7rem 1rem;
+      margin-top: 0.8rem;
+      font-size: 0.75rem;
+      color: var(--green-dim);
+    }
+
+    .rec-box strong { color: var(--green); }
+
+    /* ── SUMMARY SECTION ── */
+    .summary-section {
+      margin-top: 3.5rem;
+      border-top: 2px solid var(--amber);
+      padding-top: 2rem;
+    }
+
+    .summary-section h2 {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--amber);
+      margin-bottom: 1.2rem;
+    }
+
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+
+    .summary-table th {
+      background: #2a2000;
+      color: var(--amber);
+      padding: 0.6rem 0.8rem;
+      text-align: left;
+      text-transform: uppercase;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      border-bottom: 1px solid var(--border-strong);
+    }
+
+    .summary-table td {
+      padding: 0.5rem 0.8rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .summary-table tr:hover td { background: rgba(212, 164, 58, 0.03); }
+
+    .summary-table .best { color: var(--green); font-weight: bold; }
+    .summary-table .grand-total td {
+      border-top: 2px solid var(--border-strong);
+      background: rgba(212, 164, 58, 0.08);
+      color: var(--amber-light);
+      font-weight: bold;
+      font-size: 0.85rem;
+    }
+
+    /* ── METHODOLOGY NOTE ── */
+    .methodology {
+      margin-top: 3rem;
+      padding: 1.2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.72rem;
+      color: var(--cream-muted);
+      line-height: 1.7;
+    }
+
+    .methodology h3 {
+      color: var(--amber);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.7rem;
+    }
+
+    .methodology code {
+      background: rgba(212, 164, 58, 0.1);
+      color: var(--amber-light);
+      padding: 0.1rem 0.3rem;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* ── INTERNAL BANNER ── */
+    .internal-banner {
+      background: rgba(240, 96, 96, 0.08);
+      border: 1px solid rgba(240, 96, 96, 0.25);
+      border-radius: 5px;
+      padding: 0.5rem 1rem;
+      font-size: 0.7rem;
+      color: rgba(240, 96, 96, 0.7);
+      letter-spacing: 0.1em;
+      text-align: center;
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+    }
+
+    /* ── MODEL BADGE ── */
+    .model-badge {
+      display: inline-block;
+      background: rgba(212, 164, 58, 0.15);
+      border: 1px solid var(--border-strong);
+      border-radius: 4px;
+      padding: 0.25rem 0.7rem;
+      font-size: 0.65rem;
+      color: var(--amber-light);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── UTILIZATION TABLE ── */
+    .util-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.76rem;
+      margin-top: 1rem;
+    }
+
+    .util-table th {
+      background: #1e1e1e;
+      color: var(--cream-muted);
+      padding: 0.4rem 0.7rem;
+      text-align: right;
+      font-size: 0.63rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .util-table th:first-child { text-align: left; }
+    .util-table td { padding: 0.35rem 0.7rem; border-bottom: 1px solid rgba(255,255,255,0.03); text-align: right; }
+    .util-table td:first-child { text-align: left; color: var(--cream-muted); }
+    .util-table .util-best td { color: var(--green); }
+  </style>
+</head>
+<body>
+
+  <div class="page-header">
+    <h1>Cedar Tap — Revenue Model by Menu Type</h1>
+    <div class="meta">
+      Operator-use only · Internal pricing &amp; profit analysis · Source: DC Kegs (dckegs.com) · Updated 2026-06-08
+    </div>
+  </div>
+
+  <div class="internal-banner">
+    ⚠ Internal operator document — not for public distribution
+  </div>
+
+  <div class="model-badge">📦 Full-Keg Model — 1 keg per tap per event · 5-gal wine / 5.16-gal beer sixtels</div>
+
+  <!-- ============================================================
+       SECTION 1: WINE BAR MENU
+  ============================================================ -->
+  <div class="section">
+    <div class="section-header">
+      <h2>1. Wine Bar Menu</h2>
+      <div class="section-divider"></div>
+      <div class="keg-info">4 wine taps · DC Kegs 5-gal kegs · 18,927 mL/keg</div>
+    </div>
+
+    <!-- 1A: Angeline Pinot Noir -->
+    <div class="cost-box">
+      <div class="cost-item"><span class="cost-label">Product</span><span class="cost-value amber" style="font-size:0.85rem;">Angeline Pinot Noir</span></div>
+      <div class="cost-item"><span class="cost-label">Keg Cost</span><span class="cost-value red">$319.99</span></div>
+      <div class="cost-item"><span class="cost-label">Keg Volume</span><span class="cost-value muted" style="font-size:0.85rem;">5 gal / 18,927 mL</span></div>
+      <div class="cost-item"><span class="cost-label">Model</span><span class="cost-value muted" style="font-size:0.75rem;">Full keg / tap</span></div>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Pour Size</th>
+          <th class="num">mL/Pour</th>
+          <th class="num">Pours/Keg</th>
+          <th class="num">Sell Price</th>
+          <th class="num">Gross Rev</th>
+          <th class="num">Keg Cost</th>
+          <th class="num">Net Profit</th>
+          <th class="num">Margin %</th>
+          <th class="num">Break-Even Pours</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2 oz Taste</td><td class="num">59</td><td class="num">320</td>
+          <td class="num amber">$3.00</td><td class="num">$960</td>
+          <td class="num red">$319.99</td><td class="num">$640.01</td>
+          <td class="num">67%</td><td class="num">107</td>
+        </tr>
+        <tr class="highlight">
+          <td>5 oz Glass ★</td><td class="num">148</td><td class="num">127</td>
+          <td class="num amber">$9.00</td><td class="num">$1,143</td>
+          <td class="num red">$319.99</td><td class="num">$823.01</td>
+          <td class="num">72%</td><td class="num">36</td>
+        </tr>
+        <tr>
+          <td>8 oz Pour</td><td class="num">237</td><td class="num">79</td>
+          <td class="num amber">$12.00</td><td class="num">$948</td>
+          <td class="num red">$319.99</td><td class="num">$628.01</td>
+          <td class="num">66%</td><td class="num">27</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rec-box">★ <strong>Best: 5 oz Glass @ $9</strong> — highest net ($823/keg, 72% margin). Break-even at just 36 pours out of 127 available. At a 5-hr market, that's only 7 pours/hr to cover cost.</div>
+
+    <br>
+
+    <!-- 1B: Angeline Sauvignon Blanc -->
+    <div class="cost-box">
+      <div class="cost-item"><span class="cost-label">Product</span><span class="cost-value amber" style="font-size:0.85rem;">Angeline Sauvignon Blanc</span></div>
+      <div class="cost-item"><span class="cost-label">Keg Cost</span><span class="cost-value red">$319.99</span></div>
+      <div class="cost-item"><span class="cost-label">Volume</span><span class="cost-value muted" style="font-size:0.85rem;">18,927 mL</span></div>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Pour Size</th><th class="num">Pours/Keg</th><th class="num">Sell Price</th>
+          <th class="num">Gross Rev</th><th class="num">Net Profit</th><th class="num">Margin %</th><th class="num">Break-Even</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>2 oz Taste</td><td class="num">320</td><td class="num amber">$3</td><td class="num">$960</td><td class="num">$640.01</td><td class="num">67%</td><td class="num">107</td></tr>
+        <tr class="highlight"><td>5 oz Glass ★</td><td class="num">127</td><td class="num amber">$9</td><td class="num">$1,143</td><td class="num">$823.01</td><td class="num">72%</td><td class="num">36</td></tr>
+        <tr><td>8 oz Pour</td><td class="num">79</td><td class="num amber">$12</td><td class="num">$948</td><td class="num">$628.01</td><td class="num">66%</td><td class="num">27</td></tr>
+      </tbody>
+    </table>
+
+    <br>
+
+    <!-- 1C: Palladio Rosso -->
+    <div class="cost-box">
+      <div class="cost-item"><span class="cost-label">Product</span><span class="cost-value amber" style="font-size:0.85rem;">Palladio Rosso Red Blend</span></div>
+      <div class="cost-item"><span class="cost-label">Keg Cost</span><span class="cost-value red">$299.99</span></div>
+      <div class="cost-item"><span class="cost-label">Volume</span><span class="cost-value muted" style="font-size:0.85rem;">18,927 mL</span></div>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Pour Size</th><th class="num">Pours/Keg</th><th class="num">Sell Price</th>
+          <th class="num">Gross Rev</th><th class="num">Net Profit</th><th class="num">Margin %</th><th class="num">Break-Even</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>2 oz Taste</td><td class="num">320</td><td class="num amber">$3</td><td class="num">$960</td><td class="num">$660.01</td><td class="num">69%</td><td class="num">100</td></tr>
+        <tr class="highlight"><td>5 oz Glass ★</td><td class="num">127</td><td class="num amber">$9</td><td class="num">$1,143</td><td class="num">$843.01</td><td class="num">74%</td><td class="num">34</td></tr>
+        <tr><td>8 oz Pour</td><td class="num">79</td><td class="num amber">$12</td><td class="num">$948</td><td class="num">$648.01</td><td class="num">68%</td><td class="num">25</td></tr>
+      </tbody>
+    </table>
+
+    <br>
+
+    <!-- 1D: Zardetto Brut -->
+    <div class="cost-box">
+      <div class="cost-item"><span class="cost-label">Product</span><span class="cost-value amber" style="font-size:0.85rem;">Zardetto Brut Sparkling</span></div>
+      <div class="cost-item"><span class="cost-label">Keg Cost</span><span class="cost-value red">$299.99</span></div>
+      <div class="cost-item"><span class="cost-label">Volume</span><span class="cost-value muted" style="font-size:0.85rem;">18,927 mL</span></div>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Pour Size</th><th class="num">Pours/Keg</th><th class="num">Sell Price</th>
+          <th class="num">Gross Rev</th><th class="num">Net Profit</th><th class="num">Margin %</th><th class="num">Break-Even</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>2 oz Taste</td><td class="num">320</td><td class="num amber">$3</td><td class="num">$960</td><td class="num">$660.01</td><td class="num">69%</td><td class="num">100</td></tr>
+        <tr class="highlight"><td>5 oz Glass ★</td><td class="num">127</td><td class="num amber">$9</td><td class="num">$1,143</td><td class="num">$843.01</td><td class="num">74%</td><td class="num">34</td></tr>
+        <tr><td>8 oz Pour</td><td class="num">79</td><td class="num amber">$12</td><td class="num">$948</td><td class="num">$648.01</td><td class="num">68%</td><td class="num">25</td></tr>
+      </tbody>
+    </table>
+
+    <br>
+    <!-- Wine 4-tap event summary -->
+    <div class="section-header" style="margin-top:0.5rem;">
+      <h2 style="font-size:0.75rem; color:var(--amber-light);">Wine Bar — 4-Tap Event (1 full keg per tap · 5oz glass pricing)</h2>
+      <div class="section-divider"></div>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr><th>Tap</th><th>Product</th><th class="num">Keg Cost</th><th class="num">Pours/Keg</th><th class="num">Gross Rev</th><th class="num">Net Profit</th><th class="num">Margin</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>01</td><td>Angeline Pinot Noir</td><td class="num red">$319.99</td><td class="num">127</td><td class="num">$1,143</td><td class="num green">$823.01</td><td class="num">72%</td></tr>
+        <tr><td>02</td><td>Angeline Sauv Blanc</td><td class="num red">$319.99</td><td class="num">127</td><td class="num">$1,143</td><td class="num green">$823.01</td><td class="num">72%</td></tr>
+        <tr><td>03</td><td>Palladio Rosso Blend</td><td class="num red">$299.99</td><td class="num">127</td><td class="num">$1,143</td><td class="num green">$843.01</td><td class="num">74%</td></tr>
+        <tr><td>04</td><td>Zardetto Brut</td><td class="num red">$299.99</td><td class="num">127</td><td class="num">$1,143</td><td class="num green">$843.01</td><td class="num">74%</td></tr>
+        <tr class="total-row">
+          <td colspan="2">4-Tap Wine Event Total (sell-out)</td>
+          <td class="num red">$1,239.96</td>
+          <td class="num">508</td>
+          <td class="num">$4,572</td>
+          <td class="num green">$3,332.04</td>
+          <td class="num">73%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Wine utilization scenarios -->
+    <br>
+    <div style="font-size:0.7rem; color:var(--cream-muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:0.5rem;">Wine Bar — Utilization Scenarios (4-tap, 5oz @ $9)</div>
+    <table class="util-table">
+      <thead>
+        <tr><th>Utilization</th><th>Pours Sold</th><th>Gross Revenue</th><th>Net Profit</th><th>Margin</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>25% (light traffic)</td><td>127</td><td>$1,143</td><td>−$96.96</td><td class="red" style="color:var(--red);">−8%</td></tr>
+        <tr><td>40% (break-even zone)</td><td>203</td><td>$1,827</td><td>$587.04</td><td>32%</td></tr>
+        <tr><td>50% (moderate)</td><td>254</td><td>$2,286</td><td>$1,046.04</td><td>46%</td></tr>
+        <tr class="util-best"><td>75% (busy event) ★</td><td>381</td><td>$3,429</td><td>$2,189.04</td><td>64%</td></tr>
+        <tr class="util-best"><td>100% (sell-out)</td><td>508</td><td>$4,572</td><td>$3,332.04</td><td>73%</td></tr>
+      </tbody>
+    </table>
+    <div class="rec-box" style="margin-top:0.6rem;">Note: Wine bar requires ~40% utilization (203 pours ÷ 4 taps = 51 pours/tap) to break even on a full-keg event. That's ~10 pours/tap/hr at a 5-hr market — achievable at a well-trafficked event.</div>
+  </div>
+
+  <!-- ============================================================
+       SECTION 2: BEER / DRAFT BAR MENU
+  ============================================================ -->
+  <div class="section">
+    <div class="section-header">
+      <h2>2. Beer / Draft Bar Menu</h2>
+      <div class="section-divider"></div>
+      <div class="keg-info">4 beer taps · DC Kegs sixtels · 5.16 gal / 19,531 mL/keg</div>
+    </div>
+
+    <!-- Goose Island IPA -->
+    <div class="cost-box">
+      <div class="cost-item"><span class="cost-label">Product</span><span class="cost-value amber" style="font-size:0.85rem;">Goose Island IPA</span></div>
+      <div class="cost-item"><span class="cost-label">Keg Cost</span><span class="cost-value red">$164.99</span></div>
+      <div class="cost-item"><span class="cost-label">Keg Volume</span><span class="cost-value muted" style="font-size:0.85rem;">5.16 gal / 19,531 mL</span></div>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Pour Size</th><th class="num">mL/Pour</th><th class="num">Pours/Keg</th><th class="num">Sell Price</th>
+          <th class="num">Gross Rev</th><th class="num">Keg Cost</th><th class="num">Net Profit</th><th class="num">Margin %</th><th class="num">Break-Even</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight">
+          <td>5 oz Taste ★</td><td class="num">148</td><td class="num">131</td><td class="num amber">$3</td>
+          <td class="num">$393</td><td class="num red">$164.99</td><td class="num">$228.01</td><td class="num">58%</td><td class="num">55</td>
+        </tr>
+        <tr>
+          <td>12 oz</td><td class="num">355</td><td class="num">54</td><td class="num amber">$7</td>
+          <td class="num">$378</td><td class="num red">$164.99</td><td class="num">$213.01</td><td class="num">56%</td><td class="num">24</td>
+        </tr>
+        <tr>
+          <td>16 oz Pint</td><td class="num">473</td><td class="num">41</td><td class="num amber">$9</td>
+          <td class="num">$369</td><td class="num red">$164.99</td><td class="num">$204.01</td><td class="num">55%</td><td class="num">19</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rec-box">★ <strong>5 oz Taste @ $3 delivers highest gross revenue and margin per keg</strong> ($228/keg, 58%). More pours = more transactions = higher event revenue ceiling. Push pints at high-volume events where throughput matters more than pour count.</div>
+
+    <br>
+
+    <!-- Right Proper Haxan Porter -->
+    <div class="cost-box">
+      <div class="cost-item"><span class="cost-label">Product</span><span class="cost-value amber" style="font-size:0.85rem;">Right Proper Haxan Porter</span></div>
+      <div class="cost-item"><span class="cost-label">Keg Cost</span><span class="cost-value red">$164.99</span></div>
+      <div class="cost-item"><span class="cost-label">Volume</span><span class="cost-value muted" style="font-size:0.85rem;">19,531 mL</span></div>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Pour Size</th><th class="num">Pours/Keg</th><th class="num">Sell Price</th>
+          <th class="num">Gross Rev</th><th class="num">Net Profit</th><th class="num">Margin %</th><th class="num">Break-Even</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight"><td>5 oz Taste ★</td><td class="num">131</td><td class="num amber">$3</td><td class="num">$393</td><td class="num">$228.01</td><td class="num">58%</td><td class="num">55</td></tr>
+        <tr><td>12 oz</td><td class="num">54</td><td class="num amber">$7</td><td class="num">$378</td><td class="num">$213.01</td><td class="num">56%</td><td class="num">24</td></tr>
+        <tr><td>16 oz Pint</td><td class="num">41</td><td class="num amber">$9</td><td class="num">$369</td><td class="num">$204.01</td><td class="num">55%</td><td class="num">19</td></tr>
+      </tbody>
+    </table>
+
+    <br>
+
+    <!-- DC Brau El Hefe -->
+    <div class="cost-box">
+      <div class="cost-item"><span class="cost-label">Product</span><span class="cost-value amber" style="font-size:0.85rem;">DC Brau El Hefe Speaks!</span></div>
+      <div class="cost-item"><span class="cost-label">Keg Cost</span><span class="cost-value red">$164.99</span></div>
+      <div class="cost-item"><span class="cost-label">Volume</span><span class="cost-value muted" style="font-size:0.85rem;">19,531 mL</span></div>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Pour Size</th><th class="num">Pours/Keg</th><th class="num">Sell Price</th>
+          <th class="num">Gross Rev</th><th class="num">Net Profit</th><th class="num">Margin %</th><th class="num">Break-Even</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight"><td>5 oz Taste ★</td><td class="num">131</td><td class="num amber">$3</td><td class="num">$393</td><td class="num">$228.01</td><td class="num">58%</td><td class="num">55</td></tr>
+        <tr><td>12 oz</td><td class="num">54</td><td class="num amber">$7</td><td class="num">$378</td><td class="num">$213.01</td><td class="num">56%</td><td class="num">24</td></tr>
+        <tr><td>16 oz Pint</td><td class="num">41</td><td class="num amber">$9</td><td class="num">$369</td><td class="num">$204.01</td><td class="num">55%</td><td class="num">19</td></tr>
+      </tbody>
+    </table>
+
+    <br>
+
+    <!-- Angry Orchard Cider -->
+    <div class="cost-box">
+      <div class="cost-item"><span class="cost-label">Product</span><span class="cost-value amber" style="font-size:0.85rem;">Angry Orchard Hard Cider</span></div>
+      <div class="cost-item"><span class="cost-label">Keg Cost</span><span class="cost-value red">$164.99</span></div>
+      <div class="cost-item"><span class="cost-label">Volume</span><span class="cost-value muted" style="font-size:0.85rem;">19,531 mL</span></div>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Pour Size</th><th class="num">Pours/Keg</th><th class="num">Sell Price</th>
+          <th class="num">Gross Rev</th><th class="num">Net Profit</th><th class="num">Margin %</th><th class="num">Break-Even</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight"><td>5 oz Taste ★</td><td class="num">131</td><td class="num amber">$3</td><td class="num">$393</td><td class="num">$228.01</td><td class="num">58%</td><td class="num">55</td></tr>
+        <tr><td>12 oz</td><td class="num">54</td><td class="num amber">$7</td><td class="num">$378</td><td class="num">$213.01</td><td class="num">56%</td><td class="num">24</td></tr>
+        <tr><td>16 oz Pint</td><td class="num">41</td><td class="num amber">$9</td><td class="num">$369</td><td class="num">$204.01</td><td class="num">55%</td><td class="num">19</td></tr>
+      </tbody>
+    </table>
+
+    <br>
+    <!-- Beer 4-tap event summary -->
+    <div class="section-header" style="margin-top:0.5rem;">
+      <h2 style="font-size:0.75rem; color:var(--amber-light);">Beer Bar — 4-Tap Event (1 full keg per tap · 5oz taste pricing)</h2>
+      <div class="section-divider"></div>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr><th>Tap</th><th>Product</th><th class="num">Keg Cost</th><th class="num">Pours/Keg</th><th class="num">Gross Rev</th><th class="num">Net Profit</th><th class="num">Margin</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>01</td><td>Goose Island IPA</td><td class="num red">$164.99</td><td class="num">131</td><td class="num">$393</td><td class="num green">$228.01</td><td class="num">58%</td></tr>
+        <tr><td>02</td><td>DC Brau El Hefe</td><td class="num red">$164.99</td><td class="num">131</td><td class="num">$393</td><td class="num green">$228.01</td><td class="num">58%</td></tr>
+        <tr><td>03</td><td>Right Proper Porter</td><td class="num red">$164.99</td><td class="num">131</td><td class="num">$393</td><td class="num green">$228.01</td><td class="num">58%</td></tr>
+        <tr><td>04</td><td>Angry Orchard Cider</td><td class="num red">$164.99</td><td class="num">131</td><td class="num">$393</td><td class="num green">$228.01</td><td class="num">58%</td></tr>
+        <tr class="total-row">
+          <td colspan="2">4-Tap Beer Event Total (sell-out, 5oz pours)</td>
+          <td class="num red">$659.96</td>
+          <td class="num">524</td>
+          <td class="num">$1,572</td>
+          <td class="num green">$912.04</td>
+          <td class="num">58%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Beer utilization scenarios -->
+    <br>
+    <div style="font-size:0.7rem; color:var(--cream-muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:0.5rem;">Beer Bar — Utilization Scenarios (4-tap, 5oz @ $3)</div>
+    <table class="util-table">
+      <thead>
+        <tr><th>Utilization</th><th>Pours Sold</th><th>Gross Revenue</th><th>Net Profit</th><th>Margin</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>25% (light traffic)</td><td>131</td><td>$393</td><td>−$266.96</td><td class="red" style="color:var(--red);">−68%</td></tr>
+        <tr><td>42% (break-even)</td><td>220</td><td>$660</td><td>$0.04</td><td>0%</td></tr>
+        <tr><td>50% (moderate)</td><td>262</td><td>$786</td><td>$126.04</td><td>16%</td></tr>
+        <tr class="util-best"><td>75% (busy event) ★</td><td>393</td><td>$1,179</td><td>$519.04</td><td>44%</td></tr>
+        <tr class="util-best"><td>100% (sell-out)</td><td>524</td><td>$1,572</td><td>$912.04</td><td>58%</td></tr>
+      </tbody>
+    </table>
+    <div class="rec-box" style="margin-top:0.6rem;">Beer bar needs higher utilization to profit on full kegs — 42% (220 pours total = 55 pours/tap) is break-even. Consider 12oz @ $7 at high-traffic events: fewer pours but $5.83/pour vs $3.00/pour revenue density. At 16oz/$9: only 19 pints/tap to break even.</div>
+  </div>
+
+  <!-- ============================================================
+       SECTION 3: VARIETY MENU
+  ============================================================ -->
+  <div class="section">
+    <div class="section-header">
+      <h2>3. Variety Menu (2 Beer + 1 Wine + 1 Cold Brew)</h2>
+      <div class="section-divider"></div>
+      <div class="keg-info">Mixed tap · full keg per tap · broadest audience</div>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Tap</th><th>Product</th><th>Type</th>
+          <th class="num">Keg Cost</th>
+          <th class="num">Keg Vol</th>
+          <th class="num">Pour</th><th class="num">Price</th>
+          <th class="num">Pours/Keg</th><th class="num">Gross Rev</th><th class="num">Net Profit</th><th class="num">Margin</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>01</td><td>Hellbender Ignite IPA</td><td>Beer IPA</td>
+          <td class="num red">$164.99</td><td class="num muted">19,531 mL</td>
+          <td class="num">5 oz</td><td class="num amber">$3</td>
+          <td class="num">131</td><td class="num">$393</td><td class="num green">$228.01</td><td class="num">58%</td>
+        </tr>
+        <tr>
+          <td>02</td><td>Angry Orchard Cider</td><td>Cider (GF)</td>
+          <td class="num red">$164.99</td><td class="num muted">19,531 mL</td>
+          <td class="num">12 oz</td><td class="num amber">$7</td>
+          <td class="num">54</td><td class="num">$378</td><td class="num green">$213.01</td><td class="num">56%</td>
+        </tr>
+        <tr>
+          <td>03</td><td>Angeline Pinot Noir</td><td>Red Wine</td>
+          <td class="num red">$319.99</td><td class="num muted">18,927 mL</td>
+          <td class="num">5 oz</td><td class="num amber">$9</td>
+          <td class="num">127</td><td class="num">$1,143</td><td class="num green">$823.01</td><td class="num">72%</td>
+        </tr>
+        <tr>
+          <td>04</td><td>Stumptown Cold Brew</td><td>Nitro Coffee</td>
+          <td class="num red">$209.99</td><td class="num muted">18,927 mL</td>
+          <td class="num">12 oz</td><td class="num amber">$7</td>
+          <td class="num">53</td><td class="num">$371</td><td class="num green">$161.01</td><td class="num">43%</td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="3">4-Tap Variety Event Total (sell-out)</td>
+          <td class="num red">$859.96</td>
+          <td></td>
+          <td colspan="2"></td>
+          <td class="num">365</td>
+          <td class="num">$2,285</td>
+          <td class="num green">$1,425.04</td>
+          <td class="num">62%</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rec-box" style="margin-top:0.6rem;">Cold brew at $7/12oz improves margin to 43% (vs 34% at $6). Wine tap carries the event — 57.7% of total net profit from one tap. Consider pricing cold brew at $7–8 to match audience expectations. At $8/12oz: $424 gross → $214 net → 50% margin.</div>
+  </div>
+
+  <!-- ============================================================
+       SECTION 4: SUMMARY COMPARISON
+  ============================================================ -->
+  <div class="summary-section">
+    <h2>Menu Comparison Summary — 4-Tap Event, Full Keg, Sell-Out</h2>
+
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>Menu Type</th>
+          <th class="num">Total Keg Cost</th>
+          <th class="num">Total Pours</th>
+          <th class="num">Gross Revenue</th>
+          <th class="num">Net Profit</th>
+          <th class="num">Margin</th>
+          <th>Best For</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Wine Bar (4 wine, 5oz @ $9)</td>
+          <td class="num">$1,239.96</td>
+          <td class="num">508</td>
+          <td class="num">$4,572</td>
+          <td class="num best">$3,332.04</td>
+          <td class="num best">73%</td>
+          <td>Private events, weddings, corporate</td>
+        </tr>
+        <tr>
+          <td>Beer Bar (4 beer, 5oz @ $3)</td>
+          <td class="num">$659.96</td>
+          <td class="num">524</td>
+          <td class="num">$1,572</td>
+          <td class="num">$912.04</td>
+          <td class="num">58%</td>
+          <td>Tailgates, outdoor fests, casual</td>
+        </tr>
+        <tr>
+          <td>Variety Mix (2B + 1W + 1CB)</td>
+          <td class="num">$859.96</td>
+          <td class="num">365</td>
+          <td class="num">$2,285</td>
+          <td class="num">$1,425.04</td>
+          <td class="num">62%</td>
+          <td>General festivals, mixed audiences</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <br>
+
+    <!-- 2-Event Weekend projection -->
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th colspan="6" style="background:#1a1200; color:var(--amber); font-size:0.75rem; padding:0.7rem 0.8rem; letter-spacing:0.1em;">
+            WEEKEND PROJECTION — 2 Events (Fri + Sat, or Sat + Sun) — full keg per tap per event
+          </th>
+        </tr>
+        <tr>
+          <th>Menu Type</th>
+          <th class="num">Keg Cost × 2</th>
+          <th class="num">Gross × 2</th>
+          <th class="num">Net Profit</th>
+          <th class="num">Margin</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="grand-total">
+          <td>Wine Bar (2-event)</td>
+          <td class="num red">$2,479.92</td>
+          <td class="num">$9,144</td>
+          <td class="num best">$6,664.08</td>
+          <td class="num">73%</td>
+        </tr>
+        <tr>
+          <td>Beer Bar (2-event)</td>
+          <td class="num red">$1,319.92</td>
+          <td class="num">$3,144</td>
+          <td class="num">$1,824.08</td>
+          <td class="num">58%</td>
+        </tr>
+        <tr>
+          <td>Variety Mix (2-event)</td>
+          <td class="num red">$1,719.92</td>
+          <td class="num">$4,570</td>
+          <td class="num">$2,850.08</td>
+          <td class="num">62%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============================================================
+       METHODOLOGY NOTE
+  ============================================================ -->
+  <div class="methodology">
+    <h3>Calculation Methodology — Full-Keg Model (Updated 2026-06-08)</h3>
+    <p><strong>Model change:</strong> Previous model used 5.1L fill draws from larger kegs. This version treats 1 full keg as the cost and volume unit per tap per event.</p>
+    <br>
+    <p><strong>Keg volumes:</strong> Wine &amp; cold brew: <code>5 gal = 18,927 mL</code> · Beer sixtels: <code>5.16 gal = 19,531 mL</code></p>
+    <p><strong>Pours per keg</strong> = <code>floor(keg_volume_mL / mL_per_pour)</code></p>
+    <p><strong>Gross revenue</strong> = <code>pours × sell_price</code></p>
+    <p><strong>Net profit</strong> = <code>gross_revenue − keg_cost</code></p>
+    <p><strong>Margin</strong> = <code>net_profit / gross_revenue</code></p>
+    <p><strong>Break-even pours</strong> = <code>ceil(keg_cost / sell_price)</code></p>
+    <br>
+    <p style="color:rgba(240,232,216,0.35);">
+      Assumes full sell-out unless utilization scenario specified. Excludes: ABC banquet license ($85/event), CO₂/N₂ gas, labor, dry hire fee, transport, cups (~$0.07–0.15/cup).
+      Keg prices from dckegs.com as of 2026-06-08. ~5–10% waste factor not applied to pours (conservative — actual yield slightly lower).
+      Revenue model assumes all pours of each keg are sold; partial keg at end of event reduces gross proportionally.
+    </p>
+  </div>
+
+</body>
+</html>

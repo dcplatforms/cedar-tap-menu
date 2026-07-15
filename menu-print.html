@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cedar Tap — Print Menu</title>
+<style>
+  @page { size: letter portrait; margin: 0.4in; }
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .no-print { display: none; }
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: #fff;
+    font-family: 'Georgia', serif;
+    padding: 28px 32px 20px;
+    max-width: 8.5in;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 22px;
+    border-bottom: 3px solid #2d1b0e;
+    padding-bottom: 16px;
+  }
+  .header-brand {
+    font-size: 11px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 4px;
+  }
+  .header-title {
+    font-size: 40px;
+    color: #2d1b0e;
+    letter-spacing: 3px;
+    font-weight: normal;
+  }
+  .header-sub {
+    font-size: 13px;
+    color: #888;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* PRODUCT GRID */
+  .product-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 20px;
+  }
+
+  .product-card {
+    border: 2.5px solid #2d1b0e;
+    border-radius: 16px;
+    padding: 22px 20px 20px;
+    text-align: center;
+  }
+  .product-card.hibiscus { border-color: #6b0f3a; }
+
+  .product-emoji { font-size: 38px; margin-bottom: 6px; }
+  .product-name {
+    font-size: 22px;
+    font-weight: bold;
+    color: #2d1b0e;
+    margin-bottom: 3px;
+    letter-spacing: 1px;
+  }
+  .product-card.hibiscus .product-name { color: #6b0f3a; }
+  .product-desc {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 16px;
+    line-height: 1.5;
+    letter-spacing: 0.5px;
+  }
+
+  /* QR */
+  .qr-box {
+    background: #fdf8f0;
+    border-radius: 12px;
+    padding: 12px;
+    display: inline-block;
+    margin-bottom: 12px;
+  }
+  .qr-box img { width: 180px; height: 180px; display: block; }
+  .qr-caption {
+    font-size: 10px;
+    color: #aaa;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  /* SIZE TABLE */
+  .size-table { width: 100%; border-collapse: collapse; }
+  .size-table tr { border-top: 1px solid #eee; }
+  .size-table tr:first-child { border-top: 2px solid #ddd; }
+  .size-table td {
+    padding: 8px 6px;
+    font-size: 15px;
+    color: #2d1b0e;
+  }
+  .size-table .sz { font-weight: bold; font-size: 17px; text-align: left; }
+  .size-table .lbl { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+  .size-table .pr { font-weight: bold; font-size: 20px; color: #c8860a; text-align: right; }
+  .product-card.hibiscus .size-table .pr { color: #e8476a; }
+
+  /* FOOTER */
+  .footer {
+    border-top: 2px solid #2d1b0e;
+    padding-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-left { font-size: 11px; color: #888; letter-spacing: 1px; }
+  .footer-pay {
+    font-size: 12px;
+    color: #555;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+  .footer-pay strong { color: #2d1b0e; }
+  .footer-right { font-size: 11px; color: #888; letter-spacing: 1px; text-align: right; }
+
+  .print-btn {
+    display: block;
+    margin: 20px auto 0;
+    padding: 12px 36px;
+    background: #2d1b0e;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">Mobile Tap Room</div>
+  <div class="header-title">Cedar Tap</div>
+  <div class="header-sub">Craft Beverages On Tap · Scan &amp; Pay Instantly</div>
+</div>
+
+<div class="product-grid">
+
+  <!-- COLD BREW -->
+  <div class="product-card">
+    <div class="product-emoji">☕</div>
+    <div class="product-name">Nitro Cold Brew</div>
+    <div class="product-desc">Slow-steeped cold brew on nitro.<br>Rich, bold, zero bitterness.</div>
+    <div class="qr-box">
+      <img src="img/qr-cold-brew.svg" alt="Cold Brew QR">
+    </div>
+    <div class="qr-caption">Scan to choose size &amp; pay</div>
+    <table class="size-table">
+      <tr>
+        <td class="sz">10 oz</td>
+        <td class="lbl">Classic</td>
+        <td class="pr">$5.99</td>
+      </tr>
+      <tr>
+        <td class="sz">14 oz</td>
+        <td class="lbl">Standard</td>
+        <td class="pr">$7.99</td>
+      </tr>
+      <tr>
+        <td class="sz">16 oz</td>
+        <td class="lbl">Large</td>
+        <td class="pr">$9.99</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- HIBISCUS -->
+  <div class="product-card hibiscus">
+    <div class="product-emoji">🌺</div>
+    <div class="product-name">Hibiscus Nitro Tea</div>
+    <div class="product-desc">Floral hibiscus on nitro.<br>Silky, tart &amp; naturally sweet.</div>
+    <div class="qr-box">
+      <img src="img/qr-hibiscus.svg" alt="Hibiscus QR">
+    </div>
+    <div class="qr-caption">Scan to choose size &amp; pay</div>
+    <table class="size-table">
+      <tr>
+        <td class="sz">10 oz</td>
+        <td class="lbl">Classic</td>
+        <td class="pr">$5.99</td>
+      </tr>
+      <tr>
+        <td class="sz">14 oz</td>
+        <td class="lbl">Standard</td>
+        <td class="pr">$7.99</td>
+      </tr>
+      <tr>
+        <td class="sz">16 oz</td>
+        <td class="lbl">Large</td>
+        <td class="pr">$9.99</td>
+      </tr>
+    </table>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="footer-left">cedartaps.com</div>
+  <div class="footer-pay">
+    <strong>Pay by Square · Cash App $CedarTaps</strong><br>
+    <span style="font-size:10px;color:#aaa">Tap any QR code · select size · checkout in seconds</span>
+  </div>
+  <div class="footer-right">(202) 810-1861</div>
+</div>
+
+<button class="print-btn no-print" onclick="window.print()">🖨 Print This Menu</button>
+
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cedar Tap — Route Map</title>
+<link rel="icon" href="/img/cedar-tap-logo.svg">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Georgia', serif; background: #1a1208; color: #fdf8f0; height: 100vh; display: flex; flex-direction: column; }
+header { background: #2d1b0e; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #c8860a44; flex-shrink: 0; }
+.brand { font-size: 13px; letter-spacing: 4px; text-transform: uppercase; color: #c8860a; }
+.back { font-size: 11px; color: #fdf8f088; text-decoration: none; letter-spacing: 1px; }
+.back:hover { color: #c8860a; }
+.layout { display: flex; flex: 1; overflow: hidden; }
+#map { flex: 1; }
+.sidebar { width: 300px; background: #221508; overflow-y: auto; border-left: 1px solid #c8860a22; flex-shrink: 0; }
+.sidebar-header { padding: 14px 16px; background: #2d1b0e; border-bottom: 1px solid #c8860a33; }
+.sidebar-header h2 { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: #c8860a; margin-bottom: 4px; }
+.sidebar-header p { font-size: 11px; color: #fdf8f077; }
+.filter-bar { padding: 10px 16px; border-bottom: 1px solid #c8860a22; display: flex; flex-wrap: wrap; gap: 6px; }
+.filter-btn { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; border: 1px solid; cursor: pointer; background: transparent; transition: all 0.2s; }
+.filter-btn.active { color: #1a1208 !important; }
+.venue-list { padding: 8px 0; }
+.venue-item { padding: 10px 16px; border-bottom: 1px solid #ffffff08; cursor: pointer; transition: background 0.15s; }
+.venue-item:hover { background: #ffffff08; }
+.venue-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; flex-shrink: 0; }
+.venue-name { font-size: 13px; margin-bottom: 2px; display: flex; align-items: center; }
+.venue-meta { font-size: 11px; color: #fdf8f066; padding-left: 16px; }
+.venue-badge { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; padding: 2px 6px; border-radius: 10px; margin-left: auto; flex-shrink: 0; }
+.metrics-bar { padding: 14px 16px; background: #2d1b0e; border-top: 1px solid #c8860a33; flex-shrink: 0; }
+.metrics-bar h3 { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #c8860a; margin-bottom: 8px; }
+.metric-row { display: flex; justify-content: space-between; font-size: 11px; color: #fdf8f088; margin-bottom: 4px; }
+.metric-val { color: #fdf8f0; font-weight: bold; }
+/* Leaflet overrides */
+.leaflet-popup-content-wrapper { background: #2d1b0e; color: #fdf8f0; border: 1px solid #c8860a44; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+.leaflet-popup-tip { background: #2d1b0e; }
+.leaflet-popup-content { margin: 12px 14px; font-family: Georgia, serif; }
+.popup-title { font-size: 14px; font-weight: bold; margin-bottom: 4px; }
+.popup-type { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #c8860a; margin-bottom: 8px; }
+.popup-stat { font-size: 11px; color: #fdf8f099; margin-bottom: 2px; }
+.popup-stat span { color: #fdf8f0; }
+@media (max-width: 600px) { .sidebar { display: none; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">Cedar Tap · Route Map</div>
+  <a href="/" class="back">← Home</a>
+</header>
+
+<div class="layout">
+  <div id="map"></div>
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h2>Service Area</h2>
+      <p>40-mile radius · Woodbridge VA</p>
+    </div>
+    <div class="filter-bar" id="filterBar"></div>
+    <div class="venue-list" id="venueList"></div>
+    <div class="metrics-bar">
+      <h3>Weekend Targets</h3>
+      <div class="metric-row"><span>Kegs deployed</span><span class="metric-val">6</span></div>
+      <div class="metric-row"><span>Sellout target</span><span class="metric-val">294 pours</span></div>
+      <div class="metric-row"><span>Revenue target</span><span class="metric-val">$2,055</span></div>
+      <div class="metric-row"><span>Gross margin</span><span class="metric-val">64.7%</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const COLORS = {
+  route:    '#f59e0b',
+  partner:  '#22c55e',
+  pipeline: '#3b82f6',
+  prospect: '#a78bfa',
+  sports:   '#ec4899',
+  fitness:  '#06b6d4',
+  winery:   '#f97316',
+  base:     '#ef4444'
+};
+
+const venues = [
+  // Base
+  { name:'Cedar Tap Base', type:'base', lat:38.6588, lng:-77.2497, status:'base', traffic:'—', notes:'Home base · Woodbridge VA', peak:'—' },
+
+  // Saturday Route Stops
+  { name:'Stonebridge at Potomac Town Center', type:'route', lat:38.6434, lng:-77.2981, status:'Sat Stop 1', traffic:'8,000–12,000', notes:'10am–2pm · 150–180 pours target · Outdoor mall, Summer Concert Series', peak:'10am–2pm' },
+  { name:'Historic Occoquan', type:'route', lat:38.6866, lng:-77.2626, status:'Sat Stop 2', traffic:'5,000–8,000', notes:'2pm–6pm · 80–100 pours target · Artisan market, waterfront', peak:'11am–5pm' },
+
+  // Confirmed Partners
+  { name:'Murlarkey Distillery', type:'partner', lat:38.7500, lng:-77.5200, status:'confirmed', traffic:'Private events', notes:'Kegged cocktails · Private tastings · Mon 2:30pm meeting', peak:'Eve/weekends' },
+  { name:'Commonwealth Joe (CWJ)', type:'partner', lat:38.9600, lng:-77.0300, status:'supplier', traffic:'Partner', notes:'Cold brew supplier · Wholesale account pending', peak:'—' },
+  { name:'La Colombe', type:'partner', lat:38.8900, lng:-77.1300, status:'confirmed', traffic:'Partner', notes:'Cold brew on tap · Official partnership', peak:'—' },
+
+  // Active Pipeline
+  { name:'Workhouse Arts Center', type:'pipeline', lat:38.7031, lng:-77.2167, status:'outreach', traffic:'2,000–4,000', notes:'Jul 4th fireworks · Email sent', peak:'Eve/night' },
+  { name:'Lake Fairfax Park', type:'pipeline', lat:38.9580, lng:-77.3381, status:'outreach', traffic:'2,000–4,000', notes:'Jul 4th drone show · Email sent', peak:'10am–8pm' },
+  { name:'Bluemont Fair', type:'pipeline', lat:39.1262, lng:-77.8380, status:'outreach', traffic:'10,000+', notes:'Sep 19–20 · Major annual fair', peak:'9am–6pm' },
+  { name:'PWC Fair', type:'pipeline', lat:38.7700, lng:-77.4800, status:'active', traffic:'50,000+', notes:'Jul 31–Aug 8 · CWJ keg order in progress', peak:'All day' },
+  { name:'Historic Manassas FM', type:'pipeline', lat:38.7471, lng:-77.4763, status:'declined-alcohol', traffic:'1,500–2,500', notes:'No alcohol at market · Coffee pivot possible', peak:'9am–12pm' },
+  { name:'Manassas Park FM', type:'pipeline', lat:38.7716, lng:-77.4546, status:'outreach', traffic:'1,000–2,000', notes:'Email sent Apr 13', peak:'9am–12pm' },
+  { name:'EatLoco Markets', type:'pipeline', lat:39.0900, lng:-77.5200, status:'declined-alcohol', traffic:'2,000–4,000', notes:'No alcohol · Coffee tap possible', peak:'9am–2pm' },
+  { name:'2 Silos Brewing', type:'pipeline', lat:38.7930, lng:-77.5050, status:'outreach', traffic:'Event-based', notes:'Vendor partnership form submitted', peak:'Thu–Sun' },
+  { name:'Potomac Shores', type:'pipeline', lat:38.5900, lng:-77.2800, status:'active', traffic:'Residents', notes:'Chelsea Sparaco contact · Weekend events', peak:'Weekends' },
+
+  // Wineries
+  { name:'The Winery at Bull Run', type:'winery', lat:38.8312, lng:-77.4637, status:'outreach', traffic:'500–1,500', notes:'Email sent · 48hr follow-up', peak:'Thu–Sun' },
+  { name:'Paradise Springs Winery', type:'winery', lat:38.7901, lng:-77.3716, status:'outreach', traffic:'300–800', notes:'Email sent · Partnership pending', peak:'Thu–Sun' },
+  { name:'Potomac Point Winery', type:'winery', lat:38.4200, lng:-77.4000, status:'outreach', traffic:'200–600', notes:'Strongest lead · 20–200 guests', peak:'Weekends' },
+  { name:'Barrel Oak Winery', type:'winery', lat:38.9687, lng:-77.9706, status:'outreach', traffic:'300–700', notes:'Delaplane VA · Contact info@barreloak.com', peak:'Weekends' },
+
+  // Sports
+  { name:'PWSI Sports Complex', type:'sports', lat:38.6200, lng:-77.3400, status:'outreach', traffic:'500–2,000', notes:'PWSI Colleen Heron contact · VDH youth exempt', peak:'Weekends 8am–6pm' },
+  { name:'K Sports', type:'sports', lat:38.6800, lng:-77.3600, status:'prospect', traffic:'1,000–3,000', notes:'Youth tournaments', peak:'Weekends' },
+  { name:'FCPA Patriot Park', type:'sports', lat:38.7800, lng:-77.2300, status:'prospect', traffic:'1,000–3,000', notes:'17 fields · 29 tournaments/yr · Call (703) 777-0343', peak:'Weekends' },
+  { name:'Dulles Sportsplex', type:'sports', lat:38.9800, lng:-77.4100, status:'outreach', traffic:'1,500–3,000', notes:'Web form sent · Anna Hofmann', peak:'Weekends' },
+  { name:'NVSC Battlefield Tournament', type:'sports', lat:38.7200, lng:-77.5300, status:'pipeline', traffic:'2,000–4,000', notes:'Logged in pipeline · novasc.org', peak:'Tournament days' },
+
+  // Fitness
+  { name:'OneLife Fitness (Lake Ridge)', type:'fitness', lat:38.6500, lng:-77.3000, status:'outreach', traffic:'200–500/day', notes:'GM outreach sent · @lifetimefitness.com resent', peak:'6am–9am, 4pm–8pm' },
+  { name:'OneLife Fitness (Manassas)', type:'fitness', lat:38.7600, lng:-77.4700, status:'outreach', traffic:'200–500/day', notes:'GM outreach in pipeline', peak:'6am–9am, 4pm–8pm' },
+  { name:'Jiffy Lube Live', type:'prospect', lat:38.7600, lng:-77.3200, status:'outreach', traffic:'10,000–25,000', notes:'Concert venue · Event-specific · Outreach sent', peak:'Event nights' },
+];
+
+const LABELS = {
+  base:'Base', route:'Sat Route', partner:'Partner', pipeline:'Pipeline',
+  prospect:'Prospect', sports:'Sports', fitness:'Fitness', winery:'Winery'
+};
+
+// Init map centered on Woodbridge
+const map = L.map('map', { center: [38.72, -77.38], zoom: 10, zoomControl: true });
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; OpenStreetMap, &copy; CARTO', maxZoom: 19
+}).addTo(map);
+
+// Service area circle
+L.circle([38.6588, -77.2497], {
+  radius: 40 * 1609.34,
+  color: '#c8860a',
+  fillColor: '#c8860a',
+  fillOpacity: 0.04,
+  weight: 1,
+  dashArray: '6,6'
+}).addTo(map);
+
+// Route line (Sat stops)
+const routeStops = venues.filter(v => v.type === 'route' || v.type === 'base');
+L.polyline(routeStops.map(v => [v.lat, v.lng]), {
+  color: '#f59e0b',
+  weight: 2,
+  dashArray: '8,6',
+  opacity: 0.6
+}).addTo(map);
+
+function makeIcon(type) {
+  const color = COLORS[type] || '#888';
+  return L.divIcon({
+    html: `<div style="width:14px;height:14px;border-radius:50%;background:${color};border:2px solid ${color}44;box-shadow:0 0 6px ${color}88;"></div>`,
+    iconSize:[14,14], iconAnchor:[7,7], className:''
+  });
+}
+function makeRouteIcon(label) {
+  return L.divIcon({
+    html: `<div style="width:28px;height:28px;border-radius:50%;background:#f59e0b;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;color:#1a1208;box-shadow:0 0 12px #f59e0b88;">${label}</div>`,
+    iconSize:[28,28], iconAnchor:[14,14], className:''
+  });
+}
+
+let activeType = null;
+const markers = [];
+let routeCount = 0;
+
+venues.forEach(v => {
+  let icon;
+  if (v.type === 'route') { routeCount++; icon = makeRouteIcon(routeCount); }
+  else if (v.type === 'base') { icon = L.divIcon({ html:'<div style="width:18px;height:18px;border-radius:50%;background:#ef4444;border:3px solid #fff;box-shadow:0 0 10px #ef444488;"></div>', iconSize:[18,18],iconAnchor:[9,9],className:'' }); }
+  else { icon = makeIcon(v.type); }
+
+  const m = L.marker([v.lat, v.lng], { icon }).addTo(map);
+  m.bindPopup(`
+    <div class="popup-title">${v.name}</div>
+    <div class="popup-type">${LABELS[v.type] || v.type} · ${v.status}</div>
+    <div class="popup-stat">Traffic: <span>${v.traffic}</span></div>
+    <div class="popup-stat">Peak: <span>${v.peak}</span></div>
+    <div class="popup-stat" style="margin-top:6px;font-style:italic;color:#fdf8f077;">${v.notes}</div>
+  `);
+  markers.push({ v, m });
+});
+
+// Sidebar
+const types = [...new Set(venues.map(v => v.type))];
+const filterBar = document.getElementById('filterBar');
+const venueList = document.getElementById('venueList');
+
+types.forEach(type => {
+  const btn = document.createElement('button');
+  btn.className = 'filter-btn';
+  btn.textContent = LABELS[type] || type;
+  btn.style.borderColor = COLORS[type];
+  btn.style.color = COLORS[type];
+  btn.onclick = () => {
+    if (activeType === type) {
+      activeType = null;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    } else {
+      activeType = type;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      btn.style.background = COLORS[type];
+      btn.style.color = '#1a1208';
+    }
+    renderList();
+  };
+  filterBar.appendChild(btn);
+});
+
+function renderList() {
+  venueList.innerHTML = '';
+  const filtered = activeType ? venues.filter(v => v.type === activeType) : venues;
+  filtered.forEach(v => {
+    const item = document.createElement('div');
+    item.className = 'venue-item';
+    const color = COLORS[v.type] || '#888';
+    item.innerHTML = `
+      <div class="venue-name">
+        <span class="venue-dot" style="background:${color};"></span>
+        ${v.name}
+        <span class="venue-badge" style="background:${color}22;color:${color};border:1px solid ${color}44;">${v.status}</span>
+      </div>
+      <div class="venue-meta">${v.traffic} · ${v.peak}</div>
+    `;
+    item.onclick = () => {
+      map.setView([v.lat, v.lng], 13);
+      const marker = markers.find(m => m.v === v);
+      if (marker) marker.m.openPopup();
+    };
+    venueList.appendChild(item);
+  });
+}
+renderList();
+</script>
+</body>
+</html>

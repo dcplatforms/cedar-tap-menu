@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 480" width="400" height="480">
+  <defs>
+    <linearGradient id="treeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#2d5a1b"/>
+      <stop offset="100%" stop-color="#1a3a0f"/>
+    </linearGradient>
+    <linearGradient id="trunkGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#5c3010"/>
+      <stop offset="100%" stop-color="#8B5A2B"/>
+    </linearGradient>
+    <linearGradient id="bgCircle" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#f5ede0"/>
+      <stop offset="100%" stop-color="#e8d5b4"/>
+    </linearGradient>
+    <filter id="treeShadow">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="rgba(20,8,2,0.25)"/>
+    </filter>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="200" cy="185" r="175" fill="url(#bgCircle)" opacity="0.12"/>
+
+  <!-- Cedar Tree — layered tiers, widest at bottom -->
+
+  <!-- Tier 1 — top (crown) -->
+  <polygon points="200,30  228,95  172,95"  fill="url(#treeGrad)" filter="url(#treeShadow)"/>
+
+  <!-- Tier 2 -->
+  <polygon points="200,68  248,145 152,145" fill="url(#treeGrad)" filter="url(#treeShadow)"/>
+  <!-- Tier 2 side branch accents -->
+  <polygon points="200,85  254,148 236,148" fill="#2d5a1b" opacity="0.6"/>
+  <polygon points="200,85  146,148 164,148" fill="#2d5a1b" opacity="0.6"/>
+
+  <!-- Tier 3 -->
+  <polygon points="200,110  268,200 132,200" fill="url(#treeGrad)" filter="url(#treeShadow)"/>
+  <polygon points="200,128  274,202 255,202" fill="#2d5a1b" opacity="0.55"/>
+  <polygon points="200,128  126,202 145,202" fill="#2d5a1b" opacity="0.55"/>
+
+  <!-- Tier 4 — widest -->
+  <polygon points="200,158  292,262 108,262" fill="url(#treeGrad)" filter="url(#treeShadow)"/>
+  <polygon points="200,175  298,264 278,264" fill="#1a3a0f" opacity="0.5"/>
+  <polygon points="200,175  102,264 122,264" fill="#1a3a0f" opacity="0.5"/>
+
+  <!-- Trunk -->
+  <rect x="186" y="258" width="28" height="55" rx="3" fill="url(#trunkGrad)"/>
+
+  <!-- Amber tap dot / badge — small keg/tap icon on tree -->
+  <circle cx="200" cy="195" r="18" fill="#c8922a" opacity="0.92"/>
+  <text x="200" y="201" text-anchor="middle" font-size="18" font-family="Georgia,serif" fill="#fff" font-weight="700">●</text>
+  <!-- tap spigot lines -->
+  <line x1="200" y1="207" x2="200" y2="215" stroke="#c8922a" stroke-width="3" stroke-linecap="round"/>
+  <line x1="196" y1="215" x2="204" y2="215" stroke="#c8922a" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Wordmark -->
+  <text x="200" y="360"
+        text-anchor="middle"
+        font-family="'Georgia', 'Times New Roman', serif"
+        font-size="64"
+        font-weight="700"
+        letter-spacing="-1"
+        fill="#2c1a0e">Cedar</text>
+
+  <text x="200" y="416"
+        text-anchor="middle"
+        font-family="'Georgia', 'Times New Roman', serif"
+        font-size="64"
+        font-weight="400"
+        font-style="italic"
+        letter-spacing="6"
+        fill="#c8922a">Tap</text>
+
+  <!-- Thin rule lines flanking tagline -->
+  <line x1="60"  y1="438" x2="152" y2="438" stroke="#c8922a" stroke-width="1.2" opacity="0.6"/>
+  <line x1="248" y1="438" x2="340" y2="438" stroke="#c8922a" stroke-width="1.2" opacity="0.6"/>
+
+  <!-- Tagline -->
+  <text x="200" y="457"
+        text-anchor="middle"
+        font-family="'Arial', 'Helvetica', sans-serif"
+        font-size="13"
+        letter-spacing="4"
+        font-weight="500"
+        fill="#8B5A2B"
+        opacity="0.85">MOBILE TAP ROOM</text>
+</svg>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cedar Tap — Mixed Tap Menu</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #111111;
+      --card-bg: #1a1612;
+      --amber: #d4a43a;
+      --amber-light: #e8c46a;
+      --burgundy: #4a1028;
+      --cream: #fdf9f4;
+      --cream-muted: rgba(253, 249, 244, 0.6);
+      --coffee: #5c3317;
+      --coffee-light: #8b5e3c;
+      --green-accent: rgba(80, 200, 120, 0.7);
+    }
+
+    body {
+      background: var(--black);
+      color: var(--cream);
+      font-family: 'Raleway', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, #0e0e0e 0%, #1a0f08 50%, #0e0e0e 100%);
+      text-align: center;
+      padding: 2.5rem 1.5rem 2rem;
+      border-bottom: 1px solid rgba(212, 164, 58, 0.2);
+    }
+
+    .brand-sub {
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(212, 164, 58, 0.5);
+      margin-bottom: 0.6rem;
+    }
+
+    header h1 {
+      font-size: clamp(2rem, 6vw, 3.8rem);
+      font-weight: 800;
+      color: var(--cream);
+      letter-spacing: -0.01em;
+      line-height: 1;
+    }
+
+    header h1 .accent { color: var(--amber); }
+
+    .header-tagline {
+      font-size: 0.8rem;
+      color: var(--cream-muted);
+      margin-top: 0.8rem;
+      letter-spacing: 0.08em;
+    }
+
+    .event-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.2rem;
+      padding: 0.4rem 1.2rem;
+      background: rgba(212, 164, 58, 0.08);
+      border: 1px solid rgba(212, 164, 58, 0.25);
+      border-radius: 20px;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: var(--amber-light);
+      text-transform: uppercase;
+    }
+
+    /* ── TAP GRID ── */
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    .menu-intro {
+      text-align: center;
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--cream-muted);
+      max-width: 550px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.6;
+    }
+
+    .tap-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: auto auto;
+      gap: 1.2rem;
+    }
+
+    @media (max-width: 640px) {
+      .tap-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .tap-card {
+      border-radius: 10px;
+      padding: 1.5rem 1.6rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease;
+    }
+
+    .tap-card:hover { transform: translateY(-2px); }
+
+    .tap-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 10px;
+      pointer-events: none;
+      border: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+
+    .tap-card:hover::after { border-color: rgba(212, 164, 58, 0.35); }
+
+    /* Card themes */
+    .card-beer1 {
+      background: linear-gradient(145deg, #1a1508 0%, #120f00 100%);
+      border: 1px solid rgba(212, 164, 58, 0.2);
+      border-top: 3px solid #ff8c1a;
+    }
+    .card-beer2 {
+      background: linear-gradient(145deg, #0d1408 0%, #080e04 100%);
+      border: 1px solid rgba(100, 180, 80, 0.2);
+      border-top: 3px solid #5ac840;
+    }
+    .card-wine {
+      background: linear-gradient(145deg, #1a0810 0%, #0e0408 100%);
+      border: 1px solid rgba(180, 40, 80, 0.25);
+      border-top: 3px solid #c04060;
+    }
+    .card-coffee {
+      background: linear-gradient(145deg, #100a05 0%, #0a0603 100%);
+      border: 1px solid rgba(140, 80, 30, 0.3);
+      border-top: 3px solid #8b5e3c;
+    }
+
+    .tap-num {
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.45;
+      margin-bottom: 0.4rem;
+    }
+
+    .tap-name {
+      font-size: 1.4rem;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 0.2rem;
+    }
+
+    .tap-name .beer1-color { color: #ff9a40; }
+    .tap-name .beer2-color { color: #7ad860; }
+    .tap-name .wine-color { color: #e06080; }
+    .tap-name .coffee-color { color: #c89060; }
+
+    .tap-origin {
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.5;
+      margin-bottom: 0.8rem;
+    }
+
+    .tap-description {
+      font-family: 'Lora', serif;
+      font-size: 0.85rem;
+      font-style: italic;
+      color: var(--cream-muted);
+      line-height: 1.5;
+      margin-bottom: 1.2rem;
+    }
+
+    /* Type tag */
+    .type-tag {
+      display: inline-block;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      margin-bottom: 0.8rem;
+    }
+    .tag-beer { background: rgba(255, 140, 26, 0.15); color: #ff9a40; border: 1px solid rgba(255, 140, 26, 0.3); }
+    .tag-cider { background: rgba(90, 200, 64, 0.1); color: #7ad860; border: 1px solid rgba(90, 200, 64, 0.25); }
+    .tag-wine { background: rgba(192, 64, 96, 0.15); color: #e06080; border: 1px solid rgba(192, 64, 96, 0.3); }
+    .tag-coffee { background: rgba(139, 94, 60, 0.2); color: #c89060; border: 1px solid rgba(139, 94, 60, 0.4); }
+
+    /* Prices */
+    .price-list {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .price-pill {
+      display: flex;
+      align-items: baseline;
+      gap: 0.3rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 0.3rem 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .price-pill:hover {
+      background: rgba(212, 164, 58, 0.12);
+      border-color: rgba(212, 164, 58, 0.4);
+    }
+
+    .pill-size { font-size: 0.65rem; color: rgba(253,249,244,0.45); }
+    .pill-price { font-size: 0.95rem; font-weight: 700; color: var(--amber); }
+
+    /* ── GLUTEN-FREE / ALLERGY NOTE ── */
+    .allergy-bar {
+      margin-top: 2rem;
+      padding: 0.8rem 1.2rem;
+      background: rgba(80, 200, 120, 0.06);
+      border: 1px solid rgba(80, 200, 120, 0.2);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      color: rgba(80, 200, 120, 0.8);
+      letter-spacing: 0.05em;
+      text-align: center;
+    }
+
+    /* ── ORDER SECTION ── */
+    .order-section {
+      margin-top: 2.5rem;
+      padding: 2rem 1.5rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(212, 164, 58, 0.15);
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .order-section h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.4rem;
+    }
+
+    .order-section p {
+      font-size: 0.8rem;
+      color: var(--cream-muted);
+      margin-bottom: 1.2rem;
+    }
+
+    .pay-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .pay-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.5rem;
+      border-radius: 6px;
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .pay-btn-cashapp { background: #00d632; color: #000; }
+    .pay-btn-cashapp:hover { background: #00b82b; transform: scale(1.02); }
+    .pay-btn-paypal { background: #003087; color: #fff; border: 1px solid #0070ba; }
+    .pay-btn-paypal:hover { background: #0070ba; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 1.5rem 1rem;
+      font-size: 0.67rem;
+      letter-spacing: 0.1em;
+      color: rgba(253, 249, 244, 0.2);
+      border-top: 1px solid rgba(212, 164, 58, 0.08);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand-sub">Cedar Tap Trailers · Woodbridge, VA</div>
+    <h1>Something <span class="accent">for Everyone</span></h1>
+    <p class="header-tagline">2 Craft Beers · 1 Wine · 1 Nitro Cold Brew — All on Tap</p>
+    <div class="event-badge">🍺 Variety Menu · Festivals &amp; Private Events</div>
+  </header>
+
+  <main>
+
+    <p class="menu-intro">
+      Our variety pour is built for events where every guest has a different preference.
+      Whether you're a hop head, wine lover, cider fan, or coffee devotee — we've got a tap for you.
+    </p>
+
+    <div class="tap-grid">
+
+      <!-- TAP 1: IPA -->
+      <div class="tap-card card-beer1">
+        <div class="tap-num">Tap 01 · Craft Beer</div>
+        <div class="type-tag tag-beer">IPA</div>
+        <div class="tap-name"><span class="beer1-color">Hellbender Ignite IPA</span></div>
+        <div class="tap-origin">Washington DC · Local Craft · 5.16-Gal Keg</div>
+        <div class="tap-description">Intensely hoppy with tropical citrus, pine resin, and a satisfying bitter finish. Brewed in DC — locally made, boldly hopped.</div>
+        <div class="price-list">
+          <div class="price-pill"><span class="pill-size">5oz</span><span class="pill-price">$3</span></div>
+          <div class="price-pill"><span class="pill-size">12oz</span><span class="pill-price">$7</span></div>
+          <div class="price-pill"><span class="pill-size">16oz Pint</span><span class="pill-price">$9</span></div>
+        </div>
+      </div>
+
+      <!-- TAP 2: Cider -->
+      <div class="tap-card card-beer2">
+        <div class="tap-num">Tap 02 · Cider</div>
+        <div class="type-tag tag-cider">Hard Cider · GF</div>
+        <div class="tap-name"><span class="beer2-color">Angry Orchard Cider</span></div>
+        <div class="tap-origin">Upstate NY · Gluten-Free · 5.16-Gal Keg</div>
+        <div class="tap-description">Crisp apple sweetness with a clean, dry finish. Gluten-free and crowd-pleasing — the perfect crossover for guests who want something lighter.</div>
+        <div class="price-list">
+          <div class="price-pill"><span class="pill-size">5oz</span><span class="pill-price">$3</span></div>
+          <div class="price-pill"><span class="pill-size">12oz</span><span class="pill-price">$7</span></div>
+          <div class="price-pill"><span class="pill-size">16oz Pint</span><span class="pill-price">$9</span></div>
+        </div>
+      </div>
+
+      <!-- TAP 3: Wine -->
+      <div class="tap-card card-wine">
+        <div class="tap-num">Tap 03 · Wine</div>
+        <div class="type-tag tag-wine">Red Wine</div>
+        <div class="tap-name"><span class="wine-color">Angeline Pinot Noir</span></div>
+        <div class="tap-origin">California · Pinot Noir · 5-Gal Keg · DC Kegs</div>
+        <div class="tap-description">Bright cherry, raspberry, and silky tannins in a smooth, approachable California red. A wine-bar quality pour, straight from the tap.</div>
+        <div class="price-list">
+          <div class="price-pill"><span class="pill-size">2oz Taste</span><span class="pill-price">$3</span></div>
+          <div class="price-pill"><span class="pill-size">5oz Glass</span><span class="pill-price">$9</span></div>
+          <div class="price-pill"><span class="pill-size">8oz Pour</span><span class="pill-price">$12</span></div>
+        </div>
+      </div>
+
+      <!-- TAP 4: Nitro Cold Brew -->
+      <div class="tap-card card-coffee">
+        <div class="tap-num">Tap 04 · Cold Brew</div>
+        <div class="type-tag tag-coffee">Nitro Cold Brew</div>
+        <div class="tap-name"><span class="coffee-color">Stumptown Nitro Cold Brew</span></div>
+        <div class="tap-origin">Portland, OR · Nitrogen-Infused · 5.16-Gal Keg · DC Kegs</div>
+        <div class="tap-description">Smooth, creamy nitro cold brew with a cascading pour and a naturally sweet, low-acid finish. Non-alcoholic — all ages welcome.</div>
+        <div class="price-list">
+          <div class="price-pill"><span class="pill-size">5oz</span><span class="pill-price">$3</span></div>
+          <div class="price-pill"><span class="pill-size">8oz</span><span class="pill-price">$5</span></div>
+          <div class="price-pill"><span class="pill-size">12oz</span><span class="pill-price">$6</span></div>
+        </div>
+      </div>
+
+    </div><!-- /.tap-grid -->
+
+    <div class="allergy-bar">
+      🌿 Tap 02 Angry Orchard Cider is gluten-free · Tap 04 Cold Brew is non-alcoholic &amp; all-ages
+    </div>
+
+    <!-- ORDER & PAY -->
+    <div class="order-section">
+      <h3>Order &amp; Pay</h3>
+      <p>Tell us your tap and size — pay with Cash App or PayPal.</p>
+      <div class="pay-buttons">
+        <a href="https://cash.app/$CedarTaps" class="pay-btn pay-btn-cashapp" target="_blank" rel="noopener">
+          💲 Cash App · $CedarTaps
+        </a>
+        <a href="https://paypal.me/CedarTaps" class="pay-btn pay-btn-paypal" target="_blank" rel="noopener">
+          🅿 PayPal · CedarTaps
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    Cedar Tap Trailers · Woodbridge, VA · tom@cedartaps.com · Sourced from DC Kegs<br>
+    Must be 21+ to purchase alcoholic beverages. Cold brew available to all ages.
+  </footer>
+
+</body>
+</html>

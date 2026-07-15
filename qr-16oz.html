@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cedar Tap — 16oz QR Codes</title>
+<style>
+  @page { size: letter portrait; margin: 0.4in; }
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .no-print { display: none; }
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#fff; font-family:'Georgia',serif; padding:24px; }
+
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; max-width:7in; margin:0 auto; }
+
+  .card {
+    border: 3px solid #2d1b0e;
+    border-radius: 18px;
+    padding: 24px 20px 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .card.tea { border-color: #6b0f3a; }
+
+  .emoji { font-size: 40px; }
+  .brand { font-size: 9px; letter-spacing: 4px; text-transform: uppercase; color: #aaa; }
+  .name { font-size: 17px; font-weight: bold; color: #2d1b0e; letter-spacing: .5px; }
+  .card.tea .name { color: #6b0f3a; }
+  .size-badge {
+    font-size: 42px; font-weight: bold; color: #2d1b0e;
+    border: 2.5px solid #2d1b0e;
+    border-radius: 10px;
+    padding: 4px 18px;
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+  .card.tea .size-badge { color: #6b0f3a; border-color: #6b0f3a; }
+
+  .qr-wrap { background: #fdf8f0; border-radius: 12px; padding: 12px; }
+  .qr-wrap img { width: 200px; height: 200px; display: block; }
+
+  .price { font-size: 44px; font-weight: bold; color: #c8860a; }
+  .card.tea .price { color: #e8476a; }
+  .cta { font-size: 10px; color: #aaa; letter-spacing: 2px; text-transform: uppercase; }
+  .site { font-size: 10px; color: #ccc; letter-spacing: 1px; }
+
+  .print-btn {
+    display:block; margin:24px auto 0;
+    padding:12px 36px;
+    background:#2d1b0e; color:#fff;
+    border:none; border-radius:50px;
+    font-size:16px; cursor:pointer;
+    font-family:Arial,sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<div class="grid">
+
+  <div class="card">
+    <div class="emoji">☕</div>
+    <div class="brand">Cedar Tap</div>
+    <div class="name">Nitro Cold Brew</div>
+    <div class="size-badge">16 oz</div>
+    <div class="qr-wrap">
+      <img src="img/qr-cold-brew-16oz.svg" alt="Cold Brew 16oz QR">
+    </div>
+    <div class="price">$7.99</div>
+    <div class="cta">Scan &amp; Pay · Square</div>
+    <div class="site">cedartaps.com</div>
+  </div>
+
+  <div class="card tea">
+    <div class="emoji">🌺</div>
+    <div class="brand">Cedar Tap</div>
+    <div class="name">Hibiscus Nitro Tea</div>
+    <div class="size-badge">16 oz</div>
+    <div class="qr-wrap">
+      <img src="img/qr-hibiscus-tea-16oz.svg" alt="Hibiscus 16oz QR">
+    </div>
+    <div class="price">$7.99</div>
+    <div class="cta">Scan &amp; Pay · Square</div>
+    <div class="site">cedartaps.com</div>
+  </div>
+
+</div>
+
+<button class="print-btn no-print" onclick="window.print()">🖨 Print</button>
+
+</body>
+</html>

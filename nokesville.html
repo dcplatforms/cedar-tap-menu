@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nokesville Winery on Cedar Tap</title>
+  <link rel="icon" type="image/svg+xml" href="/img/cedar-tap-logo.svg" />
+  <style>
+    :root {
+      --navy: #4e6899;
+      --white: #ffffff;
+      --dark: #2c3e50;
+      --cream: #f8f7f4;
+      --accent: #d4a574;
+      --red: #8b4513;
+      --light-gray: #e8e8e8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--cream); color: var(--dark); font-family: 'Georgia', serif; min-height: 100vh; }
+
+    .container { max-width: 1000px; margin: 0 auto; padding: 60px 24px; }
+    .header { text-align: center; margin-bottom: 60px; }
+    .logo { width: 60px; height: 60px; margin: 0 auto 24px; opacity: 0.9; }
+    .brand-name { font-size: 2.8rem; color: var(--navy); font-weight: normal; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .location { font-size: 0.9rem; color: var(--dark); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px; }
+    .tagline { font-size: 0.95rem; color: var(--red); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+
+    .divider { width: 80px; height: 2px; background: var(--navy); margin: 32px auto; }
+
+    .intro { font-size: 1.05rem; line-height: 1.8; color: var(--dark); text-align: center; max-width: 700px; margin: 0 auto 48px; }
+    .mission { font-style: italic; color: var(--red); margin: 12px 0 0 0; }
+
+    .section-title { font-size: 1.6rem; color: var(--navy); margin: 48px 0 32px 0; text-align: center; border-bottom: 2px solid var(--navy); padding-bottom: 12px; }
+
+    .wine-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 48px; }
+    .wine-card { background: var(--white); border: 1px solid var(--light-gray); border-radius: 6px; padding: 28px 20px; text-align: center; box-shadow: 0 2px 6px rgba(78,104,153,0.08); }
+    .wine-name { font-size: 1.25rem; color: var(--navy); margin-bottom: 6px; font-weight: bold; }
+    .wine-type { font-size: 0.8rem; color: var(--red); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
+    .wine-desc { font-size: 0.9rem; color: var(--dark); line-height: 1.5; margin-bottom: 12px; }
+
+    .cta-section { background: var(--navy); color: var(--white); padding: 48px 40px; border-radius: 6px; text-align: center; margin: 48px 0; }
+    .cta-title { font-size: 1.8rem; margin-bottom: 20px; }
+    .cta-text { font-size: 0.95rem; line-height: 1.7; margin-bottom: 28px; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .cta-button { display: inline-block; background: var(--accent); color: var(--dark); padding: 14px 36px; border-radius: 4px; text-decoration: none; font-weight: 600; font-size: 0.9rem; letter-spacing: 0.05em; text-transform: uppercase; transition: background 0.2s; }
+    .cta-button:hover { background: #e6c080; }
+
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin: 48px 0; }
+    .info-block h3 { color: var(--navy); font-size: 1.1rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .info-block p { font-size: 0.95rem; line-height: 1.6; color: var(--dark); margin-bottom: 6px; }
+    .info-block a { color: var(--red); text-decoration: none; font-weight: 600; }
+    .info-block a:hover { text-decoration: underline; }
+
+    .footer { text-align: center; margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--light-gray); font-size: 0.85rem; color: var(--dark); }
+    .footer-note { font-size: 0.8rem; color: #999; margin-top: 12px; }
+
+    @media (max-width: 640px) {
+      .brand-name { font-size: 2rem; }
+      .info-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <img src="/img/cedar-tap-logo.svg" alt="Cedar Tap" class="logo" />
+    <h1 class="brand-name">Nokesville Winery</h1>
+    <p class="location">Nokesville, Virginia</p>
+    <p class="tagline">Soil-to-Bottle Virginia Wine</p>
+    <div class="divider"></div>
+    <p class="intro">
+      Cedar Tap partners with Nokesville Winery to bring locally-crafted Virginia wines directly to your events. From bold reds to crisp whites, experience the character of Nokesville wines poured fresh from Cedar Tap.
+      <p class="mission">"What we lack in size and views, we make up for in quality."</p>
+    </p>
+  </div>
+
+  <h2 class="section-title">Signature Wines</h2>
+
+  <div class="wine-grid">
+    <div class="wine-card">
+      <div class="wine-name">Front Porch</div>
+      <div class="wine-type">Red Blend</div>
+      <div class="wine-desc">Nokesville's signature red blend. Inviting and approachable.</div>
+    </div>
+
+    <div class="wine-card">
+      <div class="wine-name">Campfire Red</div>
+      <div class="wine-type">Red Blend</div>
+      <div class="wine-desc">A bold, warming red blend perfect for gatherings.</div>
+    </div>
+
+    <div class="wine-card">
+      <div class="wine-name">Norton</div>
+      <div class="wine-type">Red Wine</div>
+      <div class="wine-desc">Virginia's flagship varietal. Rich, structured, distinctly local.</div>
+    </div>
+
+    <div class="wine-card">
+      <div class="wine-name">Lyn Semi-Sweet</div>
+      <div class="wine-type">White Blend</div>
+      <div class="wine-desc">A balanced white with refreshing, approachable sweetness.</div>
+    </div>
+
+    <div class="wine-card">
+      <div class="wine-name">Pinot Grigio</div>
+      <div class="wine-type">White Wine</div>
+      <div class="wine-desc">Crisp and bright. Perfect for summer events.</div>
+    </div>
+
+    <div class="wine-card">
+      <div class="wine-name">Albariño</div>
+      <div class="wine-type">White Wine</div>
+      <div class="wine-desc">Classic Spanish varietal grown in Virginia soil.</div>
+    </div>
+  </div>
+
+  <div class="cta-section">
+    <h2 class="cta-title">Bring Nokesville to Your Event</h2>
+    <p class="cta-text">
+      Cedar Tap brings Nokesville Winery's Virginia craftsmanship to premium events, activations, and tastings across the DC Metro region. Whether you're planning a wine tasting, summer celebration, or corporate event, we'll pour it fresh.
+    </p>
+    <a href="mailto:tom@cedartaps.com?subject=Nokesville%20Winery%20Partnership%20–%20Cedar%20Tap%20Event%20Inquiry" class="cta-button">Request Cedar Tap + Nokesville</a>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-block">
+      <h3>Nokesville Winery</h3>
+      <p>12905 Fitzwater Dr</p>
+      <p>Nokesville, VA</p>
+      <p><a href="tel:7033303467">(703) 330-3467</a></p>
+      <p><a href="mailto:info@nokesvillewinery.com">info@nokesvillewinery.com</a></p>
+      <p style="margin-top: 12px; font-size: 0.85rem;">Thu 4–10pm · Fri–Sat 12–10pm · Sun 12–7pm</p>
+    </div>
+    <div class="info-block">
+      <h3>Cedar Tap Mobile Platform</h3>
+      <p>On-tap at DC Metro events</p>
+      <p><a href="https://cedartaps.com">cedartaps.com</a></p>
+      <p><a href="mailto:tom@cedartaps.com">tom@cedartaps.com</a></p>
+      <p><a href="tel:2028101861">(202) 810-1861</a></p>
+      <p style="margin-top: 12px; font-size: 0.85rem;">Premium beverage platform for events and activations</p>
+    </div>
+  </div>
+
+  <p class="footer">
+    Nokesville Winery Partnership · Cedar Tap Mobile Beverage Platform
+    <p class="footer-note">Visit Nokesville Winery's tasting room in Nokesville, VA or order online at nokesvillewinery.com</p>
+  </p>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cedar Tap — $7.99 QR Codes</title>
+<link rel="icon" href="/img/cedar-tap-logo.svg">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#1a1008; color:#fdf8f0; font-family:'Georgia',serif; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px 16px; gap:36px; }
+  .logo { font-size:11px; letter-spacing:5px; text-transform:uppercase; opacity:0.5; text-align:center; }
+  .card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:28px 24px; text-align:center; width:100%; max-width:320px; }
+  .card h2 { font-size:20px; font-weight:normal; margin-bottom:4px; letter-spacing:1px; }
+  .price { font-size:36px; font-weight:bold; margin:10px 0 18px; }
+  .cold { color:#c8860a; }
+  .hib { color:#e8476a; }
+  .qr-wrap { background:#fdf8f0; border-radius:12px; padding:12px; display:inline-block; margin-bottom:14px; }
+  .qr-wrap img, .qr-wrap svg { width:200px; height:200px; display:block; }
+  .pay-btn { display:block; padding:14px 32px; border-radius:50px; font-size:16px; font-family:Arial,sans-serif; font-weight:bold; letter-spacing:1px; text-decoration:none; margin-top:4px; }
+  .pay-cold { background:#c8860a; color:#fff; }
+  .pay-hib { background:#e8476a; color:#fff; }
+  .sub { font-size:12px; opacity:0.5; font-family:Arial,sans-serif; margin-top:10px; }
+  @media print {
+    body { background:#fff; color:#000; gap:20px; }
+    .card { border:2px solid #ccc; break-inside:avoid; }
+    .logo { color:#000; }
+  }
+</style>
+</head>
+<body>
+<div class="logo">Cedar Tap · Mobile Tap Room</div>
+
+<div class="card">
+  <h2>☕ Cold Brew</h2>
+  <div class="price cold">$7.99</div>
+  <div class="qr-wrap"><img src="/img/qr-799-cold-brew.svg" width="200" height="200" alt="Cold Brew QR"></div>
+  <a href="https://square.link/u/E0wn5fLx" class="pay-btn pay-cold">⚡ Pay with Square</a>
+  <div class="sub">Nitro Cold Brew · 16oz</div>
+</div>
+
+<div class="card">
+  <h2>🌺 Hibiscus Nitro Tea</h2>
+  <div class="price hib">$7.99</div>
+  <div class="qr-wrap"><img src="/img/qr-799-hibiscus.svg" width="200" height="200" alt="Hibiscus QR"></div>
+  <a href="https://square.link/u/dlOHUAeI" class="pay-btn pay-hib">⚡ Pay with Square</a>
+  <div class="sub">Hibiscus Nitro Tea · 16oz</div>
+</div>
+
+</body>
+</html>

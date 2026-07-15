@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cedar Tap Trailers — QR Order Sheet</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    /* ============================================================
+       SCREEN STYLES
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #f7f3ee;
+      font-family: 'Georgia', 'Times New Roman', serif;
+      color: #1a0a02;
+      padding: 24px;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #2c1a0e;
+    }
+    .brand-logo {
+      font-size: 2rem;
+      letter-spacing: 0.04em;
+    }
+    .brand-tagline {
+      font-size: 0.85rem;
+      color: #6b3d0a;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-family: 'Arial', sans-serif;
+      margin-top: 4px;
+    }
+    .event-header {
+      margin-top: 10px;
+      font-size: 1.05rem;
+      font-family: 'Arial', sans-serif;
+      font-weight: bold;
+      letter-spacing: 0.06em;
+      color: #2c1a0e;
+      text-transform: uppercase;
+    }
+    .event-sub {
+      font-size: 0.78rem;
+      font-family: 'Arial', sans-serif;
+      color: #6b3d0a;
+      margin-top: 3px;
+      letter-spacing: 0.04em;
+    }
+
+    .instructions {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #6b3d0a;
+      font-family: 'Arial', sans-serif;
+      margin-bottom: 24px;
+      font-style: italic;
+    }
+
+    .qr-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .qr-card {
+      background: #fff;
+      border: 2px solid #2c1a0e;
+      border-radius: 12px;
+      padding: 20px 16px 18px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .tap-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-family: 'Arial', sans-serif;
+      color: #8a5c2a;
+      margin-bottom: 6px;
+    }
+
+    .product-name {
+      font-size: 1.25rem;
+      font-weight: normal;
+      color: #2c1a0e;
+      margin-bottom: 3px;
+      line-height: 1.2;
+    }
+
+    .product-flavor {
+      font-size: 0.75rem;
+      font-family: 'Arial', sans-serif;
+      color: #6b3d0a;
+      letter-spacing: 0.04em;
+      margin-bottom: 14px;
+      font-style: italic;
+    }
+
+    .qr-container {
+      width: 160px;
+      height: 160px;
+      margin: 0 auto 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-container canvas,
+    .qr-container img {
+      width: 160px !important;
+      height: 160px !important;
+    }
+
+    .scan-text {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-family: 'Arial', sans-serif;
+      color: #2c1a0e;
+      font-weight: bold;
+    }
+
+    .price-range {
+      font-size: 0.75rem;
+      font-family: 'Arial', sans-serif;
+      color: #8a5c2a;
+      margin-top: 5px;
+    }
+
+    /* Color accents per card */
+    .card-dark { border-color: #3d1c08; }
+    .card-dark .product-name { color: #3d1c08; }
+    .card-dark .tap-label { color: #7a3a10; }
+
+    .card-origin { border-color: #1a3a1a; }
+    .card-origin .product-name { color: #1a3a1a; }
+    .card-origin .tap-label { color: #2a5a2a; }
+
+    .card-caramel { border-color: #6b3d0a; }
+    .card-caramel .product-name { color: #6b3d0a; }
+    .card-caramel .tap-label { color: #9b5d1a; }
+
+    .card-bloom { border-color: #2d1040; }
+    .card-bloom .product-name { color: #2d1040; }
+    .card-bloom .tap-label { color: #6b2a9a; }
+
+    .page-footer {
+      text-align: center;
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid #c4a882;
+      font-size: 0.72rem;
+      font-family: 'Arial', sans-serif;
+      color: #8a5c2a;
+    }
+
+    /* ============================================================
+       PRINT STYLES — clean black & white
+    ============================================================ */
+    @media print {
+      body {
+        background: #fff;
+        padding: 10mm 12mm;
+        color: #000;
+        font-size: 10pt;
+      }
+
+      .page-header {
+        border-bottom: 1.5pt solid #000;
+        margin-bottom: 6mm;
+        padding-bottom: 4mm;
+      }
+
+      .brand-logo { font-size: 16pt; color: #000; }
+      .brand-tagline { color: #333; font-size: 7pt; }
+      .event-header { color: #000; font-size: 10pt; }
+      .event-sub { color: #333; font-size: 7pt; }
+      .instructions { color: #444; font-size: 7pt; margin-bottom: 5mm; }
+
+      .qr-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 6mm;
+        max-width: 100%;
+      }
+
+      .qr-card {
+        border: 1pt solid #000;
+        border-radius: 4pt;
+        padding: 5mm 4mm;
+        background: #fff;
+        break-inside: avoid;
+      }
+
+      /* Remove color accents in print */
+      .card-dark,
+      .card-origin,
+      .card-caramel,
+      .card-bloom {
+        border-color: #000;
+      }
+      .card-dark .product-name,
+      .card-origin .product-name,
+      .card-caramel .product-name,
+      .card-bloom .product-name {
+        color: #000;
+      }
+      .card-dark .tap-label,
+      .card-origin .tap-label,
+      .card-caramel .tap-label,
+      .card-bloom .tap-label {
+        color: #333;
+      }
+
+      .tap-label { font-size: 6pt; color: #333; margin-bottom: 1mm; }
+      .product-name { font-size: 12pt; margin-bottom: 1mm; }
+      .product-flavor { font-size: 7pt; color: #333; margin-bottom: 3mm; }
+
+      .qr-container {
+        width: 38mm;
+        height: 38mm;
+        margin-bottom: 3mm;
+      }
+      .qr-container canvas,
+      .qr-container img {
+        width: 38mm !important;
+        height: 38mm !important;
+      }
+
+      .scan-text { font-size: 7pt; color: #000; }
+      .price-range { font-size: 7pt; color: #333; }
+
+      .page-footer {
+        border-top: 0.5pt solid #666;
+        margin-top: 5mm;
+        padding-top: 2mm;
+        font-size: 6.5pt;
+        color: #333;
+      }
+
+      @page {
+        size: letter portrait;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="page-header">
+    <div class="brand-logo">🌲 Cedar Tap Trailers</div>
+    <div class="brand-tagline">Nitro Cold Brew &amp; Tea · On Tap</div>
+    <div class="event-header">Dale City Farmers Market</div>
+    <div class="event-sub">Sunday, June 14, 2026 &nbsp;·&nbsp; Scan a QR code to order &amp; pay</div>
+  </header>
+
+  <p class="instructions">Scan the QR code under your tap to see the full product page and pay directly from your phone.</p>
+
+  <div class="qr-grid">
+
+    <!-- Tap 1: Cedar Dark -->
+    <div class="qr-card card-dark">
+      <div class="tap-label">Tap 1</div>
+      <div class="product-name">Cedar Dark</div>
+      <div class="product-flavor">Organic Dark Roast Nitro Cold Brew</div>
+      <div class="qr-container" id="qr-dark"></div>
+      <div class="scan-text">Scan to Order</div>
+      <div class="price-range">12 oz $8.99 · 16 oz $9.99</div>
+    </div>
+
+    <!-- Tap 2: Cedar Single Origin -->
+    <div class="qr-card card-origin">
+      <div class="tap-label">Tap 2</div>
+      <div class="product-name">Cedar Single Origin</div>
+      <div class="product-flavor">Guatemala · Peru · Ethiopia Rotating</div>
+      <div class="qr-container" id="qr-origin"></div>
+      <div class="scan-text">Scan to Order</div>
+      <div class="price-range">12 oz $8.99 · 16 oz $9.99</div>
+    </div>
+
+    <!-- Tap 3: Cedar Caramel -->
+    <div class="qr-card card-caramel">
+      <div class="tap-label">Tap 3</div>
+      <div class="product-name">Cedar Caramel</div>
+      <div class="product-flavor">Salted Caramel Nitro Cold Brew</div>
+      <div class="qr-container" id="qr-caramel"></div>
+      <div class="scan-text">Scan to Order</div>
+      <div class="price-range">12 oz $8.99 · 16 oz $9.99</div>
+    </div>
+
+    <!-- Tap 4: Cedar Bloom -->
+    <div class="qr-card card-bloom">
+      <div class="tap-label">Tap 4 · Caffeine-Free</div>
+      <div class="product-name">Cedar Bloom</div>
+      <div class="product-flavor">Passion Fruit Nitro Tea</div>
+      <div class="qr-container" id="qr-bloom"></div>
+      <div class="scan-text">Scan to Order</div>
+      <div class="price-range">12 oz $8.99 · 16 oz $9.99</div>
+    </div>
+
+  </div>
+
+  <footer class="page-footer">
+    tom@cedartaps.com<br>
+    All beverages cold-steeped 20 hours · Dairy-free &amp; vegan-friendly
+  </footer>
+
+  <script>
+    const products = [
+      {
+        id: 'qr-dark',
+        url: 'https://dcplatforms.github.io/cedar-tap-menu/cedar-dark.html'
+      },
+      {
+        id: 'qr-origin',
+        url: 'https://dcplatforms.github.io/cedar-tap-menu/cedar-single-origin.html'
+      },
+      {
+        id: 'qr-caramel',
+        url: 'https://dcplatforms.github.io/cedar-tap-menu/cedar-caramel.html'
+      },
+      {
+        id: 'qr-bloom',
+        url: 'https://dcplatforms.github.io/cedar-tap-menu/cedar-bloom.html'
+      }
+    ];
+
+    products.forEach(function(p) {
+      new QRCode(document.getElementById(p.id), {
+        text: p.url,
+        width: 160,
+        height: 160,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    });
+  </script>
+</body>
+</html>

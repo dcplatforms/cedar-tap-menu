@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+  <meta name="theme-color" content="#252239"/>
+  <meta name="description" content="Cedar Tap × Commonwealth Joe — Nitro Cold Brew on tap at Dale City Farmers Market"/>
+  <title>Cedar Tap × Commonwealth Joe · Dale City FM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Oswald:wght@300;400;500;600&family=Mulish:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* ════════════════════════════════════════════════
+       DESIGN TOKENS — Paper Cup Campaign
+    ════════════════════════════════════════════════ */
+    :root {
+      /* Kraft / Paper palette */
+      --kraft:       #c9aa82;
+      --kraft-light: #dfc9a8;
+      --kraft-pale:  #f0e6d4;
+      --kraft-dark:  #8c6b44;
+      --paper:       #f5ede0;
+      --paper-white: #faf6ef;
+      --paper-shadow:rgba(100,65,20,0.18);
+
+      /* CWJ brand */
+      --cwj-navy:    #252239;
+      --cwj-tan:     #b39671;
+      --cwj-tan-lt:  #cdb899;
+      --cwj-ink:     #1a1830;
+
+      /* Cedar Tap */
+      --cedar:       #7a3b0e;
+      --cedar-gold:  #d4a43a;
+      --cedar-amber: #c8832a;
+
+      /* Coffee stain */
+      --stain-1:     rgba(139,90,30,0.12);
+      --stain-2:     rgba(100,60,15,0.09);
+
+      --radius:      4px;
+      --radius-lg:   8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    /* ── PAPER TEXTURE BODY ───────────────────────── */
+    body {
+      font-family: 'Mulish', sans-serif;
+      background-color: var(--kraft);
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E"),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 2px,
+          rgba(255,255,255,0.015) 2px,
+          rgba(255,255,255,0.015) 4px
+        ),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 6px,
+          rgba(0,0,0,0.018) 6px,
+          rgba(0,0,0,0.018) 7px
+        );
+      color: var(--cwj-ink);
+      min-height: 100dvh;
+    }
+
+    /* ── SVG PAPER GRAIN (invisible overlay) ─────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)' opacity='0.06'/%3E%3C/svg%3E");
+      opacity: 0.55;
+    }
+
+    /* everything above the grain */
+    .page-content { position: relative; z-index: 1; }
+
+    /* ── CUP SLEEVE HEADER ───────────────────────── */
+    .sleeve {
+      background: var(--cwj-navy);
+      position: relative;
+      overflow: hidden;
+      /* diagonal ribbing = cup sleeve texture */
+      background-image:
+        repeating-linear-gradient(
+          -55deg,
+          transparent,
+          transparent 6px,
+          rgba(255,255,255,0.04) 6px,
+          rgba(255,255,255,0.04) 7px
+        ),
+        repeating-linear-gradient(
+          -55deg,
+          transparent,
+          transparent 18px,
+          rgba(255,255,255,0.025) 18px,
+          rgba(255,255,255,0.025) 19px
+        );
+      background-color: var(--cwj-navy);
+    }
+
+    /* folded top edge of sleeve */
+    .sleeve::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 100%);
+    }
+    /* folded bottom edge */
+    .sleeve::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(0deg, rgba(0,0,0,0.2) 0%, transparent 100%);
+    }
+
+    /* ── MARKET BANNER (cup rim) ─────────────────── */
+    .cup-rim {
+      background: var(--cwj-tan);
+      background-image: repeating-linear-gradient(
+        90deg,
+        transparent, transparent 8px,
+        rgba(0,0,0,0.06) 8px, rgba(0,0,0,0.06) 9px
+      );
+      padding: 7px 16px;
+      text-align: center;
+      font-family: 'Oswald', sans-serif;
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--cwj-navy);
+    }
+
+    /* ── CO-BRAND STAMP ──────────────────────────── */
+    .sleeve-inner {
+      padding: 28px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    /* circular stamp mark */
+    .stamp-ring {
+      width: 108px; height: 108px;
+      border-radius: 50%;
+      border: 2.5px solid rgba(179,150,113,0.5);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .stamp-ring::before {
+      content: '';
+      position: absolute; inset: 5px;
+      border-radius: 50%;
+      border: 1px solid rgba(179,150,113,0.25);
+    }
+    .stamp-tree {
+      font-size: 26px; line-height: 1;
+      margin-bottom: 3px;
+    }
+    .stamp-x {
+      font-family: 'Oswald', sans-serif;
+      font-size: 11px;
+      color: var(--cwj-tan);
+      letter-spacing: 0.14em;
+      font-weight: 300;
+    }
+    /* CWJ initials */
+    .cwj-initials {
+      font-family: 'Special Elite', monospace;
+      font-size: 20px;
+      color: var(--cwj-tan);
+      line-height: 1;
+    }
+
+    .stamp-title {
+      font-family: 'Special Elite', monospace;
+      font-size: 21px;
+      color: #fff;
+      text-align: center;
+      letter-spacing: 0.04em;
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+    .stamp-sub {
+      font-family: 'Oswald', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cwj-tan);
+      text-align: center;
+    }
+    .stamp-divider {
+      display: flex; align-items: center; gap: 8px;
+      margin: 10px 0 6px;
+      width: 160px;
+    }
+    .stamp-divider::before, .stamp-divider::after {
+      content: ''; flex: 1;
+      height: 1px;
+      background: rgba(179,150,113,0.35);
+    }
+    .stamp-divider span {
+      font-size: 9px;
+      color: rgba(179,150,113,0.6);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-family: 'Oswald', sans-serif;
+      font-weight: 300;
+    }
+    .stamp-tagline {
+      font-family: 'Special Elite', monospace;
+      font-size: 13px;
+      color: rgba(255,255,255,0.55);
+      text-align: center;
+      font-style: italic;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── COFFEE STAIN DECORATIONS ────────────────── */
+    .stain-wrap {
+      position: relative;
+    }
+    .stain {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .stain-a {
+      width: 64px; height: 64px;
+      right: 12px; top: -18px;
+      background: radial-gradient(circle at 30% 30%,
+        transparent 40%,
+        var(--stain-1) 41%,
+        var(--stain-1) 50%,
+        transparent 51%
+      ),
+      radial-gradient(circle at 30% 30%,
+        transparent 43%,
+        var(--stain-2) 44%,
+        var(--stain-2) 47%,
+        transparent 48%
+      );
+    }
+    .stain-b {
+      width: 40px; height: 40px;
+      left: 20px; top: 8px;
+      background: radial-gradient(circle at 40% 40%,
+        transparent 42%,
+        var(--stain-1) 43%,
+        var(--stain-1) 52%,
+        transparent 53%
+      );
+    }
+
+    /* ── TORN PAPER EDGE ─────────────────────────── */
+    .torn-edge {
+      position: relative;
+      height: 20px;
+      overflow: hidden;
+      background: transparent;
+    }
+    .torn-edge::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -2%; right: -2%;
+      height: 100%;
+      background: var(--cwj-navy);
+      clip-path: polygon(
+        0% 0%, 3% 55%, 6% 80%, 9% 45%, 12% 70%, 15% 30%, 18% 65%, 21% 40%,
+        24% 75%, 27% 50%, 30% 85%, 33% 45%, 36% 70%, 39% 35%, 42% 60%,
+        45% 80%, 48% 40%, 51% 70%, 54% 50%, 57% 85%, 60% 45%, 63% 75%,
+        66% 40%, 69% 65%, 72% 35%, 75% 70%, 78% 50%, 81% 80%, 84% 45%,
+        87% 70%, 90% 35%, 93% 60%, 96% 80%, 99% 50%, 100% 100%, 0% 100%
+      );
+    }
+
+    /* ── KRAFT MENU SECTION ──────────────────────── */
+    .kraft-section {
+      background: var(--kraft);
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.1'/%3E%3C/svg%3E"),
+        linear-gradient(180deg, rgba(0,0,0,0.06) 0%, transparent 80px);
+      padding: 0 0 8px;
+    }
+
+    /* ── SECTION LABEL (rubber stamp style) ─────── */
+    .section-label {
+      padding: 18px 18px 8px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--kraft-dark);
+      max-width: 480px;
+      margin: 0 auto;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-label::after {
+      content: ''; flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--kraft-dark) 0%, transparent 100%);
+      opacity: 0.35;
+    }
+
+    /* ── MENU GRID ───────────────────────────────── */
+    .menu {
+      display: grid;
+      gap: 8px;
+      padding: 0 12px 12px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* ── PAPER CARD ──────────────────────────────── */
+    .card {
+      background: var(--paper-white);
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23p)' opacity='0.055'/%3E%3C/svg%3E");
+      border-radius: var(--radius);
+      border: 1px solid rgba(139,107,68,0.22);
+      /* paper shadow: offset suggests lying on kraft surface */
+      box-shadow:
+        1px 2px 0 rgba(100,65,20,0.12),
+        2px 4px 8px rgba(100,65,20,0.1),
+        0 0 0 0.5px rgba(139,107,68,0.1);
+      overflow: hidden;
+      cursor: pointer;
+      transition: box-shadow 0.15s, transform 0.15s;
+    }
+    .card:active { transform: scale(0.988); }
+    .card.open {
+      border-color: rgba(179,150,113,0.5);
+      box-shadow:
+        1px 2px 0 rgba(37,34,57,0.14),
+        3px 6px 16px rgba(37,34,57,0.12),
+        0 0 0 1px rgba(179,150,113,0.3);
+    }
+
+    .card-head {
+      display: flex; align-items: center; gap: 11px;
+      padding: 13px 13px 11px;
+    }
+
+    /* tap dot with paper texture inset */
+    .tap-dot {
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 1px;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.25), 0 1px 0 rgba(255,255,255,0.3);
+    }
+    .t1 { background: #2e1506; }
+    .t2 { background: #3a5220; }
+    .t3 { background: #7a4410; }
+    .t4 { background: #503080; }
+
+    .card-info { flex: 1; }
+    .card-info .item-name {
+      font-family: 'Special Elite', monospace;
+      font-size: 18px;
+      color: var(--cwj-ink);
+      line-height: 1.2;
+    }
+    .card-info .origin {
+      font-family: 'Mulish', sans-serif;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--kraft-dark);
+      margin-top: 3px;
+      letter-spacing: 0.02em;
+      font-weight: 400;
+    }
+    .card-badges {
+      display: flex; gap: 4px; margin-top: 5px; flex-wrap: wrap;
+    }
+    .badge {
+      font-family: 'Oswald', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      padding: 3px 7px;
+      border-radius: 2px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    /* stamped look */
+    .badge-cwj  { background: var(--cwj-navy); color: var(--cwj-tan); }
+    .badge-nitro { background: transparent; color: #2a5bba; border: 1px solid #c0d0f8; }
+    .badge-cedar { background: transparent; color: var(--cedar); border: 1px solid rgba(122,59,14,0.3); }
+    .badge-tea   { background: transparent; color: #3a6b1a; border: 1px solid #b8d8a0; }
+    .badge-flight { background: var(--cwj-navy); color: var(--cedar-gold); }
+
+    .card-price {
+      font-family: 'Oswald', sans-serif;
+      font-size: 16px;
+      color: var(--cwj-ink);
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-weight: 600;
+      text-align: right;
+      line-height: 1.3;
+    }
+    .card-price .from-label { font-size: 11px; color: var(--kraft-dark); font-family: 'Mulish', sans-serif; font-weight: 400; display: block; }
+
+    .chevron {
+      font-size: 14px; color: var(--kraft-light);
+      flex-shrink: 0;
+      transition: transform 0.2s, color 0.2s;
+      font-weight: 300;
+    }
+    .card.open .chevron { transform: rotate(90deg); color: var(--cwj-tan); }
+
+    /* ── SIZE PANEL ──────────────────────────────── */
+    .size-panel {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.28s ease;
+      border-top: 1px solid transparent;
+    }
+    .card.open .size-panel {
+      max-height: 240px;
+      border-top-color: rgba(139,107,68,0.18);
+    }
+    .size-inner {
+      padding: 12px 13px 14px;
+      /* lighter paper interior */
+      background: linear-gradient(180deg, rgba(245,237,224,0.7) 0%, var(--paper-white) 100%);
+    }
+    .size-row { display: flex; gap: 7px; margin-bottom: 10px; }
+    .size-btn {
+      flex: 1;
+      background: #fff;
+      border: 1px solid rgba(139,107,68,0.25);
+      border-radius: var(--radius);
+      padding: 9px 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.12s;
+      box-shadow: 1px 1px 0 rgba(139,107,68,0.1);
+    }
+    .size-btn:hover { border-color: var(--cwj-tan); }
+    .size-btn.sel {
+      border-color: var(--cwj-navy);
+      background: var(--cwj-navy);
+      color: #fff;
+      box-shadow: 1px 2px 4px rgba(37,34,57,0.2);
+    }
+    .size-btn .oz {
+      font-family: 'Oswald', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .size-btn .price { font-size: 13px; margin-top: 2px; opacity: 0.75; }
+    .size-btn.sel .price { opacity: 0.65; }
+
+    .size-note {
+      font-size: 11px;
+      color: var(--kraft-dark);
+      text-align: center;
+      margin-bottom: 10px;
+      font-style: italic;
+      font-family: 'Mulish', sans-serif;
+    }
+    .order-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--cwj-navy);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-family: 'Oswald', sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.15s;
+      box-shadow: 0 2px 6px rgba(37,34,57,0.25);
+    }
+    .order-btn:hover { background: #1a1830; }
+
+    /* ── FLIGHT — "Special of the Day" card ─────── */
+    .flight-wrap {
+      padding: 0 12px 4px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .flight-card {
+      background: var(--cwj-navy);
+      background-image:
+        repeating-linear-gradient(
+          -50deg,
+          transparent, transparent 10px,
+          rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 11px
+        );
+      border-radius: var(--radius-lg);
+      padding: 18px 16px 16px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 2px 4px 12px rgba(37,34,57,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    /* "SPECIAL" rubber stamp */
+    .flight-stamp {
+      position: absolute;
+      top: 12px; right: 12px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      color: var(--cedar-gold);
+      border: 1.5px solid var(--cedar-gold);
+      padding: 2px 7px;
+      border-radius: 2px;
+      text-transform: uppercase;
+      opacity: 0.75;
+      transform: rotate(6deg);
+    }
+    .flight-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 10px;
+      padding-right: 56px;
+    }
+    .flight-title {
+      font-family: 'Special Elite', monospace;
+      font-size: 20px;
+      color: #fff;
+      line-height: 1.2;
+    }
+    .flight-price {
+      font-family: 'Oswald', sans-serif;
+      font-size: 26px;
+      color: var(--cedar-gold);
+      font-weight: 600;
+      margin-top: 2px;
+      letter-spacing: -0.01em;
+    }
+    .flight-desc {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.6;
+      margin-bottom: 14px;
+      font-style: italic;
+    }
+    .flight-taps {
+      display: flex; gap: 5px; margin-bottom: 14px;
+    }
+    .flight-tap {
+      flex: 1;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      padding: 8px 4px;
+      text-align: center;
+    }
+    .flight-tap .f-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin: 0 auto 5px;
+      box-shadow: 0 0 0 1.5px rgba(255,255,255,0.12);
+    }
+    .flight-tap .f-name {
+      font-size: 10px;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.04em;
+      line-height: 1.35;
+      font-family: 'Mulish', sans-serif;
+      font-weight: 500;
+    }
+    .flight-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--cedar-gold);
+      color: var(--cwj-navy);
+      border: none;
+      border-radius: var(--radius);
+      font-family: 'Oswald', sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background 0.15s;
+      box-shadow: 0 2px 6px rgba(212,164,58,0.25);
+    }
+    .flight-btn:hover { background: #e0b850; }
+
+    /* ── SOURCING STRIP (printed on cup) ─────────── */
+    .sourcing-strip {
+      background: var(--paper);
+      background-image: repeating-linear-gradient(
+        0deg, transparent, transparent 24px,
+        rgba(139,107,68,0.06) 24px, rgba(139,107,68,0.06) 25px
+      );
+      border-top: 1px solid rgba(139,107,68,0.2);
+      border-bottom: 1px solid rgba(139,107,68,0.2);
+      padding: 16px 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .sourcing-icon {
+      font-size: 20px; flex-shrink: 0; margin-top: 1px;
+      filter: sepia(0.3);
+    }
+    .sourcing-strip p {
+      font-size: 11.5px;
+      color: var(--kraft-dark);
+      line-height: 1.65;
+      font-family: 'Mulish', sans-serif;
+    }
+    .sourcing-strip strong { color: var(--cwj-ink); font-weight: 600; }
+
+    /* ── QR SECTION ──────────────────────────────── */
+    .qr-section {
+      background: var(--cwj-navy);
+      padding: 28px 18px 24px;
+      background-image: repeating-linear-gradient(
+        -55deg, transparent, transparent 8px,
+        rgba(255,255,255,0.025) 8px, rgba(255,255,255,0.025) 9px
+      );
+    }
+    .qr-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .qr-header .qr-eyebrow {
+      font-family: 'Oswald', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--cwj-tan);
+      display: block;
+      margin-bottom: 5px;
+    }
+    .qr-header h3 {
+      font-family: 'Special Elite', monospace;
+      font-size: 18px;
+      color: #fff;
+      line-height: 1.2;
+    }
+    .qr-header p {
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      margin-top: 5px;
+      font-style: italic;
+    }
+
+    /* divider line */
+    .qr-divider {
+      display: flex; align-items: center; gap: 10px;
+      margin: 0 auto 20px;
+      max-width: 280px;
+    }
+    .qr-divider::before, .qr-divider::after {
+      content: ''; flex: 1;
+      height: 1px; background: rgba(179,150,113,0.25);
+    }
+    .qr-divider span {
+      font-family: 'Oswald', sans-serif;
+      font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(179,150,113,0.5);
+    }
+
+    .qr-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    .qr-card {
+      background: var(--paper-white);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23p)' opacity='0.06'/%3E%3C/svg%3E");
+      border-radius: var(--radius);
+      padding: 14px 12px 12px;
+      text-align: center;
+      box-shadow: 1px 2px 8px rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.06);
+      text-decoration: none;
+      display: block;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .qr-card:active { transform: scale(0.97); }
+    .qr-card img {
+      width: 100%;
+      max-width: 120px;
+      height: auto;
+      display: block;
+      margin: 0 auto 10px;
+      border-radius: 2px;
+      /* slight sepia to feel printed */
+      filter: sepia(0.15);
+    }
+    .qr-card .qr-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cwj-ink);
+      font-weight: 700;
+      display: block;
+      line-height: 1.3;
+    }
+    .qr-card .qr-sub {
+      font-family: 'Mulish', sans-serif;
+      font-size: 11.5px;
+      color: var(--kraft-dark);
+      margin-top: 3px;
+      display: block;
+      font-style: italic;
+      font-weight: 500;
+    }
+    /* stamp mark on QR card */
+    .qr-card .qr-stamp {
+      display: inline-block;
+      margin-bottom: 8px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--cwj-tan);
+      border: 1px solid rgba(179,150,113,0.4);
+      padding: 2px 8px; border-radius: 2px;
+    }
+    .qr-note {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      font-style: italic;
+      font-family: 'Mulish', sans-serif;
+    }
+
+    /* ── CUP BOTTOM (footer) ─────────────────────── */
+    .cup-bottom {
+      background: var(--cwj-navy);
+      background-image: repeating-linear-gradient(
+        -55deg, transparent, transparent 6px,
+        rgba(255,255,255,0.03) 6px, rgba(255,255,255,0.03) 7px
+      );
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 24px 16px 32px;
+      font-size: 11px;
+      line-height: 2.1;
+      margin-top: 0;
+      /* top fold line */
+      border-top: 3px solid rgba(255,255,255,0.06);
+      position: relative;
+    }
+    .cup-bottom::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(179,150,113,0.4), transparent);
+    }
+    .cup-bottom a { color: var(--cwj-tan); text-decoration: none; }
+    .cup-bottom strong { color: rgba(255,255,255,0.7); }
+    /* circular cup base mark */
+    .cup-base-mark {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(179,150,113,0.3);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
+    }
+    .cup-base-mark span {
+      font-family: 'Special Elite', monospace;
+      font-size: 14px;
+      color: var(--cwj-tan);
+      opacity: 0.7;
+    }
+
+    /* ── TORN EDGE between sleeve and kraft ─────── */
+    .torn-between {
+      height: 16px;
+      position: relative;
+      background: var(--kraft);
+    }
+    .torn-between::before {
+      content: '';
+      position: absolute; top: 0; left: -1%; right: -1%;
+      height: 100%;
+      background: var(--cwj-navy);
+      clip-path: polygon(
+        0 0, 100% 0,
+        100% 30%, 97% 60%, 94% 35%, 91% 70%, 88% 40%, 85% 75%,
+        82% 45%, 79% 80%, 76% 50%, 73% 85%, 70% 45%, 67% 70%,
+        64% 35%, 61% 65%, 58% 40%, 55% 80%, 52% 50%, 49% 75%,
+        46% 40%, 43% 70%, 40% 35%, 37% 65%, 34% 45%, 31% 80%,
+        28% 50%, 25% 75%, 22% 40%, 19% 70%, 16% 35%, 13% 65%,
+        10% 40%, 7% 80%, 4% 50%, 1% 70%, 0 50%
+      );
+    }
+
+    /* ── PAYMENT MODAL ───────────────────────────── */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(37,34,57,0.65);
+      backdrop-filter: blur(5px);
+      z-index: 100;
+      display: none; align-items: flex-end; justify-content: center;
+    }
+    .overlay.open { display: flex; }
+    .modal {
+      background: var(--paper-white);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23p)' opacity='0.06'/%3E%3C/svg%3E");
+      border-radius: 14px 14px 0 0;
+      padding: 20px 20px 36px;
+      width: 100%; max-width: 480px;
+      animation: slideUp 0.25s ease;
+      border-top: 3px solid rgba(139,107,68,0.2);
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .modal-drag { width: 32px; height: 3px; background: var(--kraft-light); border-radius: 2px; margin: 0 auto 18px; }
+    .modal h3 {
+      font-family: 'Special Elite', monospace;
+      font-size: 17px;
+      margin-bottom: 2px;
+      color: var(--cwj-ink);
+    }
+    .modal .m-sub { font-size: 11.5px; color: var(--kraft-dark); margin-bottom: 16px; font-family: 'Mulish', sans-serif; }
+    .modal .total {
+      display: flex; justify-content: space-between;
+      font-weight: 700; font-size: 16px;
+      padding: 12px 0;
+      border-top: 1px dashed rgba(139,107,68,0.3);
+      margin-bottom: 14px;
+      font-family: 'Oswald', sans-serif;
+      color: var(--cwj-ink);
+    }
+    .pay-opts { display: flex; flex-direction: column; gap: 8px; }
+    .pay-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 13px; border-radius: var(--radius); border: none;
+      font-family: 'Oswald', sans-serif; font-size: 13.5px; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #fff; text-decoration: none; cursor: pointer;
+      font-weight: 600; transition: opacity 0.12s;
+    }
+    .pay-btn:hover { opacity: 0.87; }
+    .pay-cashapp { background: #00C244; }
+    .pay-paypal  { background: #003087; }
+    .pay-cancel  { background: none; border: none; color: var(--kraft-dark); font-size: 12.5px; padding: 9px; width: 100%; margin-top: 4px; cursor: pointer; font-family: 'Mulish', sans-serif; }
+
+  </style>
+</head>
+<body>
+<div class="page-content">
+
+<!-- ░░ CUP RIM ░░ -->
+<div class="cup-rim">Dale City Farmers Market &nbsp;·&nbsp; Sunday June 14 &nbsp;·&nbsp; 8 am – 1 pm</div>
+
+<!-- ░░ CUP SLEEVE ░░ -->
+<div class="sleeve">
+  <div class="sleeve-inner">
+    <!-- stamp ring -->
+    <div class="stamp-ring">
+      <span class="stamp-tree">🌲</span>
+      <span class="stamp-x">× &nbsp;</span>
+      <span class="cwj-initials">CJ</span>
+    </div>
+    <div class="stamp-title">Cedar Tap<br>× Commonwealth Joe</div>
+    <div class="stamp-divider"><span>nitro cold brew</span></div>
+    <div class="stamp-sub">Dale City · June 14, 2026</div>
+    <div style="height:10px"></div>
+    <div class="stamp-tagline">"Cold from birth. Never pasteurized, never heated."</div>
+  </div>
+</div>
+
+<!-- ░░ TORN PAPER EDGE ░░ -->
+<div class="torn-between"></div>
+
+<!-- ░░ KRAFT MENU ░░ -->
+<div class="kraft-section stain-wrap">
+  <!-- decorative coffee stains -->
+  <div class="stain stain-a"></div>
+  <div class="stain stain-b"></div>
+
+  <!-- FLIGHT CARD -->
+  <div class="section-label">Best Value</div>
+  <div class="flight-wrap">
+    <div class="flight-card" onclick="openModal('The Trail Flight','All 4 taps · 2oz each','$8.99',8.99)">
+      <div class="flight-stamp">Special</div>
+      <div class="flight-top">
+        <div>
+          <div class="flight-title">The Trail Flight</div>
+          <div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;">
+            <span class="badge badge-flight">4 Taps</span>
+            <span class="badge badge-flight">~8oz Total</span>
+          </div>
+        </div>
+        <div class="flight-price">$8.99</div>
+      </div>
+      <p class="flight-desc">Sample all four taps — 2oz of each. The perfect way to find your favorite before committing to a full pour.</p>
+      <div class="flight-taps">
+        <div class="flight-tap"><div class="f-dot" style="background:#2e1506;"></div><div class="f-name">Blue Ridge<br>Dark</div></div>
+        <div class="flight-tap"><div class="f-dot" style="background:#3a5220;"></div><div class="f-name">Shenandoah<br>Smooth</div></div>
+        <div class="flight-tap"><div class="f-dot" style="background:#7a4410;"></div><div class="f-name">Cedar<br>Caramel</div></div>
+        <div class="flight-tap"><div class="f-dot" style="background:#503080;"></div><div class="f-name">Cedar<br>Bloom</div></div>
+      </div>
+      <button class="flight-btn" onclick="event.stopPropagation();openModal('The Trail Flight','All 4 taps · 2oz each','$8.99',8.99)">Order Flight — $8.99</button>
+    </div>
+  </div>
+
+  <!-- FULL POURS -->
+  <p class="section-label" style="margin-top:14px;">Full Pours</p>
+  <div class="menu">
+
+    <!-- TAP 1 -->
+    <div class="card" onclick="toggleCard(this)">
+      <div class="card-head">
+        <div class="tap-dot t1"></div>
+        <div class="card-info">
+          <div class="item-name">Blue Ridge Dark</div>
+          <div class="origin">Commonwealth Joe · Indonesia · Dark Roast</div>
+          <div class="card-badges">
+            <span class="badge badge-cwj">CWJ</span>
+            <span class="badge badge-nitro">Nitro</span>
+          </div>
+        </div>
+        <div class="card-price"><span class="from-label">from</span>$7.99</div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="size-panel">
+        <div class="size-inner">
+          <div class="size-note">~21 pours per keg at 8oz · ~14 at 12oz</div>
+          <div class="size-row">
+            <div class="size-btn sel" onclick="sel(event,this,'8oz',7.99)"><div class="oz">8oz</div><div class="price">$7.99</div></div>
+            <div class="size-btn" onclick="sel(event,this,'12oz',8.99)"><div class="oz">12oz</div><div class="price">$8.99</div></div>
+          </div>
+          <button class="order-btn" onclick="openFromCard(event,this,'Blue Ridge Dark','Commonwealth Joe · Dark Roast')">Order — Pay at Window</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAP 2 -->
+    <div class="card" onclick="toggleCard(this)">
+      <div class="card-head">
+        <div class="tap-dot t2"></div>
+        <div class="card-info">
+          <div class="item-name">Shenandoah Smooth</div>
+          <div class="origin">Commonwealth Joe · Honduras · Medium Roast</div>
+          <div class="card-badges">
+            <span class="badge badge-cwj">CWJ</span>
+            <span class="badge badge-nitro">Nitro</span>
+          </div>
+        </div>
+        <div class="card-price"><span class="from-label">from</span>$7.99</div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="size-panel">
+        <div class="size-inner">
+          <div class="size-note">~21 pours per keg at 8oz · ~14 at 12oz</div>
+          <div class="size-row">
+            <div class="size-btn sel" onclick="sel(event,this,'8oz',7.99)"><div class="oz">8oz</div><div class="price">$7.99</div></div>
+            <div class="size-btn" onclick="sel(event,this,'12oz',8.99)"><div class="oz">12oz</div><div class="price">$8.99</div></div>
+          </div>
+          <button class="order-btn" onclick="openFromCard(event,this,'Shenandoah Smooth','Commonwealth Joe · Medium Roast')">Order — Pay at Window</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAP 3 -->
+    <div class="card" onclick="toggleCard(this)">
+      <div class="card-head">
+        <div class="tap-dot t3"></div>
+        <div class="card-info">
+          <div class="item-name">Cedar Caramel</div>
+          <div class="origin">Cedar Tap House Blend · Salted Caramel Nitro</div>
+          <div class="card-badges">
+            <span class="badge badge-cedar">Cedar Tap</span>
+            <span class="badge badge-nitro">Nitro</span>
+          </div>
+        </div>
+        <div class="card-price"><span class="from-label">from</span>$7.99</div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="size-panel">
+        <div class="size-inner">
+          <div class="size-note">~21 pours per keg at 8oz · ~14 at 12oz</div>
+          <div class="size-row">
+            <div class="size-btn sel" onclick="sel(event,this,'8oz',7.99)"><div class="oz">8oz</div><div class="price">$7.99</div></div>
+            <div class="size-btn" onclick="sel(event,this,'12oz',8.99)"><div class="oz">12oz</div><div class="price">$8.99</div></div>
+          </div>
+          <button class="order-btn" onclick="openFromCard(event,this,'Cedar Caramel','Cedar Tap · Salted Caramel Nitro')">Order — Pay at Window</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAP 4 -->
+    <div class="card" onclick="toggleCard(this)">
+      <div class="card-head">
+        <div class="tap-dot t4"></div>
+        <div class="card-info">
+          <div class="item-name">Cedar Bloom</div>
+          <div class="origin">Cedar Tap House · Passion Fruit Nitro Tea</div>
+          <div class="card-badges">
+            <span class="badge badge-cedar">Cedar Tap</span>
+            <span class="badge badge-tea">Tea</span>
+          </div>
+        </div>
+        <div class="card-price"><span class="from-label">from</span>$7.99</div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="size-panel">
+        <div class="size-inner">
+          <div class="size-note">~21 pours per keg at 8oz · ~14 at 12oz</div>
+          <div class="size-row">
+            <div class="size-btn sel" onclick="sel(event,this,'8oz',7.99)"><div class="oz">8oz</div><div class="price">$7.99</div></div>
+            <div class="size-btn" onclick="sel(event,this,'12oz',8.99)"><div class="oz">12oz</div><div class="price">$8.99</div></div>
+          </div>
+          <button class="order-btn" onclick="openFromCard(event,this,'Cedar Bloom','Cedar Tap · Passion Fruit Nitro Tea')">Order — Pay at Window</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /menu -->
+</div><!-- /kraft-section -->
+
+<!-- ░░ QR CODES — TAKE IT HOME ░░ -->
+<div class="qr-section">
+  <div class="qr-header">
+    <span class="qr-eyebrow">Can't get enough?</span>
+    <h3>Take It Home</h3>
+    <p>Order direct from Commonwealth Joe — shipped fresh to your door.</p>
+  </div>
+  <div class="qr-divider"><span>scan to order</span></div>
+  <div class="qr-grid">
+
+    <!-- CWJ Shop Coffee -->
+    <a class="qr-card" href="https://commonwealthjoe.com/pages/shop-coffee-beans" target="_blank" rel="noopener">
+      <span class="qr-stamp">CWJ Shop</span>
+      <img
+        src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=252239&bgcolor=faf6ef&qzone=1&data=https%3A%2F%2Fcommonwealthjoe.com%2Fpages%2Fshop-coffee-beans"
+        alt="QR — Commonwealth Joe Shop"
+        loading="lazy"
+      />
+      <span class="qr-label">Shop Coffee Beans</span>
+      <span class="qr-sub">Roasted in Arlington, VA</span>
+    </a>
+
+    <!-- Nitro Cold Brew / Wholesale -->
+    <a class="qr-card" href="https://drink.commonwealthjoe.com/wholesale-cold-brew" target="_blank" rel="noopener">
+      <span class="qr-stamp">Nitro Cold Brew</span>
+      <img
+        src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=252239&bgcolor=faf6ef&qzone=1&data=https%3A%2F%2Fdrink.commonwealthjoe.com%2Fwholesale-cold-brew"
+        alt="QR — CWJ Nitro Cold Brew"
+        loading="lazy"
+      />
+      <span class="qr-label">Nitro Cold Brew</span>
+      <span class="qr-sub">Kegs &amp; wholesale</span>
+    </a>
+
+    <!-- CWJ Subscriptions -->
+    <a class="qr-card" href="https://subscribe.commonwealthjoe.com/coffee-beans/" target="_blank" rel="noopener">
+      <span class="qr-stamp">Subscribe</span>
+      <img
+        src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=252239&bgcolor=faf6ef&qzone=1&data=https%3A%2F%2Fsubscribe.commonwealthjoe.com%2Fcoffee-beans%2F"
+        alt="QR — CWJ Subscriptions"
+        loading="lazy"
+      />
+      <span class="qr-label">Coffee Subscriptions</span>
+      <span class="qr-sub">Fresh beans, monthly</span>
+    </a>
+
+    <!-- Cedar Tap -->
+    <a class="qr-card" href="https://cedartaps.com" target="_blank" rel="noopener">
+      <span class="qr-stamp">Cedar Tap</span>
+      <img
+        src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=7a3b0e&bgcolor=faf6ef&qzone=1&data=https%3A%2F%2Fcedartaps.com"
+        alt="QR — Cedar Tap"
+        loading="lazy"
+      />
+      <span class="qr-label">Book Cedar Tap</span>
+      <span class="qr-sub">Bring us to your event</span>
+    </a>
+
+  </div>
+  <p class="qr-note">Use code CEDARTAP at commonwealthjoe.com for 10% off your first order</p>
+</div>
+
+<!-- ░░ SOURCING STRIP ░░ -->
+<div class="sourcing-strip">
+  <span class="sourcing-icon">☕</span>
+  <p><strong>Commonwealth Joe coffee</strong> served on Cedar Tap's hand-crafted cedar trailer. Nitro cold brew kegs sourced directly from CWJ's Arlington, VA roastery. <strong>Cold from birth — never pasteurized, never heated.</strong></p>
+</div>
+
+<!-- ░░ CUP BOTTOM ░░ -->
+<footer class="cup-bottom">
+  <div class="cup-base-mark"><span>CT</span></div>
+  <strong>Cedar Tap Trailers</strong> &nbsp;×&nbsp; <strong>Commonwealth Joe</strong><br>
+  <a href="mailto:tom@cedartaps.com">tom@cedartaps.com</a> &nbsp;·&nbsp; (202) 810-1861<br>
+  <a href="https://commonwealthjoe.com" target="_blank">commonwealthjoe.com</a><br>
+  <a href="/" style="color:rgba(255,255,255,0.28);font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;font-family:'Oswald',sans-serif;">← Cedar Tap Home</a>
+</footer>
+
+<!-- ░░ PAYMENT MODAL ░░ -->
+<div class="overlay" id="overlay" onclick="closeIfOut(event)">
+  <div class="modal">
+    <div class="modal-drag"></div>
+    <h3 id="m-item">Blue Ridge Dark</h3>
+    <div class="m-sub" id="m-sub">Commonwealth Joe · Dark Roast · 8oz</div>
+    <div class="total"><span>Total</span><span id="m-price">$7.99</span></div>
+    <div class="pay-opts">
+      <a id="m-paypal" href="#" class="pay-btn pay-paypal" target="_blank">Pay with PayPal</a>
+    </div>
+    <button class="pay-cancel" onclick="closeModal()">Cancel — I'll pay at the window</button>
+  </div>
+</div>
+
+<script data-goatcounter="https://cedartap.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+  function toggleCard(card) {
+    const was = card.classList.contains('open');
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('open'));
+    if (!was) card.classList.add('open');
+  }
+  function sel(e, btn, size, price) {
+    e.stopPropagation();
+    const panel = btn.closest('.size-inner');
+    panel.querySelectorAll('.size-btn').forEach(b => b.classList.remove('sel'));
+    btn.classList.add('sel');
+    const card = btn.closest('.card');
+    card.dataset.sz = size;
+    card.dataset.px = price;
+  }
+  function openFromCard(e, btn, name, sub) {
+    e.stopPropagation();
+    const card = btn.closest('.card');
+    const size  = card.dataset.sz  || '8oz';
+    const price = parseFloat(card.dataset.px || 7.99);
+    openModal(name, sub + ' · ' + size, '$' + price.toFixed(2), price);
+  }
+  function openModal(name, sub, priceStr, priceNum) {
+    document.getElementById('m-item').textContent  = name;
+    document.getElementById('m-sub').textContent   = sub;
+    document.getElementById('m-price').textContent = typeof priceStr === 'string' ? priceStr : '$' + parseFloat(priceStr).toFixed(2);
+    const note = encodeURIComponent(name + ' — Cedar Tap Trailers');
+    const amt  = parseFloat(priceNum).toFixed(2);
+    document.getElementById('m-cashapp').href = `https://cash.app/$CedarTaps/${amt}?note=${note}`;
+    document.getElementById('m-paypal').href  = `https://paypal.me/cedartaptrailer/${amt}`;
+    document.getElementById('overlay').classList.add('open');
+  }
+  function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+  function closeIfOut(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
+  document.querySelectorAll('.card').forEach(c => { c.dataset.sz = '8oz'; c.dataset.px = '7.99'; });
+</script>
+</div><!-- /page-content -->
+</body>
+</html>

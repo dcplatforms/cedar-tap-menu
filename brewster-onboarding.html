@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Brewster — Onboarding Preview</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  :root {
+    --cream: #f8f4ee; --cream2: #ede8e0; --espresso: #2d1b0e; --brown: #3b2510;
+    --gold: #c8860a; --green: #2d7a3a; --red: #c0392b; --text: #1a0f05;
+    --dim: #7a6a5a; --white: #fff;
+  }
+  body { background:#e8e2d8; display:flex; justify-content:center; align-items:center; min-height:100vh; font-family:'Georgia',serif; }
+  .phone { width:390px; height:844px; background:var(--cream); border-radius:44px; overflow:hidden; position:relative; box-shadow:0 40px 80px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.1); }
+  .screen { position:absolute; inset:0; display:flex; flex-direction:column; padding:0; opacity:0; pointer-events:none; transition:opacity 0.35s ease, transform 0.35s ease; transform:translateX(40px); }
+  .screen.active { opacity:1; pointer-events:all; transform:translateX(0); }
+  .screen.exit { opacity:0; transform:translateX(-40px); }
+
+  /* Progress bar */
+  .progress-bar { height:3px; background:var(--cream2); position:relative; }
+  .progress-fill { height:100%; background:var(--gold); transition:width 0.4s ease; }
+
+  /* Status bar */
+  .status { height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 24px; font-family:Arial,sans-serif; font-size:12px; color:var(--dim); flex-shrink:0; }
+
+  /* Screen body */
+  .body { flex:1; overflow:auto; padding:0 28px 28px; display:flex; flex-direction:column; }
+  .logo-sm { font-size:11px; letter-spacing:4px; text-transform:uppercase; color:var(--dim); margin-bottom:20px; font-family:Arial,sans-serif; }
+  h1 { font-size:28px; line-height:1.2; color:var(--espresso); margin-bottom:10px; }
+  h2 { font-size:22px; line-height:1.3; color:var(--espresso); margin-bottom:8px; }
+  .sub { font-size:15px; color:var(--dim); line-height:1.6; margin-bottom:24px; font-family:Arial,sans-serif; }
+  .emoji-lg { font-size:56px; margin-bottom:16px; }
+
+  /* Cards */
+  .card { background:var(--white); border-radius:20px; padding:20px; margin-bottom:16px; box-shadow:0 2px 12px rgba(45,27,14,0.08); }
+  .card-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--dim); font-family:Arial,sans-serif; margin-bottom:6px; }
+
+  /* Number input */
+  .num-row { display:flex; align-items:center; gap:16px; }
+  .num-btn { width:44px; height:44px; border-radius:50%; border:2px solid var(--cream2); background:var(--cream); font-size:22px; color:var(--espresso); cursor:pointer; display:flex; align-items:center; justify-content:center; font-family:Arial,sans-serif; transition:all 0.15s; }
+  .num-btn:active { background:var(--gold); border-color:var(--gold); color:#fff; }
+  .num-val { font-size:36px; font-weight:bold; color:var(--espresso); min-width:60px; text-align:center; }
+
+  /* Spend buttons */
+  .spend-row { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px; margin-top:12px; }
+  .spend-btn { padding:12px 4px; border-radius:12px; border:2px solid var(--cream2); background:var(--cream); font-size:14px; font-family:Arial,sans-serif; color:var(--espresso); cursor:pointer; text-align:center; transition:all 0.15s; }
+  .spend-btn.sel { background:var(--espresso); border-color:var(--espresso); color:#fff; }
+
+  /* Pain reveal */
+  .pain-box { background:var(--espresso); border-radius:20px; padding:24px; color:#fff; text-align:center; margin-bottom:16px; }
+  .pain-label { font-size:12px; letter-spacing:2px; text-transform:uppercase; opacity:0.6; font-family:Arial,sans-serif; margin-bottom:8px; }
+  .pain-amount { font-size:52px; font-weight:bold; color:var(--gold); }
+  .pain-period { font-size:14px; opacity:0.7; font-family:Arial,sans-serif; }
+  .vs-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .vs-card { border-radius:16px; padding:16px; text-align:center; }
+  .vs-card.cafe { background:#fee; }
+  .vs-card.brew { background:#efe; }
+  .vs-val { font-size:26px; font-weight:bold; }
+  .vs-val.red { color:var(--red); }
+  .vs-val.green { color:var(--green); }
+  .vs-lbl { font-size:12px; font-family:Arial,sans-serif; opacity:0.7; margin-top:4px; }
+
+  /* Tile select */
+  .tile-grid { display:grid; gap:10px; margin-bottom:16px; }
+  .tile-grid.cols2 { grid-template-columns:1fr 1fr; }
+  .tile-grid.cols3 { grid-template-columns:1fr 1fr 1fr; }
+  .tile { padding:14px 10px; border-radius:16px; border:2px solid var(--cream2); background:var(--cream); text-align:center; cursor:pointer; transition:all 0.15s; }
+  .tile .t-icon { font-size:26px; margin-bottom:6px; }
+  .tile .t-lbl { font-size:13px; font-family:Arial,sans-serif; color:var(--espresso); }
+  .tile.sel { border-color:var(--espresso); background:var(--espresso); }
+  .tile.sel .t-lbl { color:#fff; }
+
+  /* Aha moment */
+  .aha-card { background:linear-gradient(135deg, #2d1b0e 0%, #5c3820 100%); border-radius:24px; padding:28px 24px; color:#fff; margin-bottom:16px; position:relative; overflow:hidden; }
+  .aha-card::before { content:''; position:absolute; top:-40px; right:-40px; width:160px; height:160px; background:rgba(200,134,10,0.15); border-radius:50%; }
+  .kit-name { font-size:20px; margin-bottom:6px; }
+  .kit-price-row { display:flex; align-items:baseline; gap:10px; margin:12px 0; }
+  .kit-price { font-size:42px; font-weight:bold; color:var(--gold); }
+  .kit-strike { font-size:22px; text-decoration:line-through; opacity:0.5; }
+  .savings-badge { display:inline-block; background:var(--green); color:#fff; font-size:13px; font-family:Arial,sans-serif; padding:4px 12px; border-radius:50px; margin-bottom:16px; }
+  .ingredient-list { font-size:13px; font-family:Arial,sans-serif; opacity:0.8; line-height:2; }
+  .ingredient-list span { display:block; }
+
+  /* Weekly plan */
+  .week-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-bottom:20px; }
+  .day-cell { border-radius:10px; padding:8px 2px; text-align:center; cursor:pointer; transition:all 0.2s; }
+  .day-cell .day-lbl { font-size:10px; font-family:Arial,sans-serif; font-weight:bold; text-transform:uppercase; margin-bottom:4px; }
+  .day-cell .day-icon { font-size:18px; }
+  .day-cell.home { background:#f0e8d8; }
+  .day-cell.cafe { background:#e8f0ee; }
+  .day-cell.upgrade { background:#f8f0e0; border:2px solid var(--gold); }
+  .legend { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
+  .legend-item { display:flex; align-items:center; gap:6px; font-size:12px; font-family:Arial,sans-serif; color:var(--dim); }
+  .legend-dot { width:10px; height:10px; border-radius:50%; }
+
+  /* CTA button */
+  .btn { display:block; width:100%; padding:18px; border-radius:50px; font-size:17px; font-family:Arial,sans-serif; font-weight:bold; text-align:center; cursor:pointer; border:none; letter-spacing:0.5px; transition:all 0.2s; margin-top:auto; }
+  .btn-primary { background:var(--espresso); color:#fff; }
+  .btn-primary:active { background:var(--brown); transform:scale(0.98); }
+  .btn-secondary { background:transparent; color:var(--dim); font-size:14px; margin-top:10px; }
+
+  /* Sign up form */
+  .input-group { margin-bottom:14px; }
+  .input-label { font-size:12px; font-family:Arial,sans-serif; color:var(--dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; display:block; }
+  .input-field { width:100%; padding:14px 16px; border:2px solid var(--cream2); border-radius:14px; font-size:16px; font-family:Arial,sans-serif; background:var(--cream); color:var(--espresso); outline:none; transition:border-color 0.2s; }
+  .input-field:focus { border-color:var(--espresso); }
+
+  /* Dashboard */
+  .dash-header { background:var(--espresso); padding:28px 28px 24px; color:#fff; }
+  .dash-greeting { font-size:22px; margin-bottom:4px; }
+  .dash-sub { font-size:13px; opacity:0.7; font-family:Arial,sans-serif; }
+  .tracker-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+  .tracker-card { background:var(--white); border-radius:16px; padding:16px; text-align:center; box-shadow:0 2px 8px rgba(45,27,14,0.08); }
+  .tracker-val { font-size:24px; font-weight:bold; margin-bottom:2px; }
+  .tracker-label { font-size:11px; font-family:Arial,sans-serif; color:var(--dim); }
+  .savings-banner { background:linear-gradient(135deg, #2d7a3a, #3d9a4a); border-radius:16px; padding:16px 20px; color:#fff; text-align:center; margin-bottom:16px; }
+  .savings-banner .val { font-size:32px; font-weight:bold; }
+  .savings-banner .lbl { font-size:13px; font-family:Arial,sans-serif; opacity:0.85; }
+
+  /* Nav dots */
+  .nav-dots { position:absolute; bottom:16px; left:50%; transform:translateX(-50%); display:flex; gap:6px; }
+  .dot { width:6px; height:6px; border-radius:50%; background:var(--cream2); transition:all 0.2s; }
+  .dot.active { background:var(--espresso); width:18px; border-radius:4px; }
+
+  /* Back button */
+  .back-btn { background:none; border:none; color:var(--dim); font-size:14px; font-family:Arial,sans-serif; cursor:pointer; padding:0; margin-bottom:12px; display:flex; align-items:center; gap:4px; }
+
+  @media (max-width: 430px) {
+    .phone { width:100vw; height:100vh; border-radius:0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone" id="phone">
+
+  <!-- SCREEN 1: JTBD Hook -->
+  <div class="screen active" id="s1">
+    <div class="status"><span>9:41</span><span>●●●</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:10%"></div></div>
+    <div class="body" style="justify-content:center; text-align:center; padding-top:40px;">
+      <div class="emoji-lg">☕</div>
+      <h1 style="font-size:32px; margin-bottom:16px;">Your $5 coffee<br>habit, upgraded.</h1>
+      <p class="sub" style="margin-bottom:40px;">Brewster curates café-style coffee experiences around your taste, sources ingredients locally, and keeps on-demand coffee options when you need them.</p>
+      <button class="btn btn-primary" onclick="go(2)">Build my coffee week →</button>
+      <button class="btn btn-secondary" onclick="go(2)">Already have an account? Log in</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: Habit Mirror -->
+  <div class="screen" id="s2">
+    <div class="status"><span>9:41</span><span>●●●</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div>
+    <div class="body" style="padding-top:28px;">
+      <button class="back-btn" onclick="go(1)">← Back</button>
+      <div class="logo-sm">Step 2 of 10</div>
+      <h2>How many café coffees do you buy per week?</h2>
+      <p class="sub">Be honest — this builds your savings estimate.</p>
+      <div class="card">
+        <div class="card-label">Drinks per week</div>
+        <div class="num-row" style="margin-top:8px;">
+          <button class="num-btn" onclick="adjDrinks(-1)">−</button>
+          <div class="num-val" id="drinksVal">5</div>
+          <button class="num-btn" onclick="adjDrinks(1)">+</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">How much do you usually spend?</div>
+        <div class="spend-row">
+          <button class="spend-btn" onclick="selSpend(this,'3')">$3</button>
+          <button class="spend-btn sel" onclick="selSpend(this,'5')">$5</button>
+          <button class="spend-btn" onclick="selSpend(this,'6')">$6</button>
+          <button class="spend-btn" onclick="selSpend(this,'7')">$7+</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">What do you usually order?</div>
+        <input class="input-field" placeholder="e.g. Iced Vanilla Latte" id="orderInput" value="Iced Vanilla Latte" style="margin-top:4px;">
+      </div>
+      <button class="btn btn-primary" onclick="go(3)" style="margin-top:auto;">Continue →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: Pain Reveal -->
+  <div class="screen" id="s3">
+    <div class="status"><span>9:41</span><span>●●●</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:30%"></div></div>
+    <div class="body" style="padding-top:28px;">
+      <button class="back-btn" onclick="go(2)">← Back</button>
+      <div class="logo-sm">Step 3 of 10</div>
+      <h2>You'\''re spending</h2>
+      <div class="pain-box">
+        <div class="pain-label">On café coffee alone</div>
+        <div class="pain-amount" id="painMonthly">$108</div>
+        <div class="pain-period">per month</div>
+      </div>
+      <div class="vs-row">
+        <div class="vs-card cafe">
+          <div class="vs-val red" id="painWeekly">$25</div>
+          <div class="vs-lbl">Your café habit<br>per week</div>
+        </div>
+        <div class="vs-card brew">
+          <div class="vs-val green">$8</div>
+          <div class="vs-lbl">Brewster<br>per week</div>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="go(4)" style="margin-top:24px;">See how →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: Beverage State -->
+  <div class="screen" id="s4">
+    <div class="status"><span>9:41</span><span>●●●</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:40%"></div></div>
+    <div class="body" style="padding-top:28px;">
+      <button class="back-btn" onclick="go(3)">← Back</button>
+      <div class="logo-sm">Step 4 of 10</div>
+      <h2>How do you like your coffee?</h2>
+      <p class="sub">We'\''ll use this to build your perfect kit.</p>
+      <div class="card-label" style="margin-bottom:8px;">Temperature</div>
+      <div class="tile-grid cols3" style="margin-bottom:18px;">
+        <div class="tile sel" onclick="selTile(this,'temp')"><div class="t-icon">🧊</div><div class="t-lbl">Iced</div></div>
+        <div class="tile" onclick="selTile(this,'temp')"><div class="t-icon">☕</div><div class="t-lbl">Hot</div></div>
+        <div class="tile" onclick="selTile(this,'temp')"><div class="t-icon">🔄</div><div class="t-lbl">Both</div></div>
+      </div>
+      <div class="card-label" style="margin-bottom:8px;">Milk preference</div>
+      <div class="tile-grid cols3" style="margin-bottom:18px;">
+        <div class="tile sel" onclick="selTile(this,'milk')"><div class="t-icon">🌾</div><div class="t-lbl">Oat</div></div>
+        <div class="tile" onclick="selTile(this,'milk')"><div class="t-icon">🌰</div><div class="t-lbl">Almond</div></div>
+        <div class="tile" onclick="selTile(this,'milk')"><div class="t-icon">🥛</div><div class="t-lbl">Dairy</div></div>
+      </div>
+      <div class="card-label" style="margin-bottom:8px;">Flavor</div>
+      <div class="tile-grid cols3">
+        <div class="tile sel" onclick="selTile(this,'flavor')"><div class="t-icon">🍦</div><div class="t-lbl">Vanilla</div></div>
+        <div class="tile" onclick="selTile(this,'flavor')"><div class="t-icon">🍮</div><div class="t-lbl">Caramel</div></div>
+        <div class="tile" onclick="selTile(this,'flavor')"><div class="t-icon">🫘</div><div class="t-lbl">Classic</div></div>
+      </div>
+      <button class="btn btn-primary" onclick="go(5)" style="margin-top:20px;">Continue →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: Equipment -->
+  <div class="screen" id="s5">
+    <div class="status"><span>9:41</span><span>●●●</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div>
+    <div class="body" style="padding-top:28px;">
+      <button class="back-btn" onclick="go(4)">← Back</button>
+      <div class="logo-sm">Step 5 of 10</div>
+      <h2>What'\''s your at-home setup?</h2>
+      <p class="sub">We'\''ll match your kit to what you already have.</p>
+      <div class="tile-grid cols2">
+        <div class="tile" onclick="selTile(this,'equip')"><div class="t-icon">🟢</div><div class="t-lbl">Keurig / Pod</div></div>
+        <div class="tile" onclick="selTile(this,'equip')"><div class="t-icon">☕</div><div class="t-lbl">Drip maker</div></div>
+        <div class="tile" onclick="selTile(this,'equip')"><div class="t-icon">🇫🇷</div><div class="t-lbl">French press</div></div>
+        <div class="tile sel" onclick="selTile(this,'equip')"><div class="t-icon">🫙</div><div class="t-lbl">Cold brew jar</div></div>
+        <div class="tile" onclick="selTile(this,'equip')"><div class="t-icon">💨</div><div class="t-lbl">Espresso</div></div>
+        <div class="tile" onclick="selTile(this,'equip')"><div class="t-icon">❌</div><div class="t-lbl">Nothing</div></div>
+      </div>
+      <button class="btn btn-primary" onclick="go(6)" style="margin-top:auto;">Continue →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 6: Motivation -->
+  <div class="screen" id="s6">
+    <div class="status"><span>9:41</span><span>●●●</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:58%"></div></div>
+    <div class="body" style="padding-top:28px;">
+      <button class="back-btn" onclick="go(5)">← Back</button>
+      <div class="logo-sm">Step 6 of 10</div>
+      <h2>What'\''s your main goal?</h2>
+      <p class="sub">This shapes which kit we build for you.</p>
+      <div class="tile-grid" style="grid-template-columns:1fr; gap:12px;">
+        <div class="tile sel" style="display:flex;align-items:center;gap:14px;text-align:left;padding:18px;" onclick="selTile(this,'goal')">
+          <span style="font-size:28px;">💰</span>
+          <div><div class="t-lbl" style="font-size:15px; font-weight:bold;">Save money</div><div style="font-size:12px;color:var(--dim);font-family:Arial,sans-serif;">Cut your monthly café spend by ~67%</div></div>
+        </div>
+        <div class="tile" style="display:flex;align-items:center;gap:14px;text-align:left;padding:18px;" onclick="selTile(this,'goal')">
+          <span style="font-size:28px;">⭐</span>
+          <div><div class="t-lbl" style="font-size:15px; font-weight:bold;">Better quality</div><div style="font-size:12px;color:var(--dim);font-family:Arial,sans-serif;">Café-grade ingredients at home</div></div>
+        </div>
+        <div class="tile" style="display:flex;align-items:center;gap:14px;text-align:left;padding:18px;" onclick="selTile(this,'goal')">
+          <span style="font-size:28px;">⚡</span>
+          <div><div class="t-lbl" style="font-size:15px; font-weight:bold;">Convenience</div><div style="font-size:12px;color:var(--dim);font-family:Arial,sans-serif;">Ready in 60 seconds, no barista needed</div></div>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="go(7)" style="margin-top:auto;">Continue →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 7: Logistics -->
+  <div class="screen" id="s7">
+    <div class="status"><span>9:41</span><span>●●●</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:68%"></div></div>
+    <div class="body" style="padding-top:28px;">
+      <button class="back-btn" onclick="go(6)">← Back</button>
+      <div class="logo-sm">Step 7 of 10</div>
+      <h2>Last thing — where are you?</h2>
+      <p class="sub">We source ingredients from local roasters near you.</p>
+      <div class="input-group">
+        <label class="input-label">Zip Code</label>
+        <input class="input-field" placeholder="e.g. 22153" value="22153" type="tel">
+      </div>
+      <div class="card-label" style="margin-bottom:8px;">How often do you want your kit?</div>
+      <div class="tile-grid cols3" style="margin-bottom:20px;">
+        <div class="tile sel" onclick="selTile(this,'freq')"><div class="t-icon">📅</div><div class="t-lbl">Weekly</div></div>
+        <div class="tile" onclick="selTile(this,'freq')"><div class="t-icon">🗓️</div><div class="t-lbl">Biweekly</div></div>
+        <div class="tile" onclick="selTile(this,'freq')"><div class="t-icon">📆</div><div class="t-lbl">Monthly</div></div>
+      </div>
+      <div style="background:#fff8e8; border-radius:14px; padding:14px 16px; font-size:13px; font-family:Arial,sans-serif; color:var(--dim); line-height:1.5;">
+        📍 <strong style="color:var(--espresso);">Commonwealth Joe</strong> — nitro cold brew roaster near Woodbridge VA — sources locally and delivers fresh.
+      </div>
+      <button class="btn btn-primary" onclick="go(8)" style="margin-top:24px;">Build my kit →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 8: AHA MOMENT -->
+  <div class="screen" id="s8">
+    <div class="status" style="color:#fff; background:var(--espresso);"><span>9:41</span><span>●●●</span></div>
+    <div class="progress-bar" style="background:rgba(255,255,255,0.15);"><div class="progress-fill" style="width:78%; background:var(--gold);"></div></div>
+    <div class="body" style="background:var(--espresso); color:#fff; padding-top:20px;">
+      <div style="font-size:11px; letter-spacing:3px; text-transform:uppercase; opacity:0.5; font-family:Arial,sans-serif; margin-bottom:4px;">MOST POPULAR</div>
+      <div class="aha-card">
+        <div class="savings-badge">✓ You save ~67%</div>
+        <div class="kit-name">Iced Vanilla Oat Latte Week</div>
+        <p style="font-size:13px; opacity:0.75; font-family:Arial,sans-serif; margin-bottom:12px;">Creamy, smooth, and perfectly balanced — good-go everyday drink.</p>
+        <div class="kit-price-row">
+          <span class="kit-price">$1.60</span>
+          <span class="kit-strike">$5.00</span>
+          <span style="font-size:13px; opacity:0.6; font-family:Arial,sans-serif;">/drink</span>
+        </div>
+        <div class="ingredient-list">
+          <span>☕ Cold brew concentrate</span>
+          <span>🌾 Barista-style oat milk</span>
+          <span>🍦 Vanilla syrup</span>
+          <span>☁️ Cold foam options</span>
+          <span>📖 Recipe guide + tips</span>
+        </div>
+      </div>
+      <div style="display:flex; gap:12px; margin-bottom:20px;">
+        <div style="flex:1; background:rgba(255,255,255,0.08); border-radius:14px; padding:14px; text-align:center;">
+          <div style="font-size:22px; font-weight:bold; color:var(--gold);">5–7</div>
+          <div style="font-size:11px; opacity:0.6; font-family:Arial,sans-serif;">drinks/kit</div>
+        </div>
+        <div style="flex:1; background:rgba(255,255,255,0.08); border-radius:14px; padding:14px; text-align:center;">
+          <div style="font-size:22px; font-weight:bold; color:var(--gold);">~67%</div>
+          <div style="font-size:11px; opacity:0.6; font-family:Arial,sans-serif;">savings</div>
+        </div>
+        <div style="flex:1; background:rgba(255,255,255,0.08); border-radius:14px; padding:14px; text-align:center;">
+          <div style="font-size:22px; font-weight:bold; color:var(--gold);">Local</div>
+          <div style="font-size:11px; opacity:0.6; font-family:Arial,sans-serif;">sourced</div>
+        </div>
+      </div>
+      <button class="btn" style="background:var(--gold); color:#fff;" onclick="go(9)">Build my coffee week →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 9: Weekly Calendar -->
+  <div class="screen" id="s9">
+    <div class="status"><span>9:41</span><span>●●●</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:88%"></div></div>
+    <div class="body" style="padding-top:28px;">
+      <button class="back-btn" onclick="go(8)">← Back</button>
+      <div class="logo-sm">Step 9 of 10</div>
+      <h2>Let'\''s build your<br>coffee week.</h2>
+      <p class="sub" style="margin-bottom:16px;">Tap to change any day.</p>
+      <div class="week-grid">
+        <div class="day-cell home" onclick="cycleDay(this)"><div class="day-lbl">Mon</div><div class="day-icon">🟤</div></div>
+        <div class="day-cell home" onclick="cycleDay(this)"><div class="day-lbl">Tue</div><div class="day-icon">🟤</div></div>
+        <div class="day-cell cafe" onclick="cycleDay(this)"><div class="day-lbl">Wed</div><div class="day-icon">☕</div></div>
+        <div class="day-cell home" onclick="cycleDay(this)"><div class="day-lbl">Thu</div><div class="day-icon">🟤</div></div>
+        <div class="day-cell cafe" onclick="cycleDay(this)"><div class="day-lbl">Fri</div><div class="day-icon">☕</div></div>
+        <div class="day-cell upgrade" onclick="cycleDay(this)"><div class="day-lbl">Sat</div><div class="day-icon">✨</div></div>
+        <div class="day-cell upgrade" onclick="cycleDay(this)"><div class="day-lbl">Sun</div><div class="day-icon">✨</div></div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#c8a870;"></div>At-home days</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4a9070;"></div>Café days</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--gold);"></div>Weekend upgrade</div>
+      </div>
+      <div style="background:#f0efe8; border-radius:14px; padding:14px 16px; font-size:13px; font-family:Arial,sans-serif; color:var(--dim); line-height:1.6; margin-bottom:16px;">
+        💡 <strong style="color:var(--espresso);">Tip:</strong> You'\''ll save the most by brewing at home 3–4 days a week. Looks good!
+      </div>
+      <button class="btn btn-primary" onclick="go(10)">Looks good →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 10: Save Progress / Sign Up -->
+  <div class="screen" id="s10">
+    <div class="status"><span>9:41</span><span>●●●</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+    <div class="body" style="padding-top:28px;">
+      <button class="back-btn" onclick="go(9)">← Back</button>
+      <div class="emoji-lg" style="font-size:44px;">🎉</div>
+      <h2>Save your progress</h2>
+      <p class="sub">Your Iced Vanilla Oat Latte kit is ready. Create an account to lock it in — takes 10 seconds.</p>
+      <div class="input-group">
+        <label class="input-label">Email</label>
+        <input class="input-field" type="email" placeholder="you@email.com">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Password</label>
+        <input class="input-field" type="password" placeholder="Create a password">
+      </div>
+      <div style="background:#f0faf2; border:1.5px solid #b8e0c4; border-radius:14px; padding:14px 16px; font-size:13px; font-family:Arial,sans-serif; color:#2d6a3a; line-height:1.5; margin-bottom:20px;">
+        ✓ Your kit, weekly plan, and 67% savings are saved to your account.
+      </div>
+      <button class="btn btn-primary" onclick="go(11)" style="background:var(--green);">Save my kit — it'\''s free →</button>
+      <div style="font-size:12px; font-family:Arial,sans-serif; color:var(--dim); text-align:center; margin-top:16px; line-height:1.6;">
+        By continuing you agree to our Terms and Privacy Policy.<br>No credit card required.
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 11: Dashboard -->
+  <div class="screen" id="s11">
+    <div class="status" style="background:var(--espresso); color:#fff;"><span>9:41</span><span>●●●</span></div>
+    <div class="dash-header">
+      <div class="dash-greeting">You'\''re all set, Alex! ✨</div>
+      <div class="dash-sub">Welcome to Brewster — your café habit is officially upgraded.</div>
+    </div>
+    <div class="body" style="padding-top:20px; overflow:auto;">
+      <div class="tracker-row">
+        <div class="tracker-card">
+          <div class="tracker-val" style="color:var(--red);">$25</div>
+          <div class="tracker-label">Café/week (before)</div>
+        </div>
+        <div class="tracker-card">
+          <div class="tracker-val" style="color:var(--green);">$8</div>
+          <div class="tracker-label">Brewster/week</div>
+        </div>
+      </div>
+      <div class="savings-banner">
+        <div class="val">$17 saved this week</div>
+        <div class="lbl">$73.61/month back in your pocket</div>
+      </div>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-label">This week'\''s kit</div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:10px;">
+          <div>
+            <div style="font-size:16px; font-weight:bold; color:var(--espresso); margin-bottom:4px;">Iced Vanilla Oat Latte Week</div>
+            <div style="font-size:13px; font-family:Arial,sans-serif; color:var(--dim);">Cold brew · Oat milk · Vanilla</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:22px; font-weight:bold; color:var(--gold);">$1.60</div>
+            <div style="font-size:12px; text-decoration:line-through; color:var(--dim);">$5.00</div>
+          </div>
+        </div>
+      </div>
+      <div class="week-grid" style="margin-bottom:16px;">
+        <div class="day-cell home"><div class="day-lbl">Mon</div><div class="day-icon">🟤</div></div>
+        <div class="day-cell home"><div class="day-lbl">Tue</div><div class="day-icon">🟤</div></div>
+        <div class="day-cell cafe"><div class="day-lbl">Wed</div><div class="day-icon">☕</div></div>
+        <div class="day-cell home"><div class="day-lbl">Thu</div><div class="day-icon">🟤</div></div>
+        <div class="day-cell cafe"><div class="day-lbl">Fri</div><div class="day-icon">☕</div></div>
+        <div class="day-cell upgrade"><div class="day-lbl">Sat</div><div class="day-icon">✨</div></div>
+        <div class="day-cell upgrade"><div class="day-lbl">Sun</div><div class="day-icon">✨</div></div>
+      </div>
+      <button class="btn btn-primary" style="background:var(--green); margin-bottom:10px;">Order ingredients →</button>
+      <button class="btn btn-secondary" onclick="go(1)" style="margin-top:0;">↺ Restart preview</button>
+    </div>
+  </div>
+
+  <!-- Nav dots -->
+  <div class="nav-dots" id="navDots"></div>
+
+</div>
+
+<script>
+let current = 1;
+let drinks = 5, spend = 5;
+
+function renderDots() {
+  const dots = document.getElementById('navDots');
+  dots.innerHTML = '';
+  for (let i = 1; i <= 11; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === current ? ' active' : '');
+    dots.appendChild(d);
+  }
+}
+
+function go(n) {
+  const prev = document.getElementById('s' + current);
+  const next = document.getElementById('s' + n);
+  if (!next) return;
+  prev.classList.remove('active');
+  prev.classList.add('exit');
+  setTimeout(() => prev.classList.remove('exit'), 350);
+  next.classList.add('active');
+  current = n;
+  renderDots();
+  updatePain();
+}
+
+function adjDrinks(d) {
+  drinks = Math.max(1, Math.min(14, drinks + d));
+  document.getElementById('drinksVal').textContent = drinks;
+  updatePain();
+}
+
+function selSpend(el, val) {
+  document.querySelectorAll('.spend-btn').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+  spend = parseFloat(val);
+  updatePain();
+}
+
+function updatePain() {
+  const weekly = drinks * spend;
+  const monthly = Math.round(weekly * 4.33);
+  const el1 = document.getElementById('painMonthly');
+  const el2 = document.getElementById('painWeekly');
+  if (el1) el1.textContent = '$' + monthly;
+  if (el2) el2.textContent = '$' + weekly;
+}
+
+function selTile(el, group) {
+  el.closest('.tile-grid').querySelectorAll('.tile').forEach(t => t.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+const dayTypes = ['home', 'cafe', 'upgrade'];
+const dayIcons = { home: '🟤', cafe: '☕', upgrade: '✨' };
+function cycleDay(el) {
+  const cur = dayTypes.findIndex(t => el.classList.contains(t));
+  const next = (cur + 1) % 3;
+  dayTypes.forEach(t => el.classList.remove(t));
+  el.classList.add(dayTypes[next]);
+  el.querySelector('.day-icon').textContent = dayIcons[dayTypes[next]];
+}
+
+renderDots();
+updatePain();
+</script>
+
+</body>
+</html>

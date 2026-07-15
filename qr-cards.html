@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cedar Tap — Individual QR Cards (Print)</title>
+<style>
+  @page { size: letter portrait; margin: 0.3in; }
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .no-print { display: none; }
+    .page-break { page-break-before: always; }
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#fff; font-family:'Georgia',serif; padding:20px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    max-width: 7.5in;
+    margin: 0 auto;
+  }
+
+  .card {
+    border: 2.5px solid #2d1b0e;
+    border-radius: 14px;
+    padding: 18px 14px 14px;
+    text-align: center;
+    aspect-ratio: 3/4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card.tea { border-color: #6b0f3a; }
+
+  .card-top { display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .card-emoji { font-size:28px; }
+  .card-brand { font-size:8px; letter-spacing:3px; text-transform:uppercase; color:#aaa; }
+  .card-name { font-size:14px; font-weight:bold; color:#2d1b0e; letter-spacing:.5px; }
+  .card.tea .card-name { color:#6b0f3a; }
+  .card-size { font-size:28px; font-weight:bold; color:#2d1b0e; letter-spacing:1px; margin-top:2px; }
+  .card.tea .card-size { color:#6b0f3a; }
+
+  .qr-wrap { background:#fdf8f0; border-radius:10px; padding:8px; }
+  .qr-wrap img { width:140px; height:140px; display:block; }
+
+  .card-bottom { display:flex; flex-direction:column; align-items:center; gap:3px; }
+  .card-price { font-size:30px; font-weight:bold; color:#c8860a; }
+  .card.tea .card-price { color:#e8476a; }
+  .card-cta { font-size:9px; color:#aaa; letter-spacing:1.5px; text-transform:uppercase; }
+  .card-site { font-size:9px; color:#bbb; letter-spacing:1px; }
+
+  .print-btn {
+    display:block; margin:24px auto 0;
+    padding:12px 36px;
+    background:#2d1b0e; color:#fff;
+    border:none; border-radius:50px;
+    font-size:16px; cursor:pointer;
+    font-family:Arial,sans-serif;
+  }
+  .page-label {
+    text-align:center; font-size:10px; color:#ccc;
+    letter-spacing:2px; text-transform:uppercase;
+    margin-bottom:12px; font-family:Arial,sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-label no-print">Row 1 — Cold Brew · Row 2 — Hibiscus Nitro Tea</div>
+
+<div class="grid">
+
+  <!-- COLD BREW -->
+  <div class="card">
+    <div class="card-top">
+      <div class="card-emoji">☕</div>
+      <div class="card-brand">Cedar Tap</div>
+      <div class="card-name">Nitro Cold Brew</div>
+      <div class="card-size">10 oz</div>
+    </div>
+    <div class="qr-wrap">
+      <img src="img/qr-cold-brew-10oz.svg" alt="QR">
+    </div>
+    <div class="card-bottom">
+      <div class="card-price">$5.99</div>
+      <div class="card-cta">Scan &amp; Pay · Square</div>
+      <div class="card-site">cedartaps.com</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-top">
+      <div class="card-emoji">☕</div>
+      <div class="card-brand">Cedar Tap</div>
+      <div class="card-name">Nitro Cold Brew</div>
+      <div class="card-size">14 oz</div>
+    </div>
+    <div class="qr-wrap">
+      <img src="img/qr-cold-brew-14oz.svg" alt="QR">
+    </div>
+    <div class="card-bottom">
+      <div class="card-price">$7.99</div>
+      <div class="card-cta">Scan &amp; Pay · Square</div>
+      <div class="card-site">cedartaps.com</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-top">
+      <div class="card-emoji">☕</div>
+      <div class="card-brand">Cedar Tap</div>
+      <div class="card-name">Nitro Cold Brew</div>
+      <div class="card-size">16 oz</div>
+    </div>
+    <div class="qr-wrap">
+      <img src="img/qr-cold-brew-16oz.svg" alt="QR">
+    </div>
+    <div class="card-bottom">
+      <div class="card-price">$9.99</div>
+      <div class="card-cta">Scan &amp; Pay · Square</div>
+      <div class="card-site">cedartaps.com</div>
+    </div>
+  </div>
+
+  <!-- HIBISCUS -->
+  <div class="card tea">
+    <div class="card-top">
+      <div class="card-emoji">🌺</div>
+      <div class="card-brand">Cedar Tap</div>
+      <div class="card-name">Hibiscus Nitro Tea</div>
+      <div class="card-size">10 oz</div>
+    </div>
+    <div class="qr-wrap">
+      <img src="img/qr-hibiscus-tea-10oz.svg" alt="QR">
+    </div>
+    <div class="card-bottom">
+      <div class="card-price">$5.99</div>
+      <div class="card-cta">Scan &amp; Pay · Square</div>
+      <div class="card-site">cedartaps.com</div>
+    </div>
+  </div>
+
+  <div class="card tea">
+    <div class="card-top">
+      <div class="card-emoji">🌺</div>
+      <div class="card-brand">Cedar Tap</div>
+      <div class="card-name">Hibiscus Nitro Tea</div>
+      <div class="card-size">14 oz</div>
+    </div>
+    <div class="qr-wrap">
+      <img src="img/qr-hibiscus-tea-14oz.svg" alt="QR">
+    </div>
+    <div class="card-bottom">
+      <div class="card-price">$7.99</div>
+      <div class="card-cta">Scan &amp; Pay · Square</div>
+      <div class="card-site">cedartaps.com</div>
+    </div>
+  </div>
+
+  <div class="card tea">
+    <div class="card-top">
+      <div class="card-emoji">🌺</div>
+      <div class="card-brand">Cedar Tap</div>
+      <div class="card-name">Hibiscus Nitro Tea</div>
+      <div class="card-size">16 oz</div>
+    </div>
+    <div class="qr-wrap">
+      <img src="img/qr-hibiscus-tea-16oz.svg" alt="QR">
+    </div>
+    <div class="card-bottom">
+      <div class="card-price">$9.99</div>
+      <div class="card-cta">Scan &amp; Pay · Square</div>
+      <div class="card-site">cedartaps.com</div>
+    </div>
+  </div>
+
+</div>
+
+<button class="print-btn no-print" onclick="window.print()">🖨 Print QR Cards</button>
+
+</body>
+</html>

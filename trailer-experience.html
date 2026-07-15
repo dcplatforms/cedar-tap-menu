@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trailer QR Experience — Cedar Tap</title>
+  <link rel="icon" href="/img/cedar-tap-logo.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
+  <!-- QR code library -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <style>
+    :root {
+      --cedar:   #1c2e1a;
+      --cedar-m: #2a4427;
+      --gold:    #c8a857;
+      --gold-lt: #e2c97e;
+      --cream:   #f5f0e6;
+      --smoke:   rgba(255,255,255,0.06);
+      --border:  rgba(200,168,87,0.18);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--cedar);
+      color: var(--cream);
+      font-family: 'Barlow', sans-serif;
+      padding: 2rem;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      color: var(--gold);
+      margin-bottom: 0.4rem;
+    }
+    .subtitle { font-size: 0.88rem; color: rgba(245,240,230,0.55); margin-bottom: 2.5rem; }
+
+    /* ── ZONE SECTIONS ── */
+    .zone-section { margin-bottom: 3rem; }
+    .zone-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .qr-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .qr-card {
+      background: var(--smoke);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.9rem;
+      text-align: center;
+      transition: border-color .2s, transform .2s;
+      cursor: pointer;
+    }
+    .qr-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+    .qr-card.tap-card { border-color: rgba(200,168,87,0.3); }
+
+    .qr-canvas-wrap {
+      width: 130px; height: 130px;
+      background: #fff;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      padding: 6px;
+      flex-shrink: 0;
+    }
+    .qr-canvas-wrap canvas { display: block; }
+
+    .qr-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .qr-name { font-size: 0.92rem; font-weight: 600; }
+    .qr-sub  { font-size: 0.75rem; color: rgba(245,240,230,0.5); }
+    .qr-url  { font-size: 0.7rem; color: rgba(245,240,230,0.3); word-break: break-all; }
+
+    /* ── TRAILER MAP SVG ── */
+    .trailer-map-section {
+      margin-bottom: 3rem;
+      background: var(--smoke);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+    }
+    .trailer-map-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+      color: var(--gold);
+    }
+    .trailer-svg-wrap {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .trailer-svg-wrap svg { width: 100%; height: auto; }
+
+    /* ── PRINT BUTTON ── */
+    .print-bar {
+      display: flex; gap: 1rem; margin-bottom: 2.5rem; flex-wrap: wrap;
+    }
+    .btn-print {
+      display: inline-block;
+      padding: 0.7rem 1.5rem;
+      background: var(--gold);
+      color: var(--cedar);
+      font-weight: 700;
+      font-size: 0.85rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+      letter-spacing: 0.04em;
+    }
+    .btn-print:hover { background: var(--gold-lt); }
+    .btn-secondary {
+      display: inline-block;
+      padding: 0.7rem 1.5rem;
+      background: transparent;
+      color: var(--gold);
+      font-weight: 600;
+      font-size: 0.85rem;
+      border: 1px solid rgba(200,168,87,0.4);
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+    }
+
+    @media print {
+      body { background: #fff; color: #000; padding: 0.5rem; }
+      .print-bar, nav { display: none !important; }
+      .qr-card { border: 1px solid #ccc; break-inside: avoid; }
+      h1 { color: #000; }
+      .zone-title { color: #555; }
+      .qr-canvas-wrap { background: #fff; border: 1px solid #ddd; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Trailer QR Experience</h1>
+  <p class="subtitle">Cedar Tap · Scan-to-order, partner products, and digital menu system · Print-ready for trailer placement</p>
+
+  <div class="print-bar">
+    <button class="btn-print" onclick="window.print()">🖨️ Print QR Sheets</button>
+    <a class="btn-secondary" href="/tap-pay.html" target="_blank">Preview Order Page →</a>
+    <a class="btn-secondary" href="/qr-sheet.html" target="_blank">Legacy QR Sheet →</a>
+  </div>
+
+  <!-- TRAILER MAP -->
+  <div class="trailer-map-section">
+    <h2>Trailer Placement Map</h2>
+    <div class="trailer-svg-wrap">
+      <svg viewBox="0 0 700 340" xmlns="http://www.w3.org/2000/svg" font-family="Barlow, sans-serif">
+        <!-- Trailer body -->
+        <rect x="20" y="60" width="620" height="220" rx="12" fill="#2a4427" stroke="#c8a857" stroke-width="1.5"/>
+        <!-- Wheels -->
+        <circle cx="130" cy="295" r="22" fill="#1c2e1a" stroke="#c8a857" stroke-width="1.5"/>
+        <circle cx="560" cy="295" r="22" fill="#1c2e1a" stroke="#c8a857" stroke-width="1.5"/>
+        <!-- Hitch -->
+        <rect x="0" y="162" width="25" height="16" rx="3" fill="#1c2e1a" stroke="#c8a857" stroke-width="1"/>
+        <!-- Trailer label -->
+        <text x="350" y="40" text-anchor="middle" fill="#c8a857" font-size="13" font-weight="600" letter-spacing="3" font-family="Barlow Condensed, sans-serif">CEDAR TAP · MOBILE TAP ROOM</text>
+
+        <!-- FRONT PANEL — Main Menu QR -->
+        <rect x="45" y="90" width="110" height="100" rx="6" fill="#1c2e1a" stroke="#e2c97e" stroke-width="1.5" stroke-dasharray="4,2"/>
+        <text x="100" y="130" text-anchor="middle" fill="#e2c97e" font-size="9" font-weight="700">FRONT PANEL</text>
+        <text x="100" y="148" text-anchor="middle" fill="#c8a857" font-size="8">QR → Main Menu</text>
+        <text x="100" y="163" text-anchor="middle" fill="rgba(245,240,230,0.5)" font-size="7">cedartaps.com/tap-pay</text>
+
+        <!-- TAP 1 -->
+        <rect x="185" y="90" width="95" height="100" rx="6" fill="#1c2e1a" stroke="#e2c97e" stroke-width="1.5" stroke-dasharray="4,2"/>
+        <text x="232" y="125" text-anchor="middle" fill="#e2c97e" font-size="9" font-weight="700">TAP 01</text>
+        <text x="232" y="142" text-anchor="middle" fill="#c8a857" font-size="7.5">La Colombe</text>
+        <text x="232" y="157" text-anchor="middle" fill="#c8a857" font-size="7.5">Nitro Latte</text>
+        <text x="232" y="173" text-anchor="middle" fill="rgba(245,240,230,0.45)" font-size="7">QR → Order &amp; Pay</text>
+
+        <!-- TAP 2 -->
+        <rect x="300" y="90" width="95" height="100" rx="6" fill="#1c2e1a" stroke="#e2c97e" stroke-width="1.5" stroke-dasharray="4,2"/>
+        <text x="347" y="125" text-anchor="middle" fill="#e2c97e" font-size="9" font-weight="700">TAP 02</text>
+        <text x="347" y="142" text-anchor="middle" fill="#c8a857" font-size="7.5">Commonwealth</text>
+        <text x="347" y="157" text-anchor="middle" fill="#c8a857" font-size="7.5">Joe Cold Brew</text>
+        <text x="347" y="173" text-anchor="middle" fill="rgba(245,240,230,0.45)" font-size="7">QR → Order &amp; Pay</text>
+
+        <!-- TAP 3 -->
+        <rect x="415" y="90" width="95" height="100" rx="6" fill="#1c2e1a" stroke="#e2c97e" stroke-width="1.5" stroke-dasharray="4,2"/>
+        <text x="462" y="125" text-anchor="middle" fill="#e2c97e" font-size="9" font-weight="700">TAP 03</text>
+        <text x="462" y="142" text-anchor="middle" fill="#c8a857" font-size="7.5">Craft Beer</text>
+        <text x="462" y="157" text-anchor="middle" fill="#c8a857" font-size="7.5">Half Barrel</text>
+        <text x="462" y="173" text-anchor="middle" fill="rgba(245,240,230,0.45)" font-size="7">QR → Order &amp; Pay</text>
+
+        <!-- TAP 4 -->
+        <rect x="530" y="90" width="95" height="100" rx="6" fill="#1c2e1a" stroke="#e2c97e" stroke-width="1.5" stroke-dasharray="4,2"/>
+        <text x="577" y="125" text-anchor="middle" fill="#e2c97e" font-size="9" font-weight="700">TAP 04</text>
+        <text x="577" y="142" text-anchor="middle" fill="#c8a857" font-size="7.5">Specialty</text>
+        <text x="577" y="157" text-anchor="middle" fill="#c8a857" font-size="7.5">Rotating</text>
+        <text x="577" y="173" text-anchor="middle" fill="rgba(245,240,230,0.45)" font-size="7">QR → Today's Menu</text>
+
+        <!-- SIDE PANEL — Partner Showcase -->
+        <rect x="60" y="205" width="200" height="55" rx="6" fill="rgba(200,168,87,0.08)" stroke="rgba(200,168,87,0.3)" stroke-width="1"/>
+        <text x="160" y="224" text-anchor="middle" fill="#c8a857" font-size="9" font-weight="700">SIDE PANEL — PARTNER BRANDS</text>
+        <text x="160" y="242" text-anchor="middle" fill="rgba(245,240,230,0.55)" font-size="7.5">La Colombe · Commonwealth Joe · Murlarkey</text>
+        <text x="160" y="255" text-anchor="middle" fill="rgba(245,240,230,0.4)" font-size="7">QR per brand → partner experience page</text>
+
+        <!-- SIDE PANEL — Programs -->
+        <rect x="280" y="205" width="200" height="55" rx="6" fill="rgba(200,168,87,0.08)" stroke="rgba(200,168,87,0.3)" stroke-width="1"/>
+        <text x="380" y="224" text-anchor="middle" fill="#c8a857" font-size="9" font-weight="700">SIDE PANEL — PROGRAMS</text>
+        <text x="380" y="242" text-anchor="middle" fill="rgba(245,240,230,0.55)" font-size="7.5">Dry Hire · Sponsor a Tap · Full Service</text>
+        <text x="380" y="255" text-anchor="middle" fill="rgba(245,240,230,0.4)" font-size="7">QR → cedartaps.com/campaigns</text>
+
+        <!-- REAR PANEL -->
+        <rect x="500" y="205" width="110" height="55" rx="6" fill="rgba(200,168,87,0.08)" stroke="rgba(200,168,87,0.3)" stroke-width="1"/>
+        <text x="555" y="224" text-anchor="middle" fill="#c8a857" font-size="9" font-weight="700">REAR PANEL</text>
+        <text x="555" y="242" text-anchor="middle" fill="rgba(245,240,230,0.55)" font-size="7.5">Instagram · Website</text>
+        <text x="555" y="255" text-anchor="middle" fill="rgba(245,240,230,0.4)" font-size="7">@CedarTap · cedartaps.com</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- PER-TAP QR CODES -->
+  <div class="zone-section">
+    <div class="zone-title">Tap Handle QR Codes — Scan to Order &amp; Pay</div>
+    <div class="qr-grid" id="tap-qrs"></div>
+  </div>
+
+  <!-- PARTNER QR CODES -->
+  <div class="zone-section">
+    <div class="zone-title">Partner Brand QR Codes — Trailer Side Panels</div>
+    <div class="qr-grid" id="partner-qrs"></div>
+  </div>
+
+  <!-- PROGRAM QR CODES -->
+  <div class="zone-section">
+    <div class="zone-title">Programs &amp; Campaigns — Trailer Side Panel</div>
+    <div class="qr-grid" id="program-qrs"></div>
+  </div>
+
+  <!-- SOCIAL QR CODES -->
+  <div class="zone-section">
+    <div class="zone-title">Social &amp; Rear Panel</div>
+    <div class="qr-grid" id="social-qrs"></div>
+  </div>
+
+  <script>
+    const BASE = 'https://cedartaps.com';
+
+    const taps = [
+      { label: 'TAP 01', name: 'La Colombe Nitro Latte', sub: '8oz $7.99 · 12oz $8.99', url: BASE + '/tap-pay.html?tap=1', color: '#3d1f00' },
+      { label: 'TAP 02', name: 'CWJ Nitro Cold Brew', sub: '8oz $7.99 · 12oz $8.99', url: BASE + '/tap-pay.html?tap=2', color: '#1a0f00' },
+      { label: 'TAP 03', name: 'Craft Beer', sub: '5oz $4.99 · 12oz $8.99 · 16oz $11.99', url: BASE + '/tap-pay.html?tap=3', color: '#0f1f2e' },
+      { label: 'TAP 04', name: "Today's Specialty", sub: 'Wine / Kombucha / Seasonal', url: BASE + '/tap-pay.html?tap=4', color: '#1a1020' },
+      { label: 'ALL TAPS', name: 'Full Order Menu', sub: 'See everything on tap', url: BASE + '/tap-pay.html', color: '#1c2e1a' },
+    ];
+
+    const partners = [
+      { label: 'PARTNER · TAP 01', name: 'La Colombe Coffee', sub: 'Triple-charged nitro draft latte', url: BASE + '/lacolombe.html' },
+      { label: 'PARTNER · TAP 02', name: 'Commonwealth Joe', sub: 'Small-batch cold brew, Arlington VA', url: BASE + '/cwj.html' },
+      { label: 'PARTNER · MURLARKEY', name: 'Murlarkey Distillery', sub: 'Kegged cocktails & private tastings', url: BASE + '/murlarkey.html' },
+    ];
+
+    const programs = [
+      { label: 'PROGRAM · RENTAL', name: 'Dry Hire', sub: 'Rent the rig · from $150/hr', url: BASE + '/campaigns.html#dry-hire' },
+      { label: 'PROGRAM · PARTNERSHIP', name: 'Sponsor a Tap', sub: 'Put your brand on draft', url: BASE + '/campaigns.html#sponsor' },
+      { label: 'PROGRAM · FULL SERVICE', name: 'Full Service Hire', sub: 'End-to-pour event service', url: BASE + '/campaigns.html#full-service' },
+      { label: 'PROGRAMS', name: 'All Partnership Options', sub: 'Explore how to work with us', url: BASE + '/campaigns.html' },
+    ];
+
+    const social = [
+      { label: 'WEBSITE', name: 'cedartaps.com', sub: 'Full menu, events, booking', url: BASE },
+      { label: 'INSTAGRAM', name: '@CedarTap', sub: 'Follow for event updates', url: 'https://instagram.com/cedartap' },
+      { label: 'EVENTS', name: 'Event Calendar', sub: 'Where we\'re pouring next', url: BASE + '/events.html' },
+      { label: 'BOOK US', name: 'Work With Cedar Tap', sub: 'Book a date or get a quote', url: BASE + '/campaigns.html#contact' },
+    ];
+
+    function renderQRCards(items, containerId) {
+      const container = document.getElementById(containerId);
+      items.forEach((item, i) => {
+        const card = document.createElement('div');
+        card.className = 'qr-card';
+        card.onclick = () => window.open(item.url, '_blank');
+
+        const wrap = document.createElement('div');
+        wrap.className = 'qr-canvas-wrap';
+
+        const canvas = document.createElement('canvas');
+        wrap.appendChild(canvas);
+
+        card.innerHTML = `
+          <div class="qr-label">${item.label}</div>
+          <div class="qr-name">${item.name}</div>
+          <div class="qr-sub">${item.sub}</div>
+          <div class="qr-url">${item.url.replace('https://', '')}</div>
+        `;
+        card.insertBefore(wrap, card.querySelector('.qr-name'));
+        container.appendChild(card);
+
+        // Generate QR
+        QRCode.toCanvas(canvas, item.url, {
+          width: 118,
+          margin: 1,
+          color: { dark: '#1c2e1a', light: '#ffffff' },
+          errorCorrectionLevel: 'M'
+        }).catch(err => {
+          // Fallback dark color
+          QRCode.toCanvas(canvas, item.url, { width: 118, margin: 1 });
+        });
+      });
+    }
+
+    renderQRCards(taps,     'tap-qrs');
+    renderQRCards(partners, 'partner-qrs');
+    renderQRCards(programs, 'program-qrs');
+    renderQRCards(social,   'social-qrs');
+  </script>
+
+</body>
+</html>

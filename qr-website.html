@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cedar Tap — Website QR</title>
+<link rel="icon" href="/img/cedar-tap-logo.svg">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#1a1008; color:#fdf8f0; font-family:'Georgia',serif; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px 16px; }
+  .logo-mark { font-size:11px; letter-spacing:5px; text-transform:uppercase; opacity:0.45; margin-bottom:32px; text-align:center; }
+  .card { background:rgba(255,255,255,0.04); border:1px solid rgba(200,134,10,0.3); border-radius:22px; padding:32px 28px; text-align:center; width:100%; max-width:340px; }
+  .tree { font-size:48px; margin-bottom:10px; }
+  h1 { font-size:26px; font-weight:normal; letter-spacing:2px; margin-bottom:4px; }
+  .tagline { font-size:13px; opacity:0.6; font-family:Arial,sans-serif; letter-spacing:1px; text-transform:uppercase; margin-bottom:22px; }
+  .qr-wrap { background:#fdf8f0; border-radius:14px; padding:14px; display:inline-block; margin-bottom:16px; }
+  .qr-wrap img { width:220px; height:220px; display:block; }
+  .url { font-size:18px; color:#c8860a; font-family:Arial,sans-serif; letter-spacing:1px; margin-bottom:6px; font-weight:bold; }
+  .sub { font-size:12px; opacity:0.45; font-family:Arial,sans-serif; }
+  @media print {
+    body { background:#fff; color:#000; }
+    .card { border:2px solid #c8860a; }
+    .logo-mark { color:#000; }
+    .url { color:#8b5e00; }
+  }
+</style>
+</head>
+<body>
+<div class="logo-mark">Cedar Tap · Mobile Tap Room</div>
+<div class="card">
+  <div class="tree">🌲</div>
+  <h1>Cedar Tap</h1>
+  <div class="tagline">Mobile Tap Room</div>
+  <div class="qr-wrap">
+    <img src="/img/qr-site-cedartaps.svg" width="220" height="220" alt="cedartaps.com QR">
+  </div>
+  <div class="url">cedartaps.com</div>
+  <div class="sub">Scan to visit · Menu · Ordering · Events</div>
+</div>
+</body>
+</html>

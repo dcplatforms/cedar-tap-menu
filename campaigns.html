@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Work With Cedar Tap — Mobile Tap Room Partnerships</title>
+  <link rel="icon" href="/img/cedar-tap-logo.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cedar:    #1c2e1a;
+      --cedar-mid:#2a4427;
+      --cedar-lt: #3d6b35;
+      --gold:     #c8a857;
+      --gold-lt:  #e2c97e;
+      --cream:    #f5f0e6;
+      --cream-dk: #ede5d4;
+      --bark:     #7a5c3e;
+      --smoke:    rgba(255,255,255,0.08);
+      --border:   rgba(200,168,87,0.20);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--cedar);
+      color: var(--cream);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 400;
+      line-height: 1.65;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.85rem 2rem;
+      background: rgba(28,46,26,0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+    .nav-brand img { height: 28px; }
+    .nav-brand span { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--gold); letter-spacing: 0.04em; }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+    .nav-links a { color: rgba(245,240,230,0.75); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; transition: color .2s; }
+    .nav-links a:hover { color: var(--gold); }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 7rem 2rem 5rem;
+      background: radial-gradient(ellipse 120% 80% at 50% 0%, rgba(61,107,53,0.35) 0%, transparent 70%);
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-badge {
+      display: inline-block;
+      padding: 0.3rem 1rem;
+      border: 1px solid var(--gold);
+      border-radius: 40px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 1.2rem;
+    }
+    .hero h1 em { color: var(--gold); font-style: italic; }
+    .hero p {
+      font-size: 1.1rem;
+      color: rgba(245,240,230,0.75);
+      max-width: 560px;
+      margin: 0 auto 2.5rem;
+    }
+    .hero-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-gold {
+      display: inline-block;
+      padding: 0.85rem 2rem;
+      background: var(--gold);
+      color: var(--cedar);
+      font-weight: 700;
+      font-size: 0.88rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: background .2s, transform .15s;
+    }
+    .btn-gold:hover { background: var(--gold-lt); transform: translateY(-1px); }
+    .btn-outline {
+      display: inline-block;
+      padding: 0.85rem 2rem;
+      border: 1px solid rgba(200,168,87,0.5);
+      color: var(--gold);
+      font-weight: 600;
+      font-size: 0.88rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: border-color .2s, color .2s;
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold-lt); }
+
+    /* ── CAMPAIGN SECTIONS ── */
+    .campaign {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      min-height: 540px;
+      border-bottom: 1px solid var(--border);
+    }
+    .campaign:nth-child(even) .camp-visual { order: 2; }
+    .camp-visual {
+      position: relative;
+      overflow: hidden;
+      min-height: 400px;
+    }
+    .camp-visual-inner {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding: 3rem;
+    }
+    /* Tier visual backgrounds */
+    .tier-dry .camp-visual  { background: linear-gradient(135deg, #0f1f0e 0%, #1e3c1a 50%, #2a5224 100%); }
+    .tier-sponsor .camp-visual { background: linear-gradient(135deg, #1a1208 0%, #2e2010 50%, #3d2a0f 100%); }
+    .tier-full .camp-visual  { background: linear-gradient(135deg, #0a1520 0%, #0f2030 50%, #142840 100%); }
+
+    .camp-icon {
+      font-size: 3.5rem;
+      line-height: 1;
+      filter: drop-shadow(0 0 20px rgba(200,168,87,0.3));
+    }
+    .camp-tier-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.85;
+    }
+    .camp-visual-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.2;
+    }
+    .camp-visual-headline em { color: var(--gold); font-style: italic; }
+    .camp-pricing {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .price-chip {
+      padding: 0.4rem 0.9rem;
+      background: rgba(200,168,87,0.12);
+      border: 1px solid rgba(200,168,87,0.3);
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--gold-lt);
+      white-space: nowrap;
+    }
+
+    /* campaign body */
+    .camp-body {
+      padding: 4rem 3.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.6rem;
+    }
+    .camp-kicker {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .camp-body h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 2.2vw, 2rem);
+      font-weight: 700;
+      line-height: 1.25;
+    }
+    .camp-body p {
+      color: rgba(245,240,230,0.75);
+      font-size: 0.97rem;
+      max-width: 440px;
+    }
+    .camp-features { list-style: none; display: flex; flex-direction: column; gap: 0.65rem; }
+    .camp-features li {
+      display: flex; align-items: flex-start; gap: 0.65rem;
+      font-size: 0.92rem;
+      color: rgba(245,240,230,0.85);
+    }
+    .camp-features li::before {
+      content: '';
+      display: inline-block;
+      width: 18px; height: 18px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      background: var(--gold);
+      border-radius: 50%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6l3 3 5-5' stroke='%231c2e1a' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-size: 70%; background-repeat: no-repeat; background-position: center;
+    }
+    .camp-note {
+      font-size: 0.78rem;
+      color: rgba(245,240,230,0.45);
+      font-style: italic;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+    .camp-cta { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.25rem; }
+
+    /* ── USE CASES STRIP ── */
+    .use-cases {
+      padding: 5rem 2rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+    }
+    .use-cases h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      margin-bottom: 3rem;
+    }
+    .uc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.25rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .uc-card {
+      background: var(--smoke);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem 1.25rem;
+      text-align: center;
+      transition: border-color .2s, transform .2s;
+    }
+    .uc-card:hover { border-color: var(--gold); transform: translateY(-3px); }
+    .uc-icon { font-size: 1.8rem; margin-bottom: 0.6rem; }
+    .uc-label { font-size: 0.82rem; font-weight: 600; letter-spacing: 0.04em; }
+
+    /* ── REVENUE CALLOUT ── */
+    .rev-callout {
+      padding: 5rem 2rem;
+      background: linear-gradient(135deg, rgba(42,68,39,0.4) 0%, rgba(28,46,26,0.2) 100%);
+      border-bottom: 1px solid var(--border);
+    }
+    .rev-callout-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 2rem;
+    }
+    .rev-stat {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(0,0,0,0.2);
+    }
+    .rev-stat .stat-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+    .rev-stat .stat-label {
+      font-size: 0.8rem;
+      color: rgba(245,240,230,0.6);
+      letter-spacing: 0.04em;
+    }
+    .rev-stat .stat-sub {
+      font-size: 0.72rem;
+      color: rgba(245,240,230,0.4);
+      margin-top: 0.3rem;
+    }
+
+    /* ── PROCESS STRIP ── */
+    .process {
+      padding: 5rem 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+      border-bottom: 1px solid var(--border);
+    }
+    .process h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: flex; gap: 1.5rem;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      flex-shrink: 0;
+      width: 40px; height: 40px;
+      background: var(--cedar-mid);
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+    .step-body h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.3rem; }
+    .step-body p { font-size: 0.88rem; color: rgba(245,240,230,0.65); }
+
+    /* ── PARTNER LOGOS ── */
+    .partners-strip {
+      padding: 3.5rem 2rem;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .partners-strip p {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(245,240,230,0.4);
+      margin-bottom: 1.5rem;
+    }
+    .partner-logos {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .partner-pill {
+      padding: 0.5rem 1.2rem;
+      border: 1px solid rgba(200,168,87,0.2);
+      border-radius: 30px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: rgba(245,240,230,0.55);
+      transition: border-color .2s, color .2s;
+    }
+    .partner-pill:hover { border-color: var(--gold); color: var(--cream); }
+
+    /* ── CONTACT / CTA FOOTER ── */
+    .contact-section {
+      padding: 6rem 2rem;
+      text-align: center;
+      background: radial-gradient(ellipse 100% 80% at 50% 100%, rgba(61,107,53,0.2) 0%, transparent 70%);
+    }
+    .contact-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      margin-bottom: 1rem;
+    }
+    .contact-section p {
+      color: rgba(245,240,230,0.7);
+      max-width: 480px;
+      margin: 0 auto 2rem;
+    }
+    .contact-detail {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      color: rgba(245,240,230,0.55);
+    }
+    .contact-detail a { color: var(--gold); text-decoration: none; }
+    .contact-detail a:hover { color: var(--gold-lt); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: rgba(245,240,230,0.3);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    footer a { color: rgba(245,240,230,0.45); text-decoration: none; }
+    footer a:hover { color: var(--gold); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .campaign { grid-template-columns: 1fr; }
+      .campaign:nth-child(even) .camp-visual { order: 0; }
+      .camp-body { padding: 2.5rem 1.5rem; }
+      .rev-callout-inner { grid-template-columns: 1fr; }
+      nav { padding: 0.85rem 1rem; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-brand" href="/">
+      <img src="/img/cedar-tap-logo.svg" alt="Cedar Tap" />
+      <span>Cedar Tap</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#dry-hire">Dry Hire</a></li>
+      <li><a href="#sponsor">Sponsor a Tap</a></li>
+      <li><a href="#full-service">Full Service</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="/events.html">Events</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">Partnership Programs</div>
+    <h1>Your Event. Our<br/><em>Mobile Tap Room.</em></h1>
+    <p>Three ways to work with Cedar Tap — from a simple equipment rental to a fully staffed, permit-ready, end-to-pour experience.</p>
+    <div class="hero-ctas">
+      <a href="#contact" class="btn-gold">Book a Date</a>
+      <a href="#dry-hire" class="btn-outline">Explore Options</a>
+    </div>
+  </section>
+
+  <!-- ── TIER 1: DRY HIRE ── -->
+  <section class="campaign tier-dry" id="dry-hire">
+    <div class="camp-visual">
+      <div class="camp-visual-inner">
+        <div class="camp-tier-label">Tier 01 — Equipment Rental</div>
+        <div class="camp-icon">🚚</div>
+        <div class="camp-visual-headline">Bring Your Own<br/><em>Craft.</em></div>
+        <div class="camp-pricing">
+          <span class="price-chip">$150 / hr</span>
+          <span class="price-chip">$500 / half-day</span>
+          <span class="price-chip">$1,000 / day</span>
+          <span class="price-chip">$1,750 / weekend</span>
+        </div>
+      </div>
+    </div>
+    <div class="camp-body">
+      <div class="camp-kicker">Dry Hire</div>
+      <h2>The rig is yours.<br/>You pour it your way.</h2>
+      <p>Rent Cedar Tap's 4-tap mobile trailer, deliver it to your location, and fill it with whatever you're pouring. Perfect for wineries, breweries, and distilleries that want to extend their brand off-site without staffing constraints.</p>
+      <ul class="camp-features">
+        <li>4-tap cold-service trailer, delivered &amp; set up</li>
+        <li>Compatible with half barrels, corny kegs, and sixtels</li>
+        <li>Off-grid capable — no power hookup required</li>
+        <li>Full setup and breakdown included in rate</li>
+        <li>Operator manual + remote support on call</li>
+        <li>Ideal for private events, venue activations, and B2B rentals</li>
+      </ul>
+      <div class="camp-note">ABC licensing, product sourcing, and staffing are the renter's responsibility under dry hire. Cedar Tap provides the equipment and delivery only.</div>
+      <div class="camp-cta">
+        <a href="#contact" class="btn-gold">Check Availability</a>
+        <a href="mailto:tom@cedartaps.com?subject=Dry Hire Inquiry" class="btn-outline">Get a Quote</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TIER 2: SPONSOR A TAP ── -->
+  <section class="campaign tier-sponsor" id="sponsor">
+    <div class="camp-body">
+      <div class="camp-kicker">Sponsor a Tap</div>
+      <h2>Your brand.<br/>On draft at every event.</h2>
+      <p>Claim a dedicated tap on Cedar Tap's trailer for a season, event, or custom run. Your product, your branding, poured by our team at every Cedar Tap activation. The fastest way to put your beverage in front of 1,000+ people per event.</p>
+      <ul class="camp-features">
+        <li>Dedicated tap with your brand signage and product</li>
+        <li>Featured on Cedar Tap's digital menus and QR experience</li>
+        <li>Partner page hosted at cedartaps.com/[yourbrand]</li>
+        <li>Sourcing coordination — we handle event logistics</li>
+        <li>Photography and social content at each activation</li>
+        <li>Seasonal, per-event, or multi-event rate structures</li>
+      </ul>
+      <div class="camp-note">Current tap partners: La Colombe Coffee, Commonwealth Joe, Murlarkey Distillery. Limited spots available per season.</div>
+      <div class="camp-cta">
+        <a href="mailto:tom@cedartaps.com?subject=Sponsor a Tap — Partnership Inquiry" class="btn-gold">Become a Tap Partner</a>
+        <a href="/pipeline.html" class="btn-outline">See the Event Calendar</a>
+      </div>
+    </div>
+    <div class="camp-visual">
+      <div class="camp-visual-inner">
+        <div class="camp-tier-label">Tier 02 — Brand Partnership</div>
+        <div class="camp-icon">🍺</div>
+        <div class="camp-visual-headline">Put Your Brand<br/><em>On Draft.</em></div>
+        <div class="camp-pricing">
+          <span class="price-chip">Per-Event Rate</span>
+          <span class="price-chip">Season Packages</span>
+          <span class="price-chip">Revenue Share</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TIER 3: FULL SERVICE ── -->
+  <section class="campaign tier-full" id="full-service">
+    <div class="camp-visual">
+      <div class="camp-visual-inner">
+        <div class="camp-tier-label">Tier 03 — Full Service</div>
+        <div class="camp-icon">🎯</div>
+        <div class="camp-visual-headline">End-to-Pour,<br/><em>Done for You.</em></div>
+        <div class="camp-pricing">
+          <span class="price-chip">Custom Quote</span>
+          <span class="price-chip">Permit-Ready</span>
+          <span class="price-chip">Fully Staffed</span>
+        </div>
+      </div>
+    </div>
+    <div class="camp-body">
+      <div class="camp-kicker">Full Service Hire</div>
+      <h2>You focus on your event.<br/>We handle every pour.</h2>
+      <p>Cedar Tap manages everything from product sourcing to health permits, ABC licensing, staffing, setup, and breakdown. Ideal for festivals, corporate events, and private venues that want a turnkey premium bar experience with zero overhead.</p>
+      <ul class="camp-features">
+        <li>Product sourcing and keg delivery coordinated end-to-end</li>
+        <li>VA ABC banquet licensing handled per event ($85 cost pass-through)</li>
+        <li>Health permit application and compliance managed</li>
+        <li>Trained pouring staff on-site for event duration</li>
+        <li>Point-of-sale via Square — tap-to-pay and QR ordering</li>
+        <li>Post-event revenue report and pour analytics provided</li>
+      </ul>
+      <div class="camp-note">Minimum 6-hour booking. Available for events up to 5,000 guests. Multi-day and multi-city bookings available. Spirits events require 12-day ABC lead time.</div>
+      <div class="camp-cta">
+        <a href="mailto:tom@cedartaps.com?subject=Full Service Event Inquiry" class="btn-gold">Request a Proposal</a>
+        <a href="#contact" class="btn-outline">Talk to Tom</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- USE CASES -->
+  <section class="use-cases">
+    <div class="section-eyebrow">Where We Pour</div>
+    <h2>Cedar Tap fits any occasion</h2>
+    <div class="uc-grid">
+      <div class="uc-card">
+        <div class="uc-icon">🏟️</div>
+        <div class="uc-label">County Fairs</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-icon">🍷</div>
+        <div class="uc-label">Winery Events</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-icon">🏢</div>
+        <div class="uc-label">Corporate Picnics</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-icon">💍</div>
+        <div class="uc-label">Weddings</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-icon">🎸</div>
+        <div class="uc-label">Music Festivals</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-icon">🌿</div>
+        <div class="uc-label">Farmers Markets</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-icon">🏌️</div>
+        <div class="uc-label">Golf Courses</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-icon">🎪</div>
+        <div class="uc-label">Pop-Up Events</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-icon">🏘️</div>
+        <div class="uc-label">HOA Events</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-icon">🎓</div>
+        <div class="uc-label">Alumni Events</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVENUE STATS -->
+  <section class="rev-callout">
+    <div class="rev-callout-inner">
+      <div class="rev-stat">
+        <div class="stat-val">$7,268</div>
+        <div class="stat-label">Net Revenue Per Day</div>
+        <div class="stat-sub">Beer · Half barrel · 6-keg cap</div>
+      </div>
+      <div class="rev-stat">
+        <div class="stat-val">990</div>
+        <div class="stat-label">Max Pours Per Day</div>
+        <div class="stat-sub">6 half barrels · 165 pours each</div>
+      </div>
+      <div class="rev-stat">
+        <div class="stat-val">4</div>
+        <div class="stat-label">Independent Taps</div>
+        <div class="stat-sub">Rotating product mix per event</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="process">
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Reach out with your event details</h4>
+          <p>Send us the date, location, expected attendance, and service tier you're interested in. We'll confirm availability within 24 hours.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>We build your pour menu</h4>
+          <p>Based on your audience and event type, we recommend the optimal product mix — coffee, craft beer, wine, kombucha, or spirits — and send a custom quote.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Permits, sourcing, and logistics handled</h4>
+          <p>For Full Service bookings, Cedar Tap coordinates ABC banquet licensing, health permits, keg delivery, and staffing. Dry Hire clients receive equipment on the morning of the event.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>Show up, pour, and get paid</h4>
+          <p>We arrive early, set up, and run the tap room. Payments are processed via Square tap-to-pay and QR ordering. Post-event you receive a full pour report and settlement.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARTNERS -->
+  <section class="partners-strip">
+    <p>Current tap partners</p>
+    <div class="partner-logos">
+      <span class="partner-pill">La Colombe Coffee</span>
+      <span class="partner-pill">Commonwealth Joe</span>
+      <span class="partner-pill">Murlarkey Distillery</span>
+      <span class="partner-pill">DC Kegs</span>
+      <span class="partner-pill">Your Brand Here</span>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact-section" id="contact">
+    <div class="section-eyebrow">Ready to Pour?</div>
+    <h2>Let's talk about your event</h2>
+    <p>Drop us a line with your date and guest count. We'll get back to you within a business day.</p>
+    <a href="mailto:tom@cedartaps.com?subject=Event Inquiry — Cedar Tap" class="btn-gold">Email tom@cedartaps.com</a>
+    <div class="contact-detail">
+      <span>📞 <a href="tel:+12028101861">(202) 810-1861</a></span>
+      <span>📍 Serving NoVA &amp; DC Metro · 40-mile radius</span>
+      <span>🌐 <a href="https://cedartaps.com">cedartaps.com</a></span>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>© 2026 Cedar Tap Trailers LLC · Woodbridge, VA</span>
+    <div style="display:flex;gap:1.5rem;">
+      <a href="/">Home</a>
+      <a href="/events.html">Events</a>
+      <a href="/pipeline.html">Pipeline</a>
+      <a href="mailto:tom@cedartaps.com">Contact</a>
+    </div>
+  </footer>
+
+</body>
+</html>

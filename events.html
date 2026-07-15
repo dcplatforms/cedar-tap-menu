@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cedar Tap — Event Calendar</title>
+  <meta name="description" content="Cedar Tap's mobile tap room event calendar — upcoming pour events, vendor appearances, and partnership activations across Northern Virginia and the DC Metro area." />
+  <link rel="icon" type="image/svg+xml" href="/img/cedar-tap-logo.svg" />
+  <script data-goatcounter="https://cedartap.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  <style>
+    :root {
+      --bg:        #0f0d0b;
+      --surface:   #1a1510;
+      --card:      #201a13;
+      --border:    #2e2519;
+      --cream:     #f0e6d3;
+      --cream-dim: #9e8e78;
+      --gold:      #c8941a;
+      --gold-dim:  rgba(200,148,26,.15);
+      --green:     #4caf7d;
+      --red:       #e05252;
+      --amber:     #f5a96a;
+      --blue:      #6ab0f5;
+      --purple:    #a78bfa;
+      --radius:    10px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--cream); font-family: 'Georgia', serif; min-height: 100vh; }
+
+    /* NAV */
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 28px; border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 0; z-index: 100; }
+    .nav-brand { display: flex; align-items: center; gap: 10px; font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); text-decoration: none; }
+    .nav-brand img { width: 26px; height: 26px; }
+    .nav-links { display: flex; gap: 20px; align-items: center; }
+    .nav-links a { color: var(--cream-dim); text-decoration: none; font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; transition: color .2s; }
+    .nav-links a:hover { color: var(--cream); }
+    .nav-links a.active { color: var(--gold); }
+
+    /* HERO BANNER */
+    .hero-banner {
+      background: linear-gradient(135deg, #1a1510 0%, #0f0d0b 60%);
+      border-bottom: 1px solid var(--border);
+      padding: 56px 24px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 50% 100%, rgba(200,148,26,.07) 0%, transparent 70%);
+    }
+    .hero-eyebrow { font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; position: relative; }
+    .hero-title { font-size: 2.4rem; font-weight: normal; color: var(--cream); line-height: 1.2; position: relative; }
+    .hero-title em { color: var(--gold); font-style: italic; }
+    .hero-sub { color: var(--cream-dim); font-size: .9rem; margin-top: 12px; font-style: italic; position: relative; }
+    .hero-cta-row { display: flex; gap: 12px; justify-content: center; margin-top: 28px; flex-wrap: wrap; position: relative; }
+    .btn-primary { display: inline-block; background: var(--gold); color: #0f0d0b; font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; padding: 12px 28px; border-radius: 4px; text-decoration: none; font-family: sans-serif; font-weight: bold; transition: opacity .2s; }
+    .btn-primary:hover { opacity: .88; }
+    .btn-ghost { display: inline-block; border: 1px solid var(--gold); color: var(--gold); font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; padding: 11px 28px; border-radius: 4px; text-decoration: none; font-family: sans-serif; transition: background .2s; }
+    .btn-ghost:hover { background: var(--gold-dim); }
+
+    /* FILTERS */
+    .filter-bar { display: flex; gap: 8px; padding: 20px 24px; overflow-x: auto; background: var(--surface); border-bottom: 1px solid var(--border); }
+    .filter-chip { display: inline-flex; align-items: center; gap: 5px; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--card); color: var(--cream-dim); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: all .2s; white-space: nowrap; font-family: sans-serif; }
+    .filter-chip:hover, .filter-chip.active { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+    .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .dot-confirmed { background: var(--green); }
+    .dot-talks     { background: var(--gold); }
+    .dot-applying  { background: var(--amber); }
+    .dot-target    { background: var(--blue); }
+    .dot-closed    { background: var(--red); }
+
+    /* PAGE LAYOUT */
+    .page { max-width: 1100px; margin: 0 auto; padding: 40px 24px 100px; }
+
+    /* TIMELINE */
+    .month-group { margin-bottom: 48px; }
+    .month-header {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 20px;
+    }
+    .month-label {
+      font-size: .7rem; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--gold); white-space: nowrap;
+    }
+    .month-line { flex: 1; height: 1px; background: var(--border); }
+    .month-count { font-size: .65rem; color: var(--cream-dim); font-family: sans-serif; }
+
+    .events-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+
+    /* EVENT CARDS */
+    .event-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .2s, transform .15s;
+    }
+    .event-card:hover { border-color: rgba(200,148,26,.3); transform: translateY(-2px); }
+    .event-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    }
+    .event-card.ev-confirmed::before  { background: var(--green); }
+    .event-card.ev-talks::before      { background: var(--gold); }
+    .event-card.ev-applying::before   { background: var(--amber); }
+    .event-card.ev-target::before     { background: var(--blue); }
+    .event-card.ev-closed::before     { background: var(--red); }
+    .event-card.ev-platform::before   { background: var(--purple); }
+
+    .ev-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .ev-date-badge {
+      background: rgba(200,148,26,.12); border: 1px solid rgba(200,148,26,.2);
+      border-radius: 6px; padding: 6px 10px; text-align: center; flex-shrink: 0; min-width: 52px;
+    }
+    .ev-date-day { font-size: 1.3rem; font-weight: bold; color: var(--gold); line-height: 1; }
+    .ev-date-mo { font-size: .58rem; letter-spacing: .1em; text-transform: uppercase; color: var(--cream-dim); margin-top: 2px; font-family: sans-serif; }
+    .ev-status { font-size: .6rem; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; white-space: nowrap; font-family: sans-serif; }
+    .pill-confirmed { background: rgba(76,175,125,.15);  color: var(--green);  border: 1px solid rgba(76,175,125,.3); }
+    .pill-talks     { background: rgba(200,148,26,.15);  color: var(--gold);   border: 1px solid rgba(200,148,26,.3); }
+    .pill-applying  { background: rgba(245,169,106,.12); color: var(--amber);  border: 1px solid rgba(245,169,106,.25); }
+    .pill-target    { background: rgba(106,176,245,.1);  color: var(--blue);   border: 1px solid rgba(106,176,245,.2); }
+    .pill-closed    { background: rgba(224,82,82,.1);    color: var(--red);    border: 1px solid rgba(224,82,82,.2); }
+    .pill-platform  { background: rgba(167,139,250,.12); color: var(--purple); border: 1px solid rgba(167,139,250,.25); }
+
+    .ev-name { font-size: 1rem; font-weight: bold; color: var(--cream); margin-bottom: 3px; margin-top: 10px; }
+    .ev-location { font-size: .72rem; color: var(--cream-dim); font-family: sans-serif; display: flex; align-items: center; gap: 4px; }
+    .ev-location svg { opacity: .5; flex-shrink: 0; }
+    .ev-type-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+    .ev-tag { font-size: .6rem; letter-spacing: .07em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; background: rgba(255,255,255,.05); color: var(--cream-dim); border: 1px solid var(--border); font-family: sans-serif; }
+    .ev-notes { font-size: .75rem; color: var(--cream-dim); margin-top: 10px; line-height: 1.5; font-style: italic; }
+    .ev-revenue { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .ev-rev-label { font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: var(--cream-dim); font-family: sans-serif; }
+    .ev-rev-val { font-size: .9rem; font-weight: bold; color: var(--gold); }
+    .ev-action-row { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+    .ev-action-link { font-size: .65rem; letter-spacing: .07em; text-transform: uppercase; color: var(--gold); text-decoration: none; border: 1px solid rgba(200,148,26,.25); padding: 4px 10px; border-radius: 4px; font-family: sans-serif; transition: background .2s; }
+    .ev-action-link:hover { background: var(--gold-dim); }
+
+    /* STATS BAR */
+    .stat-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 40px; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 16px; }
+    .stat-val { font-size: 1.7rem; font-weight: bold; color: var(--cream); line-height: 1; }
+    .stat-val.gold { color: var(--gold); }
+    .stat-label { font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--cream-dim); margin-top: 5px; font-family: sans-serif; }
+
+    /* BOOK BANNER */
+    .book-banner {
+      background: linear-gradient(135deg, #201a13, #1a1510);
+      border: 1px solid rgba(200,148,26,.2);
+      border-radius: var(--radius);
+      padding: 40px 36px;
+      text-align: center;
+      margin-top: 60px;
+    }
+    .book-banner h2 { font-size: 1.6rem; font-weight: normal; margin-bottom: 8px; }
+    .book-banner h2 em { color: var(--gold); font-style: italic; }
+    .book-banner p { color: var(--cream-dim); font-size: .85rem; font-style: italic; margin-bottom: 24px; }
+    .book-btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* FOOTER */
+    .footer { background: var(--surface); border-top: 1px solid var(--border); text-align: center; padding: 28px 24px; margin-top: 60px; }
+    .footer p { color: var(--cream-dim); font-size: .72rem; }
+    .footer a { color: var(--gold); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .hero-title { font-size: 1.7rem; }
+      .events-grid { grid-template-columns: 1fr; }
+      .nav-links { gap: 12px; }
+      .nav-links a { font-size: .68rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="/" class="nav-brand">
+    <img src="/img/cedar-tap-logo.svg" alt="Cedar Tap" />
+    Cedar Tap
+  </a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/events" class="active">Events</a>
+    <a href="/pipeline">Pipeline</a>
+    <a href="/cafe-menu">Menu</a>
+    <a href="/#contact">Book</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero-banner">
+  <div class="hero-eyebrow">Summer 2026 Season</div>
+  <h1 class="hero-title">Cedar Tap <em>Events</em></h1>
+  <p class="hero-sub">Upcoming appearances, pour events, and partnership activations across the DC Metro area</p>
+  <div class="hero-cta-row">
+    <a href="/#contact" class="btn-primary">Book Your Event</a>
+    <a href="/pipeline" class="btn-ghost">View Pipeline</a>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="filter-chip active">All Events</div>
+  <div class="filter-chip"><span class="dot dot-confirmed"></span>Confirmed</div>
+  <div class="filter-chip"><span class="dot dot-talks"></span>In Talks</div>
+  <div class="filter-chip"><span class="dot dot-applying"></span>Applying</div>
+  <div class="filter-chip"><span class="dot dot-target"></span>Target</div>
+  <div class="filter-chip"><span class="dot dot-closed"></span>Closed</div>
+</div>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- STAT STRIP -->
+  <div class="stat-strip">
+    <div class="stat-card">
+      <div class="stat-val gold">3</div>
+      <div class="stat-label">Confirmed Partners</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">20+</div>
+      <div class="stat-label">Target Events</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val gold">$150K+</div>
+      <div class="stat-label">Season Pipeline</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">40mi</div>
+      <div class="stat-label">Service Radius</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val gold">4</div>
+      <div class="stat-label">Taps Available</div>
+    </div>
+  </div>
+
+  <!-- JUNE 2026 -->
+  <div class="month-group" id="june">
+    <div class="month-header">
+      <span class="month-label">June 2026</span>
+      <span class="month-line"></span>
+      <span class="month-count">6 entries</span>
+    </div>
+    <div class="events-grid">
+
+      <!-- La Colombe — confirmed supplier -->
+      <div class="event-card ev-confirmed">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">17</div>
+            <div class="ev-date-mo">Jun</div>
+          </div>
+          <span class="ev-status pill-confirmed">✅ Vendor Confirmed</span>
+        </div>
+        <div class="ev-name">La Colombe Coffee Roasters</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Woodbridge, VA (Delivery)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Wholesale Supplier</span>
+          <span class="ev-tag">Coffee on Tap</span>
+          <span class="ev-tag">Ongoing</span>
+        </div>
+        <div class="ev-notes">Active vendor partnership. In-keg cold brew builds confirmed. Corny keg quote in progress. Branded tap handles being supplied. Samples inbound.</div>
+        <div class="ev-action-row">
+          <a href="/lacolombe" class="ev-action-link">View Menu</a>
+          <a href="mailto:Eric.Kurss@lacolombe.net" class="ev-action-link">Contact Eric</a>
+        </div>
+      </div>
+
+      <!-- Murlarkey — CONFIRMED PARTNER -->
+      <div class="event-card ev-confirmed">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">18</div>
+            <div class="ev-date-mo">Jun</div>
+          </div>
+          <span class="ev-status pill-confirmed">✅ Confirmed Partner</span>
+        </div>
+        <div class="ev-name">Murlarkey Distillery</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Bristow, VA — off-site activations + private tastings
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Kegged Cocktails</span>
+          <span class="ev-tag">Private Tastings</span>
+          <span class="ev-tag">Off-Site Activation</span>
+        </div>
+        <div class="ev-notes">Confirmed Jun 18. Solid partner for kegged cocktails and private tasting events. Google Meet held Jun 15 (Zanab + Nicole). Cocktail menu options for PWC Fair in progress. VA ABC banquet license per event ($175, 12-day lead).</div>
+        <div class="ev-action-row">
+          <a href="/murlarkey" class="ev-action-link">View Menu</a>
+          <a href="mailto:nicole@murlarkey.com" class="ev-action-link">Contact Nicole</a>
+        </div>
+      </div>
+
+      <!-- Commonwealth Joe — ACTIVE SUPPLIER -->
+      <div class="event-card ev-confirmed">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">24</div>
+            <div class="ev-date-mo">Jun</div>
+          </div>
+          <span class="ev-status pill-confirmed">✅ Active Supplier</span>
+        </div>
+        <div class="ev-name">Commonwealth Joe — Wholesale Account</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Beltsville, MD (Keg Pickup) — featured at PWC Fair
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Wholesale Supplier</span>
+          <span class="ev-tag">Nitro Cold Brew</span>
+          <span class="ev-tag">15.5-gal Kegs</span>
+        </div>
+        <div class="ev-notes">Account active with Jeff Simon. Meeting scheduled Jun 24 to confirm 6× 15.5-gal kegs ($365/ea) for PWC Fair. Keg pickup Beltsville MD, 48h lead time. Menu live at cedartaps.com/cwj. Featured brand in PWSI youth sports pitch.</div>
+        <div class="ev-action-row">
+          <a href="/cwj" class="ev-action-link">View Menu</a>
+          <a href="mailto:jeff.simon@commonwealthjoe.com" class="ev-action-link">Contact Jeff</a>
+        </div>
+      </div>
+
+      <!-- PWC Juneteenth — PASSED -->
+      <div class="event-card ev-closed">
+        <div class="ev-head">
+          <div class="ev-date-badge" style="opacity:.5">
+            <div class="ev-date-day">19</div>
+            <div class="ev-date-mo">Jun</div>
+          </div>
+          <span class="ev-status pill-closed">Event Passed</span>
+        </div>
+        <div class="ev-name" style="opacity:.6;text-decoration:line-through">PWC Juneteenth and Me</div>
+        <div class="ev-location" style="opacity:.5">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Prince William County, VA
+        </div>
+        <div class="ev-notes" style="opacity:.5">Event date passed Jun 19. Outreach sent to Princess Clark-Wendel and Willie Hardeman (PWC Gov). Target for 2027 season.</div>
+      </div>
+
+      <!-- PWSI Youth Sports Outreach — NEW Jun 23 -->
+      <div class="event-card ev-talks">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">23</div>
+            <div class="ev-date-mo">Jun</div>
+          </div>
+          <span class="ev-status pill-talks">Outreach Sent</span>
+        </div>
+        <div class="ev-name">PWSI — Youth Soccer Concession Partnership</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Prince William County fields (multiple)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Youth Sports</span>
+          <span class="ev-tag">Concession Partner</span>
+          <span class="ev-tag">CWJ Branded</span>
+          <span class="ev-tag">VDH Exempt</span>
+        </div>
+        <div class="ev-notes">Soft intro sent Jun 23 to Colleen Heron (cheron@pwsi.org), PWSI Sponsorship Coordinator. Positioning Cedar Tap as mobile beverage concession for CWJ game-day activations. VDH food safety exemption applies for youth athletic association-sponsored concession stands. No alcohol — no ABC permit required.</div>
+        <div class="ev-action-row">
+          <a href="mailto:cheron@pwsi.org" class="ev-action-link">Follow Up</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JUNE 28 — SATURDAY LAUNCH DAY -->
+  <div class="month-group" id="jun28">
+    <div class="month-header">
+      <span class="month-label" style="color:#4caf7d">🚀 June 27 — Cedar Tap Saturday Launch · SELLOUT TARGET</span>
+      <span class="month-line"></span>
+      <span class="month-count">3-stop route · 294 pours · $2,055 revenue target</span>
+    </div>
+    <div class="events-grid">
+
+      <div class="event-card ev-confirmed">
+        <div class="ev-head">
+          <div class="ev-date-badge" style="background:rgba(76,175,125,.2);border-color:rgba(76,175,125,.4)">
+            <div class="ev-date-day">28</div><div class="ev-date-mo">Jun</div>
+          </div>
+          <span class="ev-status pill-confirmed">🟢 Stop 1 — 8am–12pm</span>
+        </div>
+        <div class="ev-name">Stonebridge at Potomac Town Center</div>
+        <div class="ev-location"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> Woodbridge VA · 10 min from base</div>
+        <div class="ev-type-row"><span class="ev-tag">Morning Coffee Rush</span><span class="ev-tag">800–1,500 foot traffic</span><span class="ev-tag">Target: 80 pours</span></div>
+        <div class="ev-notes">Morning anchor. High coffee intent. Manager approval on-site. 4 taps — CWJ cold brew + hibiscus nitro tea. QR scan &amp; pay live.</div>
+      </div>
+
+      <div class="event-card ev-confirmed">
+        <div class="ev-head">
+          <div class="ev-date-badge" style="background:rgba(76,175,125,.2);border-color:rgba(76,175,125,.4)">
+            <div class="ev-date-day">28</div><div class="ev-date-mo">Jun</div>
+          </div>
+          <span class="ev-status pill-confirmed">🟢 Stop 2 — 12pm–3pm</span>
+        </div>
+        <div class="ev-name">Occoquan Waterfront Village</div>
+        <div class="ev-location"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> Occoquan VA · 12 min from Stop 1</div>
+        <div class="ev-type-row"><span class="ev-tag">Historic Waterfront</span><span class="ev-tag">600–1,200 foot traffic</span><span class="ev-tag">Target: 80 pours</span></div>
+        <div class="ev-notes">Midday stop. Summer Saturday waterfront — high dwell time, ideal impulse beverage. Low-friction setup.</div>
+      </div>
+
+      <div class="event-card ev-talks">
+        <div class="ev-head">
+          <div class="ev-date-badge" style="background:rgba(200,148,26,.2);border-color:rgba(200,148,26,.4)">
+            <div class="ev-date-day">28</div><div class="ev-date-mo">Jun</div>
+          </div>
+          <span class="ev-status pill-confirmed">✅ CONFIRMED — Stop 3 · 3pm–close</span>
+        </div>
+        <div class="ev-name">Workhouse Arts Center — Red, White &amp; Boom! Fireworks</div>
+        <div class="ev-location"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> Lorton VA · 18 min from Stop 2 · Fairfax County</div>
+        <div class="ev-type-row"><span class="ev-tag">🎆 10k–15k crowd</span><span class="ev-tag">Target: 134 pours</span><span class="ev-tag">Fairfax Co. $35 solicitor license</span></div>
+        <div class="ev-notes">✅ CLEARED Jun 26. Largest volume stop of the day — completes sellout. CWJ nitro cold brew + hibiscus nitro tea. Fireworks at 9pm. Gates open 4pm.</div>
+        <div class="ev-action-row"><a href="https://www.workhousearts.org/fireworks" target="_blank" class="ev-action-link">Event Page</a></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JUNE 27 — EARLY JULY 4TH WEEKEND -->
+  <div class="month-group" id="jun27">
+    <div class="month-header">
+      <span class="month-label" style="color:#e8a820">⚡ June 27 — Early July 4th Weekend</span>
+      <span class="month-line"></span>
+      <span class="month-count">2 events · Outreach sent</span>
+    </div>
+    <div class="events-grid">
+
+      <div class="event-card ev-target">
+        <div class="ev-head">
+          <div class="ev-date-badge" style="background:rgba(200,148,26,.2);border-color:rgba(200,148,26,.4)">
+            <div class="ev-date-day">27</div>
+            <div class="ev-date-mo">Jun</div>
+          </div>
+          <span class="ev-status pill-talks" style="background:rgba(200,148,26,.2);color:#e8a820;border-color:rgba(200,148,26,.4)">🔥 Inquiry Sent · URGENT</span>
+        </div>
+        <div class="ev-name">Workhouse Arts Center — Fireworks Festival</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Lorton, VA (20mi) — Workhouse Arts Center
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Northern VA Largest Fireworks</span>
+          <span class="ev-tag">8,000–12,000</span>
+          <span class="ev-tag">Beverage Vendor Precedent</span>
+        </div>
+        <div class="ev-notes">Inquiry sent Jun 23. Northern Virginia's "largest fireworks festival" per sources. Arts center venue — Bunnyman Brewing partnership model established, confirming beverage vendor precedent. 4pm–10pm. Reply needed by Jun 25 for Friday setup logistics.</div>
+        <div class="ev-action-row">
+          <a href="mailto:info@workhousearts.org" class="ev-action-link">Follow Up</a>
+          <a href="https://workhousearts.org" target="_blank" class="ev-action-link">Website</a>
+        </div>
+      </div>
+
+      <div class="event-card ev-target">
+        <div class="ev-head">
+          <div class="ev-date-badge" style="background:rgba(200,148,26,.2);border-color:rgba(200,148,26,.4)">
+            <div class="ev-date-day">27</div>
+            <div class="ev-date-mo">Jun</div>
+          </div>
+          <span class="ev-status pill-talks" style="background:rgba(200,148,26,.2);color:#e8a820;border-color:rgba(200,148,26,.4)">🔥 Inquiry Sent · URGENT</span>
+        </div>
+        <div class="ev-name">Lake Fairfax Park — 250th Drone Light Show</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          1400 Lake Fairfax Dr, Reston, VA (32mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Drone Light Show Debut</span>
+          <span class="ev-tag">10,000–15,000</span>
+          <span class="ev-tag">County Parks Vendor Program</span>
+        </div>
+        <div class="ev-notes">Inquiry sent Jun 23 to Fairfax County Parks. First-ever Fairfax County drone light show + patriotic music. 5pm–10pm. County parks vendor program confirmed. Highest attendance June 27 event. Emailed parkmail@fairfaxcounty.gov — also try fairfaxcounty.gov/parks directly for vendor contact.</div>
+        <div class="ev-action-row">
+          <a href="mailto:parkmail@fairfaxcounty.gov" class="ev-action-link">Follow Up</a>
+          <a href="https://www.fairfaxcounty.gov/parks/lake-fairfax/250th-independence-day/062726" target="_blank" class="ev-action-link">Event Page</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JULY 2026 -->
+  <div class="month-group" id="july">
+    <div class="month-header">
+      <span class="month-label">July 2026</span>
+      <span class="month-line"></span>
+      <span class="month-count">9 events</span>
+    </div>
+    <div class="events-grid">
+
+      <!-- Manassas Celebrate America — Jul 4 HOME MARKET -->
+      <div class="event-card ev-target">
+        <div class="ev-head">
+          <div class="ev-date-badge" style="background:rgba(200,148,26,.2);border-color:rgba(200,148,26,.4)">
+            <div class="ev-date-day">4</div>
+            <div class="ev-date-mo">Jul</div>
+          </div>
+          <span class="ev-status pill-talks" style="background:rgba(200,148,26,.2);color:#e8a820;border-color:rgba(200,148,26,.4)">🔥 Inquiry Sent</span>
+        </div>
+        <div class="ev-name">Celebrate America — Manassas (Home Market)</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Manassas Museum Lawn, 9101 Prince William St (15mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Home Market</span>
+          <span class="ev-tag">8,000–12,000</span>
+          <span class="ev-tag">Fireworks 9:15 PM</span>
+          <span class="ev-tag">Established Vendor Program</span>
+        </div>
+        <div class="ev-notes">Inquiry sent Jun 23 to info@visitmanassas.org. 3pm–10pm family event with multiple food and craft vendors confirmed. Closest high-attendance July 4th event to home base. Easiest vendor approval expected. Follow up by Jun 25.</div>
+        <div class="ev-revenue">
+          <span class="ev-rev-label">Est. Net Revenue</span>
+          <span class="ev-rev-val">~$6,200</span>
+        </div>
+        <div class="ev-action-row">
+          <a href="mailto:info@visitmanassas.org" class="ev-action-link">Follow Up</a>
+          <a href="https://visitmanassas.org" target="_blank" class="ev-action-link">Website</a>
+        </div>
+      </div>
+
+      <!-- Leesburg Ida Lee Park — Jul 4 -->
+      <div class="event-card ev-target">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">4</div>
+            <div class="ev-date-mo">Jul</div>
+          </div>
+          <span class="ev-status pill-applying">Inquiry Sent</span>
+        </div>
+        <div class="ev-name">Leesburg Independence Day — Ida Lee Park</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Downtown Leesburg + Ida Lee Park, VA (36mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">10,000–15,000</span>
+          <span class="ev-tag">Parade + Evening Festival</span>
+          <span class="ev-tag">Food Truck Program</span>
+          <span class="ev-tag">Fireworks 9:30 PM</span>
+        </div>
+        <div class="ev-notes">Inquiry sent Jun 23 to parks@leesburgva.gov. One of region's largest July 4th events — parade 10am + evening park festival through 10pm fireworks. Food truck vendor program confirmed. Highest attendance opportunity in July 4th batch.</div>
+        <div class="ev-revenue">
+          <span class="ev-rev-label">Est. Net Revenue</span>
+          <span class="ev-rev-val">~$8,400</span>
+        </div>
+        <div class="ev-action-row">
+          <a href="mailto:parks@leesburgva.gov" class="ev-action-link">Follow Up</a>
+        </div>
+      </div>
+
+      <!-- Purcellville Franklin Park — Jul 4 -->
+      <div class="event-card ev-target">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">4</div>
+            <div class="ev-date-mo">Jul</div>
+          </div>
+          <span class="ev-status pill-applying">Inquiry Sent</span>
+        </div>
+        <div class="ev-name">Franklin Park Independence Day — Purcellville</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          17501 Franklin Park Dr, Purcellville, VA (38mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">5,000–8,000</span>
+          <span class="ev-tag">Free Admission</span>
+          <span class="ev-tag">Food Truck Slots</span>
+          <span class="ev-tag">Symphonic Music</span>
+        </div>
+        <div class="ev-notes">Inquiry sent Jun 23 to info@franklinparkartscenter.org. 5pm–9:30pm with Loudoun Symphonic Winds + fireworks. Free public event with food truck vendor model established. Low-friction approval expected. Family demographic ideal for CWJ cold brew.</div>
+        <div class="ev-revenue">
+          <span class="ev-rev-label">Est. Net Revenue</span>
+          <span class="ev-rev-val">~$4,800</span>
+        </div>
+        <div class="ev-action-row">
+          <a href="mailto:info@franklinparkartscenter.org" class="ev-action-link">Follow Up</a>
+        </div>
+      </div>
+
+      <!-- Herndon Bready Park — Jul 4 -->
+      <div class="event-card ev-target">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">4</div>
+            <div class="ev-date-mo">Jul</div>
+          </div>
+          <span class="ev-status pill-applying">Inquiry Sent</span>
+        </div>
+        <div class="ev-name">Herndon July 4th — Bready Park</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Bready Park, Herndon, VA (34mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">6,000–10,000</span>
+          <span class="ev-tag">City Parks Event</span>
+          <span class="ev-tag">Fireworks 9:30 PM</span>
+        </div>
+        <div class="ev-notes">Inquiry sent Jun 23 to parks@herndon-va.gov. 6:30pm–10pm city event with food, live entertainment, games. City-run parks vendor structure confirmed. Family demographic. Awaiting reply.</div>
+        <div class="ev-revenue">
+          <span class="ev-rev-label">Est. Net Revenue</span>
+          <span class="ev-rev-val">~$5,400</span>
+        </div>
+        <div class="ev-action-row">
+          <a href="mailto:parks@herndon-va.gov" class="ev-action-link">Follow Up</a>
+        </div>
+      </div>
+
+      <!-- Great Meadow Big Boom -->
+      <div class="event-card ev-target">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">4</div>
+            <div class="ev-date-mo">Jul</div>
+          </div>
+          <span class="ev-status pill-target">High Priority</span>
+        </div>
+        <div class="ev-name">Great Meadow Big Boom — July 4th</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          The Plains, VA (35mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Festival</span>
+          <span class="ev-tag">July 4th</span>
+          <span class="ev-tag">Top ROI Event</span>
+        </div>
+        <div class="ev-notes">Highest ROI event in pipeline. Large outdoor July 4th festival. Apply via gmjuly4th.com immediately.</div>
+        <div class="ev-revenue">
+          <span class="ev-rev-label">Est. Net Revenue</span>
+          <span class="ev-rev-val">$7,318</span>
+        </div>
+        <div class="ev-action-row">
+          <a href="https://gmjuly4th.com" target="_blank" class="ev-action-link">Apply Now</a>
+        </div>
+      </div>
+
+      <!-- Manassas Park Jul 2 -->
+      <div class="event-card ev-target">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">2</div>
+            <div class="ev-date-mo">Jul</div>
+          </div>
+          <span class="ev-status pill-target">Target</span>
+        </div>
+        <div class="ev-name">Manassas Park July 4th Celebration</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Manassas Park, VA (12mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">City Event</span>
+          <span class="ev-tag">Call Required</span>
+        </div>
+        <div class="ev-notes">Call 703-335-8800 (Manassas Park Parks Dept) to inquire. Pour vendor opportunity.</div>
+        <div class="ev-revenue">
+          <span class="ev-rev-label">Est. Net Revenue</span>
+          <span class="ev-rev-val">~$3,035</span>
+        </div>
+        <div class="ev-action-row">
+          <a href="tel:7033358800" class="ev-action-link">Call to Apply</a>
+        </div>
+      </div>
+
+      <!-- Fredericksburg Ag Fair -->
+      <div class="event-card ev-target">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">24</div>
+            <div class="ev-date-mo">Jul</div>
+          </div>
+          <span class="ev-status pill-target">Target</span>
+        </div>
+        <div class="ev-name">Fredericksburg Agricultural Fair</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Fredericksburg, VA (38mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">County Fair</span>
+          <span class="ev-tag">Multi-Day</span>
+          <span class="ev-tag">Jul 24–Aug 2</span>
+        </div>
+        <div class="ev-notes">10-day multi-day fair. Dry hire angle preferred. Call 540-373-1294 (Fairgrounds).</div>
+        <div class="ev-revenue">
+          <span class="ev-rev-label">Est. Net DRY HIRE (10d)</span>
+          <span class="ev-rev-val">~$9,500</span>
+        </div>
+        <div class="ev-action-row">
+          <a href="tel:5403731294" class="ev-action-link">Call Fairgrounds</a>
+        </div>
+      </div>
+
+      <!-- FXBG Craft Beer Festival -->
+      <div class="event-card ev-applying">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">TBD</div>
+            <div class="ev-date-mo">Jul</div>
+          </div>
+          <span class="ev-status pill-applying">Applied</span>
+        </div>
+        <div class="ev-name">Fredericksburg Craft Beer Festival</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Fredericksburg, VA (38mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Craft Beer</span>
+          <span class="ev-tag">Pour Event</span>
+        </div>
+        <div class="ev-notes">Outreach sent. Awaiting response from info@fbgcraftbeerfestival.com.</div>
+        <div class="ev-revenue">
+          <span class="ev-rev-label">Est. Net Revenue</span>
+          <span class="ev-rev-val">$7,273</span>
+        </div>
+      </div>
+
+      <!-- PW County Fair — NEW HIGH PRIORITY -->
+      <div class="event-card ev-target">
+        <div class="ev-head">
+          <div class="ev-date-badge" style="background:rgba(200,148,26,.2);border-color:rgba(200,148,26,.4);">
+            <div class="ev-date-day">31</div>
+            <div class="ev-date-mo">Jul</div>
+          </div>
+          <span class="ev-status pill-talks" style="background:rgba(200,148,26,.2);color:#e8a820;border-color:rgba(200,148,26,.4);">🔥 Top Priority</span>
+        </div>
+        <div class="ev-name">Prince William County Fair</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          10624 Dumfries Rd, Manassas, VA (12mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">County Fair</span>
+          <span class="ev-tag">Jul 31–Aug 8</span>
+          <span class="ev-tag">9 Days</span>
+          <span class="ev-tag">10,000+ Attendance</span>
+        </div>
+        <div class="ev-notes">🔥 ACTIVE — In direct contact with Bridget Mullins (info@pwcfair.com). Sent inline setup photos + CWJ/Murlarkey/beer menus + full pricing Jun 22. Requested call for 8-day run quote. Jeff Simon (CWJ) meeting Jun 24 to confirm 6× keg supply. Murlarkey cocktail menu in preparation. Largest county fair in Virginia — 5,000–10,000+ attendance across 9 days.</div>
+        <div class="ev-revenue">
+          <span class="ev-rev-label">Est. Net Revenue (9d mixed)</span>
+          <span class="ev-rev-val">$45,743</span>
+        </div>
+        <div class="ev-action-row">
+          <a href="tel:7033680173" class="ev-action-link">Call to Apply</a>
+          <a href="https://princewilliamcountyfairgrounds.com" target="_blank" class="ev-action-link">Website</a>
+        </div>
+      </div>
+
+      <!-- Purcellville Wine & Food Festival -->
+      <div class="event-card ev-target">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">18</div>
+            <div class="ev-date-mo">Jul</div>
+          </div>
+          <span class="ev-status pill-target">Waitlist Available</span>
+        </div>
+        <div class="ev-name">Purcellville Wine and Food Festival</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Dillon's Woods, Purcellville, VA (38mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Wine and Food</span>
+          <span class="ev-tag">2pm–8pm</span>
+          <span class="ev-tag">1,500–3,000</span>
+        </div>
+        <div class="ev-notes">At capacity — waitlist available. Premium demographic. Apply via events@purcellvilleva.gov. Strong match for craft cold brew and specialty pours.</div>
+        <div class="ev-action-row">
+          <a href="mailto:events@purcellvilleva.gov" class="ev-action-link">Join Waitlist</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- AUGUST 2026 -->
+  <div class="month-group" id="august">
+    <div class="month-header">
+      <span class="month-label">August 2026</span>
+      <span class="month-line"></span>
+      <span class="month-count">6 events</span>
+    </div>
+    <div class="events-grid">
+
+      <!-- Bites Beats Brews -->
+      <div class="event-card ev-applying">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">1</div>
+            <div class="ev-date-mo">Aug</div>
+          </div>
+          <span class="ev-status pill-applying">Applying</span>
+        </div>
+        <div class="ev-name">Bites, Beats and Brews — Alexandria</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Alexandria, VA (28mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Food and Music</span>
+          <span class="ev-tag">Pour Event</span>
+        </div>
+        <div class="ev-notes">Apply via chiceventsdc.com/vendor-registration. Urban festival with strong beverage vendor demand.</div>
+        <div class="ev-revenue">
+          <span class="ev-rev-label">Est. Net Revenue</span>
+          <span class="ev-rev-val">$5,889</span>
+        </div>
+        <div class="ev-action-row">
+          <a href="https://chiceventsdc.com/vendor-registration" target="_blank" class="ev-action-link">Apply Now</a>
+        </div>
+      </div>
+
+      <!-- FXBG Cigar Bourbon Beer -->
+      <div class="event-card ev-applying">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">8</div>
+            <div class="ev-date-mo">Aug</div>
+          </div>
+          <span class="ev-status pill-applying">Applying</span>
+        </div>
+        <div class="ev-name">FXBG Cigar, Bourbon and Beer Fest</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Fredericksburg, VA (38mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Spirits Festival</span>
+          <span class="ev-tag">Pour Event</span>
+        </div>
+        <div class="ev-notes">Premium audience — ideal for cold brew and craft on tap. Apply via vabourbonfest.com.</div>
+        <div class="ev-revenue">
+          <span class="ev-rev-label">Est. Net Revenue</span>
+          <span class="ev-rev-val">~$5,889 · waitlist</span>
+        </div>
+        <div class="ev-action-row">
+          <a href="https://vabourbonfest.com" target="_blank" class="ev-action-link">Apply Now</a>
+        </div>
+      </div>
+
+      <!-- Fredericksburg Tacos and Beer -->
+      <div class="event-card ev-applying">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">TBD</div>
+            <div class="ev-date-mo">Aug</div>
+          </div>
+          <span class="ev-status pill-applying">Web Form Pending</span>
+        </div>
+        <div class="ev-name">Cheers FXBG — Tacos and Beer</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Fredericksburg, VA (38mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Food Festival</span>
+          <span class="ev-tag">Pour Event</span>
+        </div>
+        <div class="ev-notes">Submit vendor form at cheersfxbg.regfox.com. Strong food and beverage pairing opportunity.</div>
+        <div class="ev-revenue">
+          <span class="ev-rev-label">Est. Net Revenue</span>
+          <span class="ev-rev-val">~$5,889 · waitlist</span>
+        </div>
+        <div class="ev-action-row">
+          <a href="https://cheersfxbg.regfox.com" target="_blank" class="ev-action-link">Apply Now</a>
+        </div>
+      </div>
+
+      <!-- Fairfax County Fair -->
+      <div class="event-card ev-applying">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">30</div>
+            <div class="ev-date-mo">Jul</div>
+          </div>
+          <span class="ev-status pill-applying">Applied</span>
+        </div>
+        <div class="ev-name">Fairfax County Carnival and Fair</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Frying Pan Farm Park, Herndon, VA (32mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">County Fair</span>
+          <span class="ev-tag">Jul 30–Aug 3</span>
+          <span class="ev-tag">4-Day Event</span>
+          <span class="ev-tag">3,000–5,000</span>
+        </div>
+        <div class="ev-notes">Application emailed Jun 17 to FCPAFryingPanPark@fairfaxcounty.gov. No alcohol on premises — cold brew and nitro tea ideal. Awaiting response.</div>
+        <div class="ev-action-row">
+          <a href="mailto:FCPAFryingPanPark@fairfaxcounty.gov" class="ev-action-link">Follow Up</a>
+        </div>
+      </div>
+
+      <!-- Arlington County Fair — HIGH PRIORITY -->
+      <div class="event-card ev-applying">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">12</div>
+            <div class="ev-date-mo">Aug</div>
+          </div>
+          <span class="ev-status pill-applying">Applied</span>
+        </div>
+        <div class="ev-name">Arlington County Fair</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Thomas Jefferson Community Center, Arlington, VA (38mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">County Fair</span>
+          <span class="ev-tag">Aug 12–16</span>
+          <span class="ev-tag">5-Day Event</span>
+          <span class="ev-tag">5,000–10,000+/day</span>
+        </div>
+        <div class="ev-revenue">
+          <span class="ev-rev-label">Est. Revenue</span>
+          <span class="ev-rev-val">$36,338 total · $7,268/day</span>
+        </div>
+        <div class="ev-notes">Application emailed Jun 18 to countyfair@arlingtonva.us + entertainment@arlingtoncountyfair.us. Decisions by Jun 25, payment due Jul 5. One of the highest-revenue opportunities in the pipeline.</div>
+        <div class="ev-action-row">
+          <a href="https://www.arlingtoncountyfair.us/participate/be-a-vendor/" target="_blank" class="ev-action-link">Vendor Page</a>
+        </div>
+      </div>
+
+      <!-- TASTE Leesburg -->
+      <div class="event-card ev-applying">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">9</div>
+            <div class="ev-date-mo">Aug</div>
+          </div>
+          <span class="ev-status pill-applying">Applied</span>
+        </div>
+        <div class="ev-name">TASTE Leesburg</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Downtown Leesburg, VA (36mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Food and Drink</span>
+          <span class="ev-tag">Craft Beverage</span>
+          <span class="ev-tag">1,000–2,000</span>
+        </div>
+        <div class="ev-notes">Application emailed Jun 17 to lgreen@leesburgva.gov + Eventeny form submitted. Late fee applies ($325 + $45). Notification by Jun 19. Temp food permit needed by Jul 24.</div>
+        <div class="ev-action-row">
+          <a href="https://www.eventeny.com/events/vendor/?id=43448" target="_blank" class="ev-action-link">Check Status</a>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+  <!-- SEPTEMBER 2026 -->
+  <div class="month-group" id="september">
+    <div class="month-header">
+      <span class="month-label">September 2026</span>
+      <span class="month-line"></span>
+      <span class="month-count">4 events</span>
+    </div>
+    <div class="events-grid">
+
+      <!-- Manassas International Food Festival -->
+      <div class="event-card ev-target">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">20</div>
+            <div class="ev-date-mo">Sep</div>
+          </div>
+          <span class="ev-status pill-target">Target</span>
+        </div>
+        <div class="ev-name">Manassas International Food Festival</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Manassas, VA (15mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Cultural Festival</span>
+          <span class="ev-tag">Dry Hire</span>
+        </div>
+        <div class="ev-notes">Local flagship food festival. Dry hire angle — organizers provide their own beverage. Contact via visitmanassas.org.</div>
+        <div class="ev-revenue">
+          <span class="ev-rev-label">Est. Dry Hire Revenue</span>
+          <span class="ev-rev-val">$950</span>
+        </div>
+        <div class="ev-action-row">
+          <a href="https://visitmanassas.org" target="_blank" class="ev-action-link">Apply Now</a>
+        </div>
+      </div>
+
+      <!-- Virginia Renaissance Faire -->
+      <div class="event-card ev-applying">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">5+</div>
+            <div class="ev-date-mo">Sep</div>
+          </div>
+          <span class="ev-status pill-applying">Applied</span>
+        </div>
+        <div class="ev-name">Virginia Renaissance Faire</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Lake Anna, VA (45mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Multi-Weekend</span>
+          <span class="ev-tag">5 Weekends</span>
+          <span class="ev-tag">Pour Event</span>
+        </div>
+        <div class="ev-notes">5-weekend event with highest sustained revenue potential in the season. Outreach sent to info@varf.org. Follow up needed.</div>
+        <div class="ev-revenue">
+          <span class="ev-rev-label">Est. Pour Revenue (5 wks)</span>
+          <span class="ev-rev-val">$14,775</span>
+        </div>
+      </div>
+
+      <!-- Virginia Beer and Wine Festival — NEW -->
+      <div class="event-card ev-target">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">26</div>
+            <div class="ev-date-mo">Sep</div>
+          </div>
+          <span class="ev-status pill-target">Target</span>
+        </div>
+        <div class="ev-name">Virginia Beer and Wine Festival</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          National Landing Water Park, Arlington, VA (40mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Craft Beer and Wine</span>
+          <span class="ev-tag">1,500–3,000</span>
+          <span class="ev-tag">Affluent Demo</span>
+        </div>
+        <div class="ev-notes">Craft beverage-specific festival at National Landing. Premium demographic — perfect alignment with Cedar Tap cold brew and specialty taps. Contact National Landing Events.</div>
+        <div class="ev-action-row">
+          <a href="https://nationallanding.org/do/virginia-beer-festival" target="_blank" class="ev-action-link">Apply Now</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- OCTOBER 2026 -->
+  <div class="month-group" id="october">
+    <div class="month-header">
+      <span class="month-label">October 2026</span>
+      <span class="month-line"></span>
+      <span class="month-count">3 events</span>
+    </div>
+    <div class="events-grid">
+
+      <!-- NVSC Battlefield Tournament — NEW -->
+      <div class="event-card ev-target">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">10</div>
+            <div class="ev-date-mo">Oct</div>
+          </div>
+          <span class="ev-status pill-applying">Outreach Sent</span>
+        </div>
+        <div class="ev-name">NVSC Battlefield 2026 Tournament</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Hellwig / Howison / Valley View / Catharpin — PWC Fields
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Soccer Tournament</span>
+          <span class="ev-tag">Oct 10–11</span>
+          <span class="ev-tag">230+ Teams</span>
+          <span class="ev-tag">1,000+ Spectators</span>
+        </div>
+        <div class="ev-notes">Outreach sent Jun 23 to info@novasc.org. Multi-field mobile deployment across PWC complex. Traveling families on-site full day — ideal coffee + cold brew timing. novasc.org/tournaments/battlefield-tournament</div>
+        <div class="ev-action-row">
+          <a href="https://www.novasc.org/tournaments/battlefield-tournament" target="_blank" class="ev-action-link">Tournament Info</a>
+          <a href="mailto:info@novasc.org" class="ev-action-link">Follow Up</a>
+        </div>
+      </div>
+
+      <!-- K Sports Complex -->
+      <div class="event-card ev-target">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">Wknd</div>
+            <div class="ev-date-mo">Oct+</div>
+          </div>
+          <span class="ev-status pill-applying">Outreach Sent</span>
+        </div>
+        <div class="ev-name">K Sports Complex — Tournament Weekends</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          10050 Pennsylvania Ave, Manassas, VA (12mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Indoor Sports</span>
+          <span class="ev-tag">Basketball + Volleyball</span>
+          <span class="ev-tag">400–700+/weekend</span>
+        </div>
+        <div class="ev-notes">Outreach sent Jun 23 to info@ksportsva.com. Actively seeks outside vendors — fastest vendor approval path in sporting complex pipeline. (571) 719-6121.</div>
+        <div class="ev-action-row">
+          <a href="tel:5717196121" class="ev-action-link">Call to Confirm</a>
+        </div>
+      </div>
+
+      <!-- Manassas Fall Jubilee — NEW HIGH PRIORITY -->
+      <div class="event-card ev-target">
+        <div class="ev-head">
+          <div class="ev-date-badge" style="background:rgba(200,148,26,.2);border-color:rgba(200,148,26,.4);">
+            <div class="ev-date-day">3</div>
+            <div class="ev-date-mo">Oct</div>
+          </div>
+          <span class="ev-status pill-talks" style="background:rgba(200,148,26,.2);color:#e8a820;border-color:rgba(200,148,26,.4);">🔥 Top Priority</span>
+        </div>
+        <div class="ev-name">Manassas Fall Jubilee</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Center Street, Historic Manassas, VA (15mi)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Annual Street Festival</span>
+          <span class="ev-tag">100+ Booths</span>
+          <span class="ev-tag">Free Admission</span>
+          <span class="ev-tag">3,000–5,000</span>
+        </div>
+        <div class="ev-notes">Historic downtown Manassas fall flagship event. Free public event — high foot traffic, family-oriented. 100+ booths. Contact Historic Manassas Inc. Recurring annually.</div>
+        <div class="ev-action-row">
+          <a href="https://historicmanassas.org/manassas-fall-jubilee/" target="_blank" class="ev-action-link">Apply Now</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FITNESS CENTER BRAND ACTIVATIONS -->
+  <div class="month-group" id="fitness">
+    <div class="month-header">
+      <span class="month-label">Fitness Center Activations — CWJ + La Colombe</span>
+      <span class="month-line"></span>
+      <span class="month-count">Jun 22–23 outreach · 20+ contacts</span>
+    </div>
+    <div class="events-grid">
+
+      <div class="event-card ev-applying">
+        <div class="ev-head">
+          <div class="ev-date-badge"><div class="ev-date-day">10</div><div class="ev-date-mo">NoVA</div></div>
+          <span class="ev-status pill-applying">Sent Jun 23 · 10 GMs</span>
+        </div>
+        <div class="ev-name">OneLife Fitness — NoVA Named GM Wave</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Woodbridge · Manassas · Gainesville · Sterling · Alexandria · Herndon · McLean · Falls Church · Reston · Ashburn
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Post-Workout Pop-Up</span>
+          <span class="ev-tag">CWJ Nitro</span>
+          <span class="ev-tag">La Colombe</span>
+          <span class="ev-tag">Revenue Share</span>
+        </div>
+        <div class="ev-notes">Personalized founder intro sent Jun 23 to all 10 NoVA GMs via named email addresses + Maeve Haynes (Sr. Director of Marketing). No pricing in intro — CTA first 3 sentences. Awaiting replies.</div>
+        <div class="ev-action-row">
+          <a href="mailto:maeve.haynes@onelifefitness.com" class="ev-action-link">Corporate Contact</a>
+        </div>
+      </div>
+
+      <div class="event-card ev-applying">
+        <div class="ev-head">
+          <div class="ev-date-badge"><div class="ev-date-day">10</div><div class="ev-date-mo">DC+</div></div>
+          <span class="ev-status pill-applying">Sent Jun 23 · Re-sent @lifetimefitness.com</span>
+        </div>
+        <div class="ev-name">Life Time Fitness — Named GM Wave</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Reston · Chantilly · Fairfax · Gainesville · Bethesda · Rockville · Tysons · Arlington · Alexandria · DC Metro
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Member Experience Event</span>
+          <span class="ev-tag">CWJ Nitro</span>
+          <span class="ev-tag">La Colombe</span>
+          <span class="ev-tag">Premium Positioning</span>
+        </div>
+        <div class="ev-notes">Initial send used @lt.life — all 10 bounced (Mimecast 550). Corrected to @lifetimefitness.com and re-sent Jun 23. Personalized GM intro with founder voice. Awaiting replies.</div>
+      </div>
+
+      <div class="event-card ev-applying">
+        <div class="ev-head">
+          <div class="ev-date-badge"><div class="ev-date-day">4</div><div class="ev-date-mo">DC</div></div>
+          <span class="ev-status pill-applying">Sent Jun 23 · Named GMs</span>
+        </div>
+        <div class="ev-name">Equinox — Named GM Wave</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Sports Club DC · Anthem Row DC · Bethesda MD · Tysons VA
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Ultra-Premium</span>
+          <span class="ev-tag">Circle Partner Program</span>
+          <span class="ev-tag">CWJ + La Colombe</span>
+        </div>
+        <div class="ev-notes">Named GM intros sent Jun 23: Alex Enos (DC), Karlin Ames (Anthem Row), Courtney Hallinan (Bethesda), Karri Mae (Tysons). Founder voice, CTA in first 3 sentences.</div>
+      </div>
+
+      <div class="event-card ev-applying">
+        <div class="ev-head">
+          <div class="ev-date-badge"><div class="ev-date-day">Svc</div><div class="ev-date-mo">VA</div></div>
+          <span class="ev-status pill-applying">Sent Jun 23 · Director Level</span>
+        </div>
+        <div class="ev-name">The St. James — Corporate Wellness Director</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Springfield, VA — 450,000 sqft
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Corporate Wellness Event</span>
+          <span class="ev-tag">450k Sqft Venue</span>
+          <span class="ev-tag">Revenue Share</span>
+        </div>
+        <div class="ev-notes">Direct outreach to Adin Alai (Sr. Director, Corporate Wellness) Jun 23. Largest sports and wellness facility in NoVA. Morning class recovery station concept with CWJ + La Colombe. Awaiting reply.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- YOUTH SPORTS TOURNAMENT POOL -->
+  <div class="month-group" id="youth-sports">
+    <div class="month-header">
+      <span class="month-label">Youth Sports Tournament Pipeline</span>
+      <span class="month-line"></span>
+      <span class="month-count">VDH exempt · coffee concession model · 2026–2027</span>
+    </div>
+    <div class="events-grid">
+
+      <div class="event-card ev-target">
+        <div class="ev-head">
+          <div class="ev-date-badge"><div class="ev-date-day">⚽</div><div class="ev-date-mo">Pool</div></div>
+          <span class="ev-status pill-target">Scouting</span>
+        </div>
+        <div class="ev-name">Youth Tournament Pool — 12 Events</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          NoVA / DC Metro — PWC, Fairfax, Loudoun, Arlington
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">USYS National League / EDP</span>
+          <span class="ev-tag">Loudoun Showcase (Mar)</span>
+          <span class="ev-tag">WAGS (Oct)</span>
+          <span class="ev-tag">PWSI Ice Breaker (Mar)</span>
+        </div>
+        <div class="ev-notes">Pool for consideration: USYS EDP/CCL Showcase (Feb) · Adidas Showcase (Dec) · Adidas National Cup (Feb) · Arlington ASIST (Mar) · Alexandria ASK (Mar) · Stafford St. Patricks (Mar) · VSA Cannon Cup (May) · State Cup · Presidents Cup. VDH food safety exemption applies when Cedar Tap operates as sponsored concession of recognized youth athletic association — no TFE permit required.</div>
+        <div class="ev-action-row">
+          <a href="mailto:cheron@pwsi.org" class="ev-action-link">PWSI Contact</a>
+          <a href="https://www.novasc.org/tournaments/battlefield-tournament" target="_blank" class="ev-action-link">Battlefield</a>
+        </div>
+      </div>
+
+      <div class="event-card ev-target">
+        <div class="ev-head">
+          <div class="ev-date-badge"><div class="ev-date-day">29</div><div class="ev-date-mo">Jun</div></div>
+          <span class="ev-status pill-target">Call Needed</span>
+        </div>
+        <div class="ev-name">Philip A. Bolen Memorial Park</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          42405 Claudia Dr, Leesburg, VA (Loudoun County)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">405 Acres</span>
+          <span class="ev-tag">17 Lighted Fields</span>
+          <span class="ev-tag">29 Tournaments/yr</span>
+          <span class="ev-tag">PONY National</span>
+        </div>
+        <div class="ev-notes">Call (703) 777-0343 — Loudoun County PRCS vendor inquiry. PONY National Championship + ASA Eastern Championship hosted here. 800+ attendance per tournament. Highest tournament venue volume in NoVA.</div>
+        <div class="ev-action-row">
+          <a href="tel:7037770343" class="ev-action-link">Call PRCS</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PLATFORMS / ONGOING -->
+  <div class="month-group" id="platforms">
+    <div class="month-header">
+      <span class="month-label">Platforms and Ongoing</span>
+      <span class="month-line"></span>
+      <span class="month-count">2 listings</span>
+    </div>
+    <div class="events-grid">
+
+      <div class="event-card ev-platform">
+        <div class="ev-head">
+          <div class="ev-date-badge" style="background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.2);">
+            <div class="ev-date-day" style="color:var(--purple);font-size:1rem;">AIR</div>
+            <div class="ev-date-mo">BnB</div>
+          </div>
+          <span class="ev-status pill-platform">Revision Needed</span>
+        </div>
+        <div class="ev-name">Airbnb Experiences</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Woodbridge, VA (Home Base)
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Guided Flight Experience</span>
+          <span class="ev-tag">Listing 7133103</span>
+        </div>
+        <div class="ev-notes">"Sip a Guided Flight in a Mobile Tap Room" — revision requested by Airbnb. Tom to update at airbnb.com/hosting/listings/experience/7133103.</div>
+        <div class="ev-action-row">
+          <a href="https://airbnb.com/hosting/listings/experience/7133103" target="_blank" class="ev-action-link">Update Listing</a>
+        </div>
+      </div>
+
+      <div class="event-card ev-talks">
+        <div class="ev-head">
+          <div class="ev-date-badge">
+            <div class="ev-date-day">Wknd</div>
+            <div class="ev-date-mo">Jul+</div>
+          </div>
+          <span class="ev-status pill-talks">Partnership In Progress</span>
+        </div>
+        <div class="ev-name">Potomac Shores — Summer Standing Dates</div>
+        <div class="ev-location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Potomac Shores, Prince William County, VA
+        </div>
+        <div class="ev-type-row">
+          <span class="ev-tag">Venue Partner</span>
+          <span class="ev-tag">Standing Dates</span>
+          <span class="ev-tag">Weekends</span>
+        </div>
+        <div class="ev-notes">Pursuing standing summer partnership for weekend activations. Contact: Chelsea Sparaco (LinkedIn). Available this weekend if needed.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOOK BANNER -->
+  <div class="book-banner">
+    <h2>Bring Cedar Tap to Your <em>Event</em></h2>
+    <p>Corporate activations, weddings, festivals, and venue partnerships — we pour craft beverages anywhere.</p>
+    <div class="book-btn-row">
+      <a href="/#contact" class="btn-primary">Book Your Date</a>
+      <a href="tel:2028101861" class="btn-ghost">202-810-1861</a>
+      <a href="mailto:tom@cedartaps.com" class="btn-ghost">tom@cedartaps.com</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>Cedar Tap Mobile Tap Room · Woodbridge, VA · <a href="mailto:tom@cedartaps.com">tom@cedartaps.com</a> · <a href="tel:2028101861">202-810-1861</a></p>
+  <p style="margin-top:6px;font-size:.65rem;color:#5a4e3e;">Northern Virginia and DC Metro · 40mi service radius · ABC licensed · Insured</p>
+</footer>
+
+</body>
+</html>

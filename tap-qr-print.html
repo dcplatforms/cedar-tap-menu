@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cedar Tap — Tap QR Codes (Print)</title>
+<style>
+  @media print { body { margin: 0; } }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#fff; font-family: 'Georgia', serif; padding: 20px; }
+  h1 { text-align:center; font-size:22px; letter-spacing:3px; text-transform:uppercase; margin-bottom:6px; color:#2d1b0e; }
+  .subtitle { text-align:center; font-size:11px; letter-spacing:2px; color:#888; margin-bottom:24px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; max-width:900px; margin:0 auto; }
+  .card {
+    border: 2px solid #2d1b0e;
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+    page-break-inside: avoid;
+  }
+  .card.tea { border-color: #6b0f3a; }
+  .card-emoji { font-size: 32px; margin-bottom: 6px; }
+  .card-name { font-size: 16px; font-weight: bold; color: #2d1b0e; margin-bottom: 2px; }
+  .card.tea .card-name { color: #6b0f3a; }
+  .card-size { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #888; margin-bottom: 10px; }
+  .card-price { font-size: 26px; font-weight: bold; color: #c8860a; margin-bottom: 12px; }
+  .card.tea .card-price { color: #e8476a; }
+  .qr-wrap { background: #fdf8f0; border-radius: 8px; padding: 10px; display:inline-block; margin-bottom: 8px; }
+  .qr-wrap svg { width:150px; height:150px; display:block; }
+  .card-cta { font-size: 11px; color: #555; margin-top: 4px; }
+  .footer { text-align:center; margin-top:24px; font-size:10px; color:#aaa; letter-spacing:1px; }
+</style>
+</head>
+<body>
+
+<h1>Cedar Tap</h1>
+<div class="subtitle">Scan to Order &amp; Pay · cedartaps.com</div>
+
+<div class="grid" id="grid">
+  <!-- Injected by JS -->
+</div>
+
+<div class="footer">Cedar Tap Mobile Tap Room · tom@cedartaps.com · (202) 810-1861</div>
+
+<script>
+const links = [
+  { name:'Cold Brew', size:'10oz', price:'$5.99', cls:'', emoji:'☕', url:'https://square.link/u/IoMBbPfW', slug:'cold-brew-10oz' },
+  { name:'Cold Brew', size:'14oz', price:'$7.99', cls:'', emoji:'☕', url:'https://square.link/u/IZncsxw2', slug:'cold-brew-14oz' },
+  { name:'Cold Brew', size:'16oz', price:'$9.99', cls:'', emoji:'☕', url:'https://square.link/u/MjC64dyT', slug:'cold-brew-16oz' },
+  { name:'Hibiscus Nitro Tea', size:'10oz', price:'$5.99', cls:'tea', emoji:'🌺', url:'https://square.link/u/tO6eXKsB', slug:'hibiscus-tea-10oz' },
+  { name:'Hibiscus Nitro Tea', size:'14oz', price:'$9.99', cls:'tea', emoji:'🌺', url:'https://square.link/u/5KyhrOxS', slug:'hibiscus-tea-14oz' },
+  { name:'Hibiscus Nitro Tea', size:'16oz', price:'$9.99', cls:'tea', emoji:'🌺', url:'https://square.link/u/LNq2nFc8', slug:'hibiscus-tea-16oz' },
+];
+
+const grid = document.getElementById('grid');
+links.forEach(l => {
+  const card = document.createElement('div');
+  card.className = 'card ' + l.cls;
+  card.innerHTML = `
+    <div class="card-emoji">${l.emoji}</div>
+    <div class="card-name">${l.name}</div>
+    <div class="card-size">${l.size}</div>
+    <div class="card-price">${l.price}</div>
+    <div class="qr-wrap">
+      <img src="img/qr-${l.slug}.svg" width="150" height="150">
+    </div>
+    <div class="card-cta">Scan &amp; Pay with Square</div>
+  `;
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>

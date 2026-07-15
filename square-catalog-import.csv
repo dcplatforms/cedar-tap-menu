@@ -1,0 +1,18 @@
+Token,Category,Item Name,Variation Name,SKU,Description,Price,COGS,Enabled (Square Online),Visibility
+,Nitro Cold Brew,Cedar Dark,12oz,CDK-12,Rich smooth nitrogen-kissed dark roast cold brew. Bold flavor without the bite.,8.99,,true,PUBLIC
+,Nitro Cold Brew,Cedar Dark,16oz,CDK-16,Rich smooth nitrogen-kissed dark roast cold brew. Bold flavor without the bite.,9.99,,true,PUBLIC
+,Nitro Cold Brew,Cedar Single Origin,12oz,CSO-12,Single-farm cold brew on nitro. Bright clean and complex. Ask your pourer what's on today.,8.99,,true,PUBLIC
+,Nitro Cold Brew,Cedar Single Origin,16oz,CSO-16,Single-farm cold brew on nitro. Bright clean and complex. Ask your pourer what's on today.,9.99,,true,PUBLIC
+,Nitro Cold Brew,Cedar Caramel,12oz,CCA-12,Cold brew meets dessert. Sweet salty and velvety smooth salted caramel nitro.,8.99,,true,PUBLIC
+,Nitro Cold Brew,Cedar Caramel,16oz,CCA-16,Cold brew meets dessert. Sweet salty and velvety smooth salted caramel nitro.,9.99,,true,PUBLIC
+,Nitro Tea,Cedar Bloom,12oz,CBL-12,Light floral effervescent. Nitrogen-infused passion fruit tea poured cold.,8.99,,true,PUBLIC
+,Nitro Tea,Cedar Bloom,16oz,CBL-16,Light floral effervescent. Nitrogen-infused passion fruit tea poured cold.,9.99,,true,PUBLIC
+,Draft Beer,Rotating Tap,5oz Pour,BEER-5,Local craft beer served cold on draft. Tap lineup changes per event.,5.99,,true,PUBLIC
+,Draft Beer,Rotating Tap,10oz Pour,BEER-10,Local craft beer served cold on draft. Tap lineup changes per event.,8.99,,true,PUBLIC
+,Draft Beer,Rotating Tap,16oz Pint,BEER-16,Local craft beer served cold on draft. Tap lineup changes per event.,11.99,,true,PUBLIC
+,Wine,House Wine,5oz Pour,WINE-5,Curated selection of craft wines on tap. Ask your pourer for today's pour.,7.99,,true,PUBLIC
+,Wine,House Wine,8oz Glass,WINE-8,Curated selection of craft wines on tap. Ask your pourer for today's pour.,11.99,,true,PUBLIC
+,Wine,House Wine,Bottle,WINE-BTL,Full bottle service from the tap. Ask for available selections.,34.99,,true,PUBLIC
+,Subscription,Cedar Dark Box - Monthly,Monthly,SUB-DARK,Monthly subscription box: Cedar Dark nitro concentrate + 4-pack pour packets + branded tumbler.,29.99,,true,PUBLIC
+,Subscription,Cedar Bloom Box - Monthly,Monthly,SUB-BLOOM,Monthly subscription box: Cedar Bloom light roast + caramel syrup + branded cedar stir sticks.,29.99,,true,PUBLIC
+,Subscription,Tap Room Sampler - Monthly,Monthly,SUB-SAMP,Monthly subscription box: Split roast bag + caramel syrup sampler + Cedar Tap sticker merch pack.,29.99,,true,PUBLIC

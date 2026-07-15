@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+  <meta name="theme-color" content="#0d0d0d"/>
+  <meta name="description" content="Cedar Tap × La Colombe — Cold Brew on Tap"/>
+  <title>Cedar Tap × La Colombe · Cold Brew on Tap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,900;1,300;1,400&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* ════════════════════════════════════════════════
+       DESIGN TOKENS — La Colombe Draft Can Campaign
+       Color-correct: LC cans are WHITE label, black
+       text, deep blue + red accents — brand accurate
+    ════════════════════════════════════════════════ */
+    :root {
+      /* La Colombe brand — light label accurate */
+      --lc-black:    #0d0d0d;
+      --lc-blue:     #002855;
+      --lc-blue-lt:  #003087;
+      --lc-red:      #e31837;
+      --lc-white:    #f8f8f6;    /* label background */
+      --lc-offwhite: #eeecea;
+      --lc-silver:   #c8c4c0;
+      --lc-ink:      #111111;    /* primary text on label */
+      --lc-ink-dim:  #555550;    /* secondary text */
+      --lc-rule:     rgba(0,0,0,0.1);
+
+      /* Cedar Tap */
+      --cedar:       #a05a20;
+      --cedar-warm:  #c87030;
+      --cedar-gold:  #d4a43a;
+
+      /* Can metal */
+      --metal-hi:    rgba(255,255,255,0.12);
+      --metal-sh:    rgba(0,0,0,0.35);
+
+      --radius-sm:   3px;
+      --radius:      6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    /* ── BODY — white can label surface ─────────── */
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--lc-white);
+      color: var(--lc-ink);
+      min-height: 100dvh;
+    }
+
+    /* ── CAN RIM TOP ─────────────────────────────── */
+    .can-rim-top {
+      height: 12px;
+      background: linear-gradient(180deg,
+        #5a5a5a 0%,
+        #8a8a8a 20%,
+        #6a6a6a 40%,
+        #9a9a9a 55%,
+        #707070 70%,
+        #4a4a4a 100%
+      );
+      position: relative;
+      overflow: hidden;
+    }
+    .can-rim-top::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent, transparent 3px,
+        rgba(255,255,255,0.04) 3px, rgba(255,255,255,0.04) 4px
+      );
+    }
+
+    /* ── LABEL EDGE — perforated score line ─────── */
+    .label-edge-top {
+      height: 3px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--lc-blue) 0px, var(--lc-blue) 8px,
+        transparent 8px, transparent 12px
+      );
+      opacity: 0.8;
+    }
+
+    /* ── EVENT STRIP ─────────────────────────────── */
+    .event-strip {
+      background: var(--lc-blue);
+      padding: 6px 16px;
+      text-align: center;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    /* ── CAN LABEL BODY ──────────────────────────── */
+    .label-body {
+      /* white can label — slight cylindrical highlight */
+      background: linear-gradient(180deg,
+        #f5f5f0 0%,
+        #f8f8f6 15%,
+        #fafaf8 40%,
+        #f8f8f6 65%,
+        #f5f5f2 100%
+      );
+      position: relative;
+    }
+    /* vertical highlight band — cylindrical illusion */
+    .label-body::before {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 60%; width: 80px;
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(255,255,255,0.5) 40%,
+        rgba(255,255,255,0.85) 50%,
+        rgba(255,255,255,0.5) 60%,
+        transparent
+      );
+      pointer-events: none;
+    }
+
+    /* ── CO-BRAND HEADER ─────────────────────────── */
+    .collab-header {
+      padding: 28px 20px 20px;
+      border-bottom: 1px solid var(--lc-rule);
+      text-align: center;
+      position: relative;
+    }
+
+    /* brand accent rule */
+    .collab-header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%; transform: translateX(-50%);
+      width: 40px; height: 2px;
+      background: var(--lc-red);
+    }
+
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .brand-lc {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+    }
+    /* La Colombe dove silhouette — SVG inline */
+    .lc-dove {
+      width: 36px; height: 26px;
+      fill: var(--lc-blue);
+    }
+    .brand-lc .lc-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--lc-blue);
+    }
+    .brand-lc .lc-sub {
+      font-size: 8.5px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--lc-ink-dim);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 300;
+    }
+
+    .collab-x {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px;
+      font-weight: 300;
+      color: rgba(0,0,0,0.2);
+      flex-shrink: 0;
+    }
+
+    .brand-cedar {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+    }
+    .brand-cedar .cedar-icon { font-size: 24px; line-height: 1; }
+    .brand-cedar .cedar-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cedar-warm);
+    }
+    .brand-cedar .cedar-sub {
+      font-size: 8.5px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--lc-ink-dim);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 300;
+    }
+
+    /* PRODUCT TITLE — big can-label hero text */
+    .product-hero {
+      margin-bottom: 6px;
+    }
+    .product-hero .kicker {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--lc-red);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .product-hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 44px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      line-height: 0.9;
+      color: var(--lc-ink);
+    }
+    .product-hero h1 em {
+      font-style: italic;
+      font-weight: 300;
+      color: var(--lc-ink-dim);
+    }
+    .product-hero .subhead {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--lc-ink-dim);
+      margin-top: 6px;
+    }
+
+    /* ── LABEL SECTION DIVIDER ───────────────────── */
+    .can-section {
+      border-top: 1px solid var(--lc-rule);
+      padding: 16px 20px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .can-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .can-section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--lc-ink-dim);
+    }
+    .can-section-rule {
+      flex: 1;
+      height: 1px;
+      background: var(--lc-rule);
+      margin-left: 12px;
+    }
+
+    /* ── ON-TAP ITEMS ────────────────────────────── */
+    .tap-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--lc-rule);
+      cursor: pointer;
+    }
+    .tap-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+    /* number indicator — can label line number */
+    .tap-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--lc-red);
+      letter-spacing: 0.05em;
+      flex-shrink: 0;
+      padding-top: 2px;
+      width: 18px;
+    }
+
+    .tap-info { flex: 1; }
+    .tap-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      color: var(--lc-ink);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .tap-origin {
+      font-size: 12px;
+      color: var(--lc-ink-dim);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      font-style: italic;
+      margin-bottom: 6px;
+    }
+
+    /* ingredient-style descriptor */
+    .tap-ingredients {
+      font-family: 'Barlow', sans-serif;
+      font-size: 10.5px;
+      font-weight: 300;
+      color: #888884;
+      letter-spacing: 0.01em;
+      line-height: 1.5;
+      font-style: italic;
+    }
+
+    .tap-tags {
+      display: flex; gap: 5px; margin-top: 7px; flex-wrap: wrap;
+    }
+    .tap-tag {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 1px;
+    }
+    .tag-lc    { border: 1px solid var(--lc-blue); color: var(--lc-blue); }
+    .tag-cedar { border: 1px solid rgba(168,90,32,0.5); color: var(--cedar); }
+    .tag-nitro { border: 1px solid rgba(0,0,0,0.15); color: var(--lc-ink-dim); }
+
+    .tap-right {
+      display: flex; flex-direction: column; align-items: flex-end;
+      flex-shrink: 0; gap: 4px; padding-top: 2px;
+    }
+    .tap-price {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--lc-ink);
+      line-height: 1;
+    }
+    .tap-price-from {
+      font-size: 10px;
+      color: var(--lc-ink-dim);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      display: block;
+      text-align: right;
+    }
+    .tap-chevron {
+      font-size: 14px;
+      color: rgba(0,0,0,0.2);
+      transition: transform 0.18s, color 0.18s;
+    }
+    .tap-item.open .tap-chevron { transform: rotate(90deg); color: var(--lc-red); }
+
+    /* ── SIZE PANEL ──────────────────────────────── */
+    .size-panel {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.26s ease;
+      padding-left: 32px;
+    }
+    .tap-item.open .size-panel { max-height: 200px; }
+    .size-inner {
+      padding: 10px 0 14px;
+      border-top: 1px solid var(--lc-rule);
+    }
+    .size-note {
+      font-size: 10.5px;
+      color: #888884;
+      font-style: italic;
+      margin-bottom: 10px;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+    }
+    .size-row { display: flex; gap: 7px; margin-bottom: 10px; }
+    .size-btn {
+      flex: 1;
+      border: 1px solid rgba(0,0,0,0.15);
+      background: rgba(0,0,0,0.03);
+      border-radius: var(--radius-sm);
+      padding: 9px 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.12s;
+      color: var(--lc-ink);
+    }
+    .size-btn:hover { border-color: var(--lc-blue); }
+    .size-btn.sel {
+      border-color: var(--lc-blue);
+      background: var(--lc-blue);
+      color: #fff;
+    }
+    .size-btn .oz {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .size-btn .price { font-size: 12px; margin-top: 1px; opacity: 0.75; font-family: 'Barlow', sans-serif; }
+    .size-btn.sel .price { opacity: 0.8; }
+    .order-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--lc-red);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .order-btn:hover { background: #c8102e; }
+
+    /* ── FLIGHT — "VARIETY PACK" ─────────────────── */
+    .flight-section {
+      padding: 0 20px 4px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .flight-can {
+      border: 1.5px solid var(--lc-blue);
+      border-radius: var(--radius);
+      padding: 18px 16px 16px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: #f0f4fa;
+    }
+    /* brand corner accent */
+    .flight-can::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 32px 32px 0 0;
+      border-color: var(--lc-red) transparent transparent transparent;
+    }
+    .flight-corner-text {
+      position: absolute;
+      top: 3px; left: 3px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 7px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--lc-black);
+      z-index: 1;
+      line-height: 1.1;
+    }
+    .flight-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 10px; margin-top: 4px;
+    }
+    .flight-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      color: var(--lc-ink);
+      line-height: 1;
+    }
+    .flight-title em {
+      font-style: italic;
+      font-weight: 300;
+      color: var(--lc-ink-dim);
+      font-size: 16px;
+    }
+    .flight-price {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--lc-red);
+      line-height: 1;
+    }
+    .flight-desc {
+      font-size: 12.5px;
+      color: var(--lc-ink-dim);
+      line-height: 1.55;
+      margin-bottom: 14px;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      font-style: italic;
+    }
+    .flight-pours {
+      display: flex; gap: 5px; margin-bottom: 14px;
+    }
+    .flight-pour {
+      flex: 1;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: var(--radius-sm);
+      padding: 8px 4px;
+      text-align: center;
+      background: rgba(255,255,255,0.6);
+    }
+    .flight-pour .f-bar {
+      width: 3px; height: 20px;
+      border-radius: 2px;
+      margin: 0 auto 5px;
+    }
+    .flight-pour .f-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--lc-ink-dim);
+      line-height: 1.3;
+    }
+    .flight-btn {
+      width: 100%;
+      padding: 12px;
+      background: transparent;
+      color: var(--lc-blue);
+      border: 1.5px solid var(--lc-blue);
+      border-radius: var(--radius-sm);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .flight-btn:hover { background: var(--lc-blue); color: #fff; }
+
+    /* ── NUTRITION FACTS PANEL (repurposed) ─────── */
+    .facts-panel {
+      margin: 0 20px;
+      border: 2px solid rgba(0,0,0,0.15);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      max-width: 440px;
+    }
+    .facts-title {
+      background: var(--lc-ink);
+      color: #fff;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.01em;
+      padding: 6px 12px 4px;
+      line-height: 1;
+    }
+    .facts-subtitle {
+      background: var(--lc-ink);
+      color: rgba(255,255,255,0.6);
+      font-family: 'Barlow', sans-serif;
+      font-size: 10px;
+      font-weight: 400;
+      padding: 0 12px 8px;
+      border-bottom: 8px solid var(--lc-blue);
+      line-height: 1.4;
+    }
+    .facts-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 12px;
+      border-bottom: 1px solid rgba(0,0,0,0.07);
+      font-size: 12px;
+      background: #fff;
+    }
+    .facts-row .f-label {
+      font-family: 'Barlow', sans-serif;
+      font-weight: 400;
+      color: var(--lc-ink-dim);
+    }
+    .facts-row .f-val {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--lc-ink);
+      letter-spacing: 0.04em;
+    }
+    .facts-row.teal { background: #f0f4fa; }
+    .facts-row.teal .f-label { color: var(--lc-blue); }
+    .facts-row.teal .f-val   { color: var(--lc-blue); }
+    .facts-divider {
+      height: 5px;
+      background: rgba(0,0,0,0.08);
+      margin: 2px 0;
+    }
+
+    /* ── QR / BARCODE SECTION ───────────────────── */
+    .barcode-section {
+      padding: 20px 20px 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-top: 1px solid var(--lc-rule);
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .barcode-qr img {
+      width: 80px; height: 80px;
+      display: block;
+      border-radius: 2px;
+      /* no invert needed on light bg */
+    }
+    .barcode-copy {
+      flex: 1;
+    }
+    .barcode-copy .bc-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--lc-ink);
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+    .barcode-copy .bc-sub {
+      font-size: 11px;
+      color: var(--lc-ink-dim);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.5;
+    }
+    .barcode-copy .bc-url {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--lc-blue);
+      letter-spacing: 0.06em;
+      margin-top: 6px;
+      display: block;
+      text-decoration: none;
+    }
+
+    /* ── ALLERGENS / LEGAL COPY ──────────────────── */
+    .legal-strip {
+      padding: 12px 20px 10px;
+      border-top: 1px solid var(--lc-rule);
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .legal-strip p {
+      font-family: 'Barlow', sans-serif;
+      font-size: 9.5px;
+      font-weight: 300;
+      color: #888884;
+      line-height: 1.6;
+      letter-spacing: 0.01em;
+    }
+    .legal-strip strong { font-weight: 700; color: var(--lc-ink-dim); text-transform: uppercase; font-size: 8.5px; letter-spacing: 0.14em; }
+
+    /* ── LABEL EDGE BOTTOM ───────────────────────── */
+    .label-edge-bottom {
+      height: 3px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--lc-blue) 0px, var(--lc-blue) 8px,
+        transparent 8px, transparent 12px
+      );
+      opacity: 0.5;
+    }
+
+    /* ── CAN RIM BOTTOM ──────────────────────────── */
+    .can-rim-bottom {
+      height: 16px;
+      background: linear-gradient(0deg,
+        #3a3a3a 0%,
+        #7a7a7a 25%,
+        #5a5a5a 50%,
+        #8a8a8a 70%,
+        #606060 100%
+      );
+      position: relative;
+      overflow: hidden;
+    }
+    .can-rim-bottom::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent, transparent 3px,
+        rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px
+      );
+    }
+    /* pull tab indicator */
+    .can-rim-bottom::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 28px; height: 6px;
+      border-radius: 3px;
+      background: #9a9a9a;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.4), 0 -1px 0 rgba(255,255,255,0.15);
+    }
+
+    /* ── PAYMENT MODAL ───────────────────────────── */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      display: none; align-items: flex-end; justify-content: center;
+    }
+    .overlay.open { display: flex; }
+    .modal {
+      background: var(--lc-white);
+      border-radius: 14px 14px 0 0;
+      padding: 20px 20px 36px;
+      width: 100%; max-width: 480px;
+      animation: slideUp 0.22s ease;
+      border-top: 3px solid var(--lc-blue);
+      box-shadow: 0 -4px 24px rgba(0,40,85,0.12);
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .modal-drag { width: 32px; height: 3px; background: rgba(0,0,0,0.12); border-radius: 2px; margin: 0 auto 18px; }
+    .modal h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 2px;
+      color: var(--lc-ink);
+    }
+    .modal .m-sub { font-size: 12px; color: var(--lc-ink-dim); margin-bottom: 16px; font-family: 'Barlow', sans-serif; font-weight: 300; }
+    .modal .total {
+      display: flex; justify-content: space-between;
+      font-weight: 700; font-size: 16px;
+      padding: 12px 0;
+      border-top: 1px solid var(--lc-rule);
+      margin-bottom: 14px;
+      font-family: 'Barlow Condensed', sans-serif;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--lc-ink);
+    }
+    .modal .total span:last-child { color: var(--lc-red); }
+    .pay-opts { display: flex; flex-direction: column; gap: 8px; }
+    .pay-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 13px; border-radius: var(--radius-sm); border: none;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 14px; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #fff; text-decoration: none; cursor: pointer;
+      font-weight: 700; transition: opacity 0.12s;
+    }
+    .pay-btn:hover { opacity: 0.87; }
+    .pay-cashapp { background: #00C244; color: var(--lc-black); }
+    .pay-paypal  { background: #003087; }
+    .pay-cancel  { background: none; border: none; color: var(--lc-ink-dim); font-size: 12.5px; padding: 9px; width: 100%; margin-top: 4px; cursor: pointer; font-family: 'Barlow', sans-serif; letter-spacing: 0.04em; }
+
+  </style>
+</head>
+<body>
+
+<!-- ░░ CAN RIM TOP ░░ -->
+<div class="can-rim-top"></div>
+<div class="label-edge-top"></div>
+
+<!-- ░░ EVENT STRIP ░░ -->
+<div class="event-strip">Cedar Tap &nbsp;·&nbsp; Mobile Tap Room &nbsp;·&nbsp; Northern Virginia</div>
+
+<!-- ░░ LABEL BODY ░░ -->
+<div class="label-body">
+
+  <!-- CO-BRAND HEADER -->
+  <div class="collab-header">
+    <div class="brand-lockup">
+      <!-- La Colombe -->
+      <div class="brand-lc">
+        <!-- Dove silhouette -->
+        <svg class="lc-dove" viewBox="0 0 60 42" xmlns="http://www.w3.org/2000/svg">
+          <path d="M30 4C24 4 18 7 14 12L6 10C4 10 3 12 4 14L8 18C6 22 6 26 8 30C10 34 14 37 18 38L20 36C17 35 14 32 13 28C12 24 13 20 16 17L22 20C24 21 26 21 28 20L36 16C40 18 42 22 42 26C42 30 40 34 36 36L38 38C43 36 47 31 47 26C47 20 44 15 39 12C42 10 46 9 50 10C48 7 44 5 40 5C38 5 36 6 34 7C32.5 5 31 4 30 4Z" fill="currentColor" opacity="0.9"/>
+        </svg>
+        <span class="lc-name">La Colombe</span>
+        <span class="lc-sub">Coffee Roasters</span>
+      </div>
+      <span class="collab-x">×</span>
+      <!-- Cedar Tap -->
+      <div class="brand-cedar">
+        <span class="cedar-icon">🌲</span>
+        <span class="cedar-name">Cedar Tap</span>
+        <span class="cedar-sub">Mobile Tap Room</span>
+      </div>
+    </div>
+
+    <!-- Product hero -->
+    <div class="product-hero">
+      <span class="kicker">Cold Brew · On Tap · Served Fresh</span>
+      <h1>Draft<br><em>Cold Brew</em></h1>
+      <div class="subhead">Poured fresh · Northern Virginia</div>
+    </div>
+  </div>
+
+  <!-- ── FLIGHT ── -->
+  <div class="can-section" style="padding-bottom:0;">
+    <div class="can-section-header">
+      <span class="can-section-title">Try All Four</span>
+      <span class="can-section-rule"></span>
+    </div>
+  </div>
+  <div class="flight-section">
+    <div class="flight-can" onclick="openModal('The Draft Flight','All 4 taps · 2oz each','$8.99',8.99)">
+      <div class="flight-corner-text">Best<br>Value</div>
+      <div class="flight-top">
+        <div>
+          <div class="flight-title">The Draft<br><em>Flight</em></div>
+          <div style="display:flex;gap:4px;margin-top:7px;flex-wrap:wrap;">
+            <span class="tap-tag tag-lc">4 Taps</span>
+            <span class="tap-tag tag-nitro">~8oz Total</span>
+          </div>
+        </div>
+        <div class="flight-price">$8.99</div>
+      </div>
+      <p class="flight-desc">Two ounces from each tap — the perfect way to taste La Colombe's cold brew lineup before committing to a full pour.</p>
+      <div class="flight-pours">
+        <div class="flight-pour"><div class="f-bar" style="background:#0d0d0d;border:1px solid rgba(255,255,255,0.2);"></div><div class="f-name">Pure<br>Black</div></div>
+        <div class="flight-pour"><div class="f-bar" style="background:linear-gradient(180deg,#2a1a0a,#4a2a10);"></div><div class="f-name">Black<br>Oat</div></div>
+        <div class="flight-pour"><div class="f-bar" style="background:linear-gradient(180deg,#c87030,#8a4a18);"></div><div class="f-name">Cedar<br>Caramel</div></div>
+        <div class="flight-pour"><div class="f-bar" style="background:var(--lc-blue);"></div><div class="f-name">Cold<br>Brew</div></div>
+      </div>
+      <button class="flight-btn" onclick="event.stopPropagation();openModal('The Draft Flight','All 4 taps · 2oz each','$8.99',8.99)">Order Flight — $8.99</button>
+    </div>
+  </div>
+
+  <!-- ── FULL POURS ── -->
+  <div class="can-section">
+    <div class="can-section-header">
+      <span class="can-section-title">Full Pours</span>
+      <span class="can-section-rule"></span>
+    </div>
+
+    <!-- TAP 1 — Pure Black -->
+    <div class="tap-item" onclick="toggleTap(this)">
+      <span class="tap-num">01</span>
+      <div class="tap-info">
+        <div class="tap-name">Pure Black</div>
+        <div class="tap-origin">La Colombe · Single Origin · Dark Roast</div>
+        <div class="tap-ingredients">Cold water, coarsely ground dark roast coffee. Steeped 20 hours. Nitrogen-infused on tap.</div>
+        <div class="tap-tags">
+          <span class="tap-tag tag-lc">La Colombe</span>
+          <span class="tap-tag tag-nitro">Nitro</span>
+        </div>
+        <div class="size-panel">
+          <div class="size-inner">
+            <div class="size-note">~21 pours per keg at 8oz · ~14 at 12oz</div>
+            <div class="size-row">
+              <div class="size-btn sel" onclick="sel(event,this,'8oz',7.99)"><div class="oz">8oz</div><div class="price">$7.99</div></div>
+              <div class="size-btn" onclick="sel(event,this,'12oz',8.99)"><div class="oz">12oz</div><div class="price">$8.99</div></div>
+            </div>
+            <button class="order-btn" onclick="openFromTap(event,this,'Pure Black','La Colombe · Dark Roast')">Order — Pay at Window</button>
+          </div>
+        </div>
+      </div>
+      <div class="tap-right">
+        <span class="tap-price-from">from</span>
+        <span class="tap-price">$7.99</span>
+        <span class="tap-chevron">›</span>
+      </div>
+    </div>
+
+    <!-- TAP 2 — Black Oat -->
+    <div class="tap-item" onclick="toggleTap(this)">
+      <span class="tap-num">02</span>
+      <div class="tap-info">
+        <div class="tap-name">Black Oat</div>
+        <div class="tap-origin">La Colombe · Oat Milk · Medium Roast</div>
+        <div class="tap-ingredients">Cold brew concentrate, oat milk. Smooth, naturally sweet finish with no added sugar.</div>
+        <div class="tap-tags">
+          <span class="tap-tag tag-lc">La Colombe</span>
+          <span class="tap-tag tag-nitro">Draft Latte</span>
+        </div>
+        <div class="size-panel">
+          <div class="size-inner">
+            <div class="size-note">~21 pours per keg at 8oz · ~14 at 12oz</div>
+            <div class="size-row">
+              <div class="size-btn sel" onclick="sel(event,this,'8oz',7.99)"><div class="oz">8oz</div><div class="price">$7.99</div></div>
+              <div class="size-btn" onclick="sel(event,this,'12oz',8.99)"><div class="oz">12oz</div><div class="price">$8.99</div></div>
+            </div>
+            <button class="order-btn" onclick="openFromTap(event,this,'Black Oat','La Colombe · Oat Milk Draft Latte')">Order — Pay at Window</button>
+          </div>
+        </div>
+      </div>
+      <div class="tap-right">
+        <span class="tap-price-from">from</span>
+        <span class="tap-price">$7.99</span>
+        <span class="tap-chevron">›</span>
+      </div>
+    </div>
+
+    <!-- TAP 3 — Cedar Caramel -->
+    <div class="tap-item" onclick="toggleTap(this)">
+      <span class="tap-num">03</span>
+      <div class="tap-info">
+        <div class="tap-name">Cedar Caramel</div>
+        <div class="tap-origin">Cedar Tap House Blend · Salted Caramel Nitro</div>
+        <div class="tap-ingredients">Cold brew, salted caramel, cream. Cedar Tap signature pour — sweet, bold, smooth.</div>
+        <div class="tap-tags">
+          <span class="tap-tag tag-cedar">Cedar Tap</span>
+          <span class="tap-tag tag-nitro">Nitro</span>
+        </div>
+        <div class="size-panel">
+          <div class="size-inner">
+            <div class="size-note">~21 pours per keg at 8oz · ~14 at 12oz</div>
+            <div class="size-row">
+              <div class="size-btn sel" onclick="sel(event,this,'8oz',7.99)"><div class="oz">8oz</div><div class="price">$7.99</div></div>
+              <div class="size-btn" onclick="sel(event,this,'12oz',8.99)"><div class="oz">12oz</div><div class="price">$8.99</div></div>
+            </div>
+            <button class="order-btn" onclick="openFromTap(event,this,'Cedar Caramel','Cedar Tap · Salted Caramel Nitro')">Order — Pay at Window</button>
+          </div>
+        </div>
+      </div>
+      <div class="tap-right">
+        <span class="tap-price-from">from</span>
+        <span class="tap-price">$7.99</span>
+        <span class="tap-chevron">›</span>
+      </div>
+    </div>
+
+    <!-- TAP 4 — Vanilla Draft -->
+    <div class="tap-item" onclick="toggleTap(this)">
+      <span class="tap-num">04</span>
+      <div class="tap-info">
+        <div class="tap-name">Vanilla Draft</div>
+        <div class="tap-origin">La Colombe · Vanilla · Draft Latte</div>
+        <div class="tap-ingredients">Cold brew concentrate, whole milk, vanilla bean. Rich and creamy — served cold on tap.</div>
+        <div class="tap-tags">
+          <span class="tap-tag tag-lc">La Colombe</span>
+          <span class="tap-tag tag-nitro">Draft Latte</span>
+        </div>
+        <div class="size-panel">
+          <div class="size-inner">
+            <div class="size-note">~21 pours per keg at 8oz · ~14 at 12oz</div>
+            <div class="size-row">
+              <div class="size-btn sel" onclick="sel(event,this,'8oz',7.99)"><div class="oz">8oz</div><div class="price">$7.99</div></div>
+              <div class="size-btn" onclick="sel(event,this,'12oz',8.99)"><div class="oz">12oz</div><div class="price">$8.99</div></div>
+            </div>
+            <button class="order-btn" onclick="openFromTap(event,this,'Vanilla Draft','La Colombe · Vanilla Draft Latte')">Order — Pay at Window</button>
+          </div>
+        </div>
+      </div>
+      <div class="tap-right">
+        <span class="tap-price-from">from</span>
+        <span class="tap-price">$7.99</span>
+        <span class="tap-chevron">›</span>
+      </div>
+    </div>
+
+  </div><!-- /full pours -->
+
+  <!-- ── FACTS PANEL ── -->
+  <div class="can-section" style="padding-top:0; padding-bottom:16px;">
+    <div class="facts-panel">
+      <div class="facts-title">Serving Facts</div>
+      <div class="facts-subtitle">Per 8 fl oz pour as served cold on tap from Cedar Tap's mobile trailer</div>
+      <div class="facts-row teal"><span class="f-label">Source</span><span class="f-val">La Colombe Roastery, Philadelphia PA</span></div>
+      <div class="facts-divider"></div>
+      <div class="facts-row"><span class="f-label">Caffeine</span><span class="f-val">~180mg per 8oz</span></div>
+      <div class="facts-row"><span class="f-label">Serving Temp</span><span class="f-val">36°F — Nitro Cold</span></div>
+      <div class="facts-row"><span class="f-label">Added Sugar</span><span class="f-val">0g (Black &amp; Pure Black)</span></div>
+      <div class="facts-row"><span class="f-label">Dairy</span><span class="f-val">Whole milk in Draft Lattes</span></div>
+      <div class="facts-divider"></div>
+      <div class="facts-row teal"><span class="f-label">Poured by</span><span class="f-val">Cedar Tap Mobile Tap Room</span></div>
+    </div>
+  </div>
+
+  <!-- ── QR / BARCODE ── -->
+  <div class="barcode-section">
+    <div class="barcode-qr">
+      <a href="https://lacolombe.com/collections/draft-latte" target="_blank">
+        <img
+          src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&color=000000&bgcolor=ffffff&qzone=1&data=https%3A%2F%2Flacolombe.com%2Fcollections%2Fdraft-latte"
+          alt="QR — La Colombe Draft Latte"
+        />
+      </a>
+    </div>
+    <div class="barcode-copy">
+      <div class="bc-title">Order La Colombe<br>Direct</div>
+      <div class="bc-sub">Scan to shop Draft Lattes, cold brew cans &amp; subscriptions — shipped to your door.</div>
+      <a class="bc-url" href="https://lacolombe.com" target="_blank">lacolombe.com</a>
+    </div>
+  </div>
+
+  <!-- ── LEGAL / ALLERGEN COPY ── -->
+  <div class="legal-strip">
+    <p>
+      <strong>Allergens:</strong> Products containing dairy are clearly labeled. Oat milk variants available on request. Contains caffeine — not recommended for children, pregnant women, or those sensitive to caffeine.<br>
+      <strong>Distributor:</strong> Cedar Tap Trailers LLC, Woodbridge VA · (202) 810-1861 · cedartaps.com<br>
+      <strong>Sourced from:</strong> La Colombe Coffee Roasters, Philadelphia PA · lacolombe.com<br>
+      All products poured fresh from temperature-controlled kegs. Keep refrigerated until service.
+    </p>
+  </div>
+
+</div><!-- /label-body -->
+
+<!-- ░░ CAN BOTTOM ░░ -->
+<div class="label-edge-bottom"></div>
+<div class="can-rim-bottom"></div>
+
+<!-- ░░ PAYMENT MODAL ░░ -->
+<div class="overlay" id="overlay" onclick="closeIfOut(event)">
+  <div class="modal">
+    <div class="modal-drag"></div>
+    <h3 id="m-item">Pure Black</h3>
+    <div class="m-sub" id="m-sub">La Colombe · Dark Roast · 8oz</div>
+    <div class="total"><span>Total</span><span id="m-price">$7.99</span></div>
+    <div class="pay-opts">
+      <a id="m-cashapp" href="#" class="pay-btn pay-cashapp" target="_blank">Pay with Cash App &nbsp;$CedarTaps</a>
+      <a id="m-paypal" href="#" class="pay-btn pay-paypal" target="_blank">Pay with PayPal</a>
+    </div>
+    <button class="pay-cancel" onclick="closeModal()">Cancel — I'll pay at the window</button>
+  </div>
+</div>
+
+<script data-goatcounter="https://cedartap.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+  function toggleTap(item) {
+    const was = item.classList.contains('open');
+    document.querySelectorAll('.tap-item').forEach(i => i.classList.remove('open'));
+    if (!was) item.classList.add('open');
+  }
+  function sel(e, btn, size, price) {
+    e.stopPropagation();
+    const inner = btn.closest('.size-inner');
+    inner.querySelectorAll('.size-btn').forEach(b => b.classList.remove('sel'));
+    btn.classList.add('sel');
+    const item = btn.closest('.tap-item');
+    item.dataset.sz = size;
+    item.dataset.px = price;
+  }
+  function openFromTap(e, btn, name, sub) {
+    e.stopPropagation();
+    const item = btn.closest('.tap-item');
+    const size  = item.dataset.sz  || '8oz';
+    const price = parseFloat(item.dataset.px || 7.99);
+    openModal(name, sub + ' · ' + size, '$' + price.toFixed(2), price);
+  }
+  function openModal(name, sub, priceStr, priceNum) {
+    document.getElementById('m-item').textContent  = name;
+    document.getElementById('m-sub').textContent   = sub;
+    document.getElementById('m-price').textContent = typeof priceStr === 'string' ? priceStr : '$' + parseFloat(priceStr).toFixed(2);
+    const note = encodeURIComponent(name + ' — Cedar Tap Trailers');
+    const amt  = parseFloat(priceNum).toFixed(2);
+    document.getElementById('m-cashapp').href = `https://cash.app/$CedarTaps/${amt}?note=${note}`;
+    document.getElementById('m-paypal').href  = `https://paypal.me/cedartaptrailer/${amt}`;
+    document.getElementById('overlay').classList.add('open');
+  }
+  function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+  function closeIfOut(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
+  document.querySelectorAll('.tap-item').forEach(i => { i.dataset.sz = '8oz'; i.dataset.px = '7.99'; });
+</script>
+</body>
+</html>

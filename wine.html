@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cedar Tap Wine Bar</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Montserrat:wght@300;400;500;600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --burgundy: #4a1028;
+      --burgundy-deep: #320b1c;
+      --gold: #d4a43a;
+      --gold-light: #e8c46a;
+      --cream: #fdf9f4;
+      --cream-warm: #f5ede0;
+      --black-metal: #1c1c1c;
+      --text-dark: #2a1018;
+    }
+
+    body {
+      background-color: var(--burgundy-deep);
+      color: var(--cream);
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      background-image:
+        radial-gradient(ellipse at 20% 10%, rgba(212, 164, 58, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 90%, rgba(74, 16, 40, 0.6) 0%, transparent 50%);
+    }
+
+    /* ── HEADER ── */
+    header {
+      text-align: center;
+      padding: 3rem 1.5rem 2rem;
+      border-bottom: 1px solid rgba(212, 164, 58, 0.3);
+      position: relative;
+    }
+
+    .logo-mark {
+      display: inline-block;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      opacity: 0.85;
+    }
+
+    header h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 6vw, 3.5rem);
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+    }
+
+    header h1 span {
+      display: block;
+      font-size: 0.55em;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--cream-warm);
+      letter-spacing: 0.12em;
+      margin-top: 0.3rem;
+    }
+
+    .tagline {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-top: 1rem;
+      opacity: 0.8;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.5rem auto;
+      max-width: 300px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .divider-icon { color: var(--gold); font-size: 1rem; }
+
+    /* ── POUR SIZE LEGEND ── */
+    .pour-legend {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      padding: 1rem 1.5rem;
+      margin: 0 auto 0.5rem;
+      max-width: 700px;
+    }
+
+    .pour-badge {
+      background: rgba(212, 164, 58, 0.12);
+      border: 1px solid rgba(212, 164, 58, 0.35);
+      border-radius: 20px;
+      padding: 0.4rem 1rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      color: var(--gold-light);
+      text-transform: uppercase;
+    }
+
+    /* ── MENU GRID ── */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 400;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 1.8rem;
+    }
+
+    .tap-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .tap-card {
+      background: linear-gradient(145deg, rgba(74, 16, 40, 0.7), rgba(28, 10, 20, 0.9));
+      border: 1px solid rgba(212, 164, 58, 0.25);
+      border-radius: 12px;
+      padding: 1.6rem 1.8rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .tap-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .tap-card:hover {
+      border-color: rgba(212, 164, 58, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .tap-number {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.6;
+      margin-bottom: 0.4rem;
+    }
+
+    .wine-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.55rem;
+      font-weight: 600;
+      color: var(--cream);
+      line-height: 1.2;
+      margin-bottom: 0.25rem;
+    }
+
+    .wine-meta {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      opacity: 0.75;
+      margin-bottom: 1rem;
+    }
+
+    .wine-description {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      font-style: italic;
+      color: rgba(253, 249, 244, 0.65);
+      line-height: 1.5;
+      margin-bottom: 1.2rem;
+    }
+
+    .price-row {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .price-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(212, 164, 58, 0.1);
+      border: 1px solid rgba(212, 164, 58, 0.3);
+      border-radius: 8px;
+      padding: 0.5rem 0.9rem;
+      flex: 1;
+      min-width: 70px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .price-chip:hover {
+      background: rgba(212, 164, 58, 0.2);
+      border-color: var(--gold);
+    }
+
+    .chip-size { font-size: 0.65rem; color: var(--gold-light); letter-spacing: 0.1em; text-transform: uppercase; }
+    .chip-price { font-size: 1.15rem; font-weight: 600; color: var(--gold); margin-top: 0.1rem; }
+
+    /* ── TYPE BADGE ── */
+    .type-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+    }
+    .badge-red { background: rgba(140, 20, 40, 0.5); color: #f4a0a0; border: 1px solid rgba(200, 60, 60, 0.3); }
+    .badge-white { background: rgba(212, 164, 58, 0.15); color: var(--gold-light); border: 1px solid rgba(212, 164, 58, 0.3); }
+    .badge-rose { background: rgba(180, 80, 100, 0.2); color: #f5b8c4; border: 1px solid rgba(200, 100, 120, 0.3); }
+    .badge-sparkling { background: rgba(180, 200, 255, 0.1); color: #c8d8ff; border: 1px solid rgba(150, 180, 255, 0.25); }
+
+    /* ── ORDER SECTION ── */
+    .order-section {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem 1.5rem;
+      background: rgba(212, 164, 58, 0.06);
+      border: 1px solid rgba(212, 164, 58, 0.2);
+      border-radius: 12px;
+    }
+
+    .order-section h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .order-section p {
+      font-size: 0.8rem;
+      color: rgba(253, 249, 244, 0.6);
+      margin-bottom: 1.2rem;
+      letter-spacing: 0.05em;
+    }
+
+    .pay-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .pay-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.6rem;
+      border-radius: 6px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .pay-btn-cashapp {
+      background: #00d632;
+      color: #000;
+    }
+    .pay-btn-cashapp:hover { background: #00b82b; }
+
+    .pay-btn-paypal {
+      background: #003087;
+      color: #fff;
+      border: 1px solid #0070ba;
+    }
+    .pay-btn-paypal:hover { background: #0070ba; }
+
+    /* ── OPERATOR NOTES (hidden by default) ── */
+    .operator-toggle {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: rgba(28, 28, 28, 0.9);
+      border: 1px solid rgba(212, 164, 58, 0.4);
+      color: var(--gold);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      transition: all 0.2s;
+    }
+    .operator-toggle:hover { background: rgba(212, 164, 58, 0.15); }
+
+    .operator-panel {
+      display: none;
+      position: fixed;
+      bottom: 5rem;
+      right: 1.5rem;
+      width: min(90vw, 520px);
+      max-height: 70vh;
+      overflow-y: auto;
+      background: #0e0606;
+      border: 1px solid rgba(212, 164, 58, 0.4);
+      border-radius: 10px;
+      padding: 1.5rem;
+      z-index: 99;
+      font-size: 0.78rem;
+    }
+
+    .operator-panel.open { display: block; }
+
+    .operator-panel h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      color: var(--gold);
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(212, 164, 58, 0.2);
+      padding-bottom: 0.5rem;
+    }
+
+    .profit-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.72rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .profit-table th {
+      background: rgba(212, 164, 58, 0.15);
+      color: var(--gold);
+      padding: 0.4rem 0.5rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .profit-table td {
+      padding: 0.35rem 0.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: rgba(253, 249, 244, 0.8);
+    }
+
+    .profit-table tr:hover td { background: rgba(212, 164, 58, 0.05); }
+
+    .profit-table .highlight td { color: #7eff7e; font-weight: 600; }
+
+    .profit-subhead {
+      font-size: 0.68rem;
+      color: var(--gold-light);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin: 1rem 0 0.5rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.7rem;
+      color: rgba(253, 249, 244, 0.3);
+      letter-spacing: 0.1em;
+      border-top: 1px solid rgba(212, 164, 58, 0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo-mark">🍷</div>
+    <h1>
+      Cedar Tap Wine Bar
+      <span>Private Event &amp; Festival Wine Bar</span>
+    </h1>
+    <p class="tagline">Cedar Tap Trailers · Woodbridge, VA · Sourced from DC Kegs</p>
+
+    <div class="divider"><span class="divider-icon">✦</span></div>
+
+    <div class="pour-legend">
+      <div class="pour-badge">2 oz Taste — $3.99</div>
+      <div class="pour-badge">5 oz Glass — $9.99</div>
+      <div class="pour-badge">8 oz Pour — $13.99</div>
+    </div>
+  </header>
+
+  <main>
+    <p class="section-title">— On Tap Tonight —</p>
+
+    <div class="tap-grid">
+
+      <!-- TAP 1: Red -->
+      <div class="tap-card">
+        <div class="tap-number">Tap 01</div>
+        <span class="type-badge badge-red">Red</span>
+        <div class="wine-name">Angeline Pinot Noir</div>
+        <div class="wine-meta">California · Pinot Noir · 5-Gal Keg</div>
+        <div class="wine-description">Bright cherry and raspberry notes with silky tannins and a smooth, lingering finish. California elegance on tap.</div>
+        <div class="price-row">
+          <div class="price-chip">
+            <span class="chip-size">2 oz Taste</span>
+            <span class="chip-price">$3.99</span>
+          </div>
+          <div class="price-chip">
+            <span class="chip-size">5 oz Glass</span>
+            <span class="chip-price">$9.99</span>
+          </div>
+          <div class="price-chip">
+            <span class="chip-size">8 oz Pour</span>
+            <span class="chip-price">$13.99</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAP 2: White -->
+      <div class="tap-card">
+        <div class="tap-number">Tap 02</div>
+        <span class="type-badge badge-white">White</span>
+        <div class="wine-name">Angeline Sauvignon Blanc</div>
+        <div class="wine-meta">California · Sauvignon Blanc Reserve · 5-Gal Keg</div>
+        <div class="wine-description">Crisp citrus, fresh melon, and a clean minerality. Refreshing and expressive — perfect for warm-weather events.</div>
+        <div class="price-row">
+          <div class="price-chip">
+            <span class="chip-size">2 oz Taste</span>
+            <span class="chip-price">$3.99</span>
+          </div>
+          <div class="price-chip">
+            <span class="chip-size">5 oz Glass</span>
+            <span class="chip-price">$9.99</span>
+          </div>
+          <div class="price-chip">
+            <span class="chip-size">8 oz Pour</span>
+            <span class="chip-price">$13.99</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAP 3: Rosé / Red Blend -->
+      <div class="tap-card">
+        <div class="tap-number">Tap 03</div>
+        <span class="type-badge badge-rose">Rosé Blend</span>
+        <div class="wine-name">Palladio Rosso Blend</div>
+        <div class="wine-meta">Italy · Red Blend · 5-Gal Keg</div>
+        <div class="wine-description">Soft and fruit-forward with notes of dried cherry, plum, and warm spice. An Italian red blend approachable for all palates.</div>
+        <div class="price-row">
+          <div class="price-chip">
+            <span class="chip-size">2 oz Taste</span>
+            <span class="chip-price">$3.99</span>
+          </div>
+          <div class="price-chip">
+            <span class="chip-size">5 oz Glass</span>
+            <span class="chip-price">$9.99</span>
+          </div>
+          <div class="price-chip">
+            <span class="chip-size">8 oz Pour</span>
+            <span class="chip-price">$13.99</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAP 4: Sparkling -->
+      <div class="tap-card">
+        <div class="tap-number">Tap 04</div>
+        <span class="type-badge badge-sparkling">Sparkling</span>
+        <div class="wine-name">Zardetto Brut Sparkling</div>
+        <div class="wine-meta">Italy · Brut · Prosecco-Style · 5-Gal Keg</div>
+        <div class="wine-description">Fine persistent bubbles with green apple, pear, and toasted almond. Celebratory and crowd-pleasing for any occasion.</div>
+        <div class="price-row">
+          <div class="price-chip">
+            <span class="chip-size">2 oz Taste</span>
+            <span class="chip-price">$3.99</span>
+          </div>
+          <div class="price-chip">
+            <span class="chip-size">5 oz Glass</span>
+            <span class="chip-price">$9.99</span>
+          </div>
+          <div class="price-chip">
+            <span class="chip-size">8 oz Pour</span>
+            <span class="chip-price">$13.99</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.tap-grid -->
+
+    <!-- ORDER & PAY -->
+    <div class="order-section">
+      <h3>Order &amp; Pay</h3>
+      <p>Tap your selection, then pay with Cash App or PayPal — no cash needed.</p>
+      <div class="pay-buttons">
+        <a href="https://cash.app/$CedarTaps" class="pay-btn pay-btn-cashapp" target="_blank" rel="noopener">
+          💲 Cash App · $CedarTaps
+        </a>
+        <a href="https://paypal.me/CedarTaps" class="pay-btn pay-btn-paypal" target="_blank" rel="noopener">
+          🅿 PayPal · CedarTaps
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    Cedar Tap Trailers · Woodbridge, VA · tom@cedartaps.com · Sourced from DC Kegs
+    <br>Must be 21+ to purchase. Please drink responsibly.
+  </footer>
+
+  <!-- OPERATOR TOGGLE -->
+  <button class="operator-toggle" onclick="toggleOperator()" title="Operator Notes" aria-label="Toggle operator profit notes">⚙</button>
+
+  <div class="operator-panel" id="operatorPanel">
+    <h4>⚙ Operator Profit Notes — Wine Bar</h4>
+    <p style="color:rgba(253,249,244,0.5);font-size:0.7rem;margin-bottom:1rem;">Internal use only. Keg cost data from DC Kegs. Fill = 5.1L per tap.</p>
+
+    <div class="profit-subhead">Angeline Pinot Noir — $319.99 / 5-gal keg</div>
+    <p style="color:rgba(253,249,244,0.5);font-size:0.7rem;margin-bottom:0.5rem;">Cost per 5.1L fill: $86.40 &nbsp;|&nbsp; 5-gal = 18.9L · fill ratio 0.27</p>
+    <table class="profit-table">
+      <thead><tr><th>Pour</th><th>Pours/Fill</th><th>Sell</th><th>Gross Rev</th><th>Net Profit</th><th>Margin</th></tr></thead>
+      <tbody>
+        <tr><td>2 oz Taste</td><td>86</td><td>$3.99</td><td>$258</td><td>$171.60</td><td>66%</td></tr>
+        <tr class="highlight"><td>5 oz Glass</td><td>34</td><td>$9.99</td><td>$306</td><td>$219.60</td><td>72%</td></tr>
+        <tr><td>8 oz Pour</td><td>21</td><td>$13.99</td><td>$252</td><td>$165.60</td><td>66%</td></tr>
+      </tbody>
+    </table>
+
+    <div class="profit-subhead">Angeline Sauvignon Blanc — $319.99 / 5-gal keg</div>
+    <p style="color:rgba(253,249,244,0.5);font-size:0.7rem;margin-bottom:0.5rem;">Cost per 5.1L fill: $86.40</p>
+    <table class="profit-table">
+      <thead><tr><th>Pour</th><th>Pours/Fill</th><th>Sell</th><th>Gross Rev</th><th>Net Profit</th><th>Margin</th></tr></thead>
+      <tbody>
+        <tr><td>2 oz Taste</td><td>86</td><td>$3.99</td><td>$258</td><td>$171.60</td><td>66%</td></tr>
+        <tr class="highlight"><td>5 oz Glass</td><td>34</td><td>$9.99</td><td>$306</td><td>$219.60</td><td>72%</td></tr>
+        <tr><td>8 oz Pour</td><td>21</td><td>$13.99</td><td>$252</td><td>$165.60</td><td>66%</td></tr>
+      </tbody>
+    </table>
+
+    <div class="profit-subhead">Palladio Rosso Red Blend — $299.99 / 5-gal keg</div>
+    <p style="color:rgba(253,249,244,0.5);font-size:0.7rem;margin-bottom:0.5rem;">Cost per 5.1L fill: $81.00</p>
+    <table class="profit-table">
+      <thead><tr><th>Pour</th><th>Pours/Fill</th><th>Sell</th><th>Gross Rev</th><th>Net Profit</th><th>Margin</th></tr></thead>
+      <tbody>
+        <tr><td>2 oz Taste</td><td>86</td><td>$3.99</td><td>$258</td><td>$177.00</td><td>69%</td></tr>
+        <tr class="highlight"><td>5 oz Glass</td><td>34</td><td>$9.99</td><td>$306</td><td>$225.00</td><td>74%</td></tr>
+        <tr><td>8 oz Pour</td><td>21</td><td>$13.99</td><td>$252</td><td>$171.00</td><td>68%</td></tr>
+      </tbody>
+    </table>
+
+    <div class="profit-subhead">Zardetto Brut Sparkling — $299.99 / 5-gal keg</div>
+    <p style="color:rgba(253,249,244,0.5);font-size:0.7rem;margin-bottom:0.5rem;">Cost per 5.1L fill: $81.00</p>
+    <table class="profit-table">
+      <thead><tr><th>Pour</th><th>Pours/Fill</th><th>Sell</th><th>Gross Rev</th><th>Net Profit</th><th>Margin</th></tr></thead>
+      <tbody>
+        <tr><td>2 oz Taste</td><td>86</td><td>$3.99</td><td>$258</td><td>$177.00</td><td>69%</td></tr>
+        <tr class="highlight"><td>5 oz Glass</td><td>34</td><td>$9.99</td><td>$306</td><td>$225.00</td><td>74%</td></tr>
+        <tr><td>8 oz Pour</td><td>21</td><td>$13.99</td><td>$252</td><td>$171.00</td><td>68%</td></tr>
+      </tbody>
+    </table>
+
+    <div class="profit-subhead">4-Tap Event Summary (1 fill per tap, 5 oz glass mix)</div>
+    <table class="profit-table">
+      <thead><tr><th>Wine</th><th>Net/Fill</th></tr></thead>
+      <tbody>
+        <tr><td>Pinot Noir</td><td>$219.60</td></tr>
+        <tr><td>Sauvignon Blanc</td><td>$219.60</td></tr>
+        <tr><td>Palladio Blend</td><td>$225.00</td></tr>
+        <tr><td>Zardetto Brut</td><td>$225.00</td></tr>
+        <tr style="border-top:1px solid rgba(212,164,58,0.4);font-weight:600;color:#7eff7e;"><td>Total 4-Tap Event</td><td>$889.20</td></tr>
+      </tbody>
+    </table>
+    <p style="color:rgba(253,249,244,0.4);font-size:0.68rem;margin-top:0.5rem;">Assumes full 5.1L fill sells out at 5oz glass pricing. Multiply by fills per event for multi-fill scenarios.</p>
+  </div>
+
+  <script>
+    function toggleOperator() {
+      const panel = document.getElementById('operatorPanel');
+      panel.classList.toggle('open');
+    }
+  </script>
+</body>
+</html>

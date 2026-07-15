@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+  <meta name="theme-color" content="#1a0a0a"/>
+  <meta name="description" content="Cedar Tap × MurLarkey — Craft Spirits on Tap · Tasting Event"/>
+  <title>Cedar Tap × MurLarkey · Spirits on Tap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* ════════════════════════════════════════════════
+       DESIGN TOKENS — MurLarkey Distillery Campaign
+       Palette: deep burgundy, copper/amber, aged oak,
+       cream parchment — Virginia craft distillery
+    ════════════════════════════════════════════════ */
+    :root {
+      /* MurLarkey brand — accurate palette from actual shield logo */
+      --ml-burgundy:    #8B1A1A;
+      --ml-burgundy-dk: #1a0a0a;
+      --ml-burgundy-lt: #a82020;
+      --ml-copper:      #b28564;
+      --ml-copper-lt:   #c9a07d;
+      --ml-copper-dk:   #8a6140;
+      --ml-cream:       #f8f5f0;
+      --ml-parchment:   #f8f5f0;
+      --ml-parchment-dk:#e8e2d8;
+      --ml-ink:         #1a0a0a;
+      --ml-ink-dim:     #4a3030;
+      --ml-gold:        #c8941a;
+      --ml-gold-lt:     #daa830;
+      --ml-smoke:       rgba(26,10,10,0.10);
+
+      /* Cedar Tap */
+      --cedar:          #a05a20;
+      --cedar-warm:     #c87030;
+      --cedar-gold:     #d4a43a;
+
+      /* Oak barrel texture */
+      --barrel-ring:    rgba(100,50,10,0.18);
+
+      --radius-sm:      3px;
+      --radius:         6px;
+      --radius-lg:      10px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    /* ── BODY — aged parchment / leather ─────────── */
+    body {
+      font-family: 'Barlow', sans-serif;
+      background-color: var(--ml-parchment);
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E"),
+        repeating-linear-gradient(
+          0deg,
+          transparent, transparent 28px,
+          rgba(100,50,10,0.03) 28px, rgba(100,50,10,0.03) 29px
+        );
+      color: var(--ml-ink);
+      min-height: 100dvh;
+    }
+
+    /* parchment grain overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)' opacity='0.05'/%3E%3C/svg%3E");
+      opacity: 0.6;
+    }
+
+    .page-content { position: relative; z-index: 1; }
+
+    /* ── BOTTLE LABEL SPINE (top stripe) ──────────── */
+    .bottle-neck {
+      background: var(--ml-burgundy-dk);
+      background-image:
+        repeating-linear-gradient(
+          90deg,
+          transparent, transparent 12px,
+          rgba(255,255,255,0.025) 12px, rgba(255,255,255,0.025) 13px
+        );
+      height: 8px;
+    }
+
+    /* ── EVENT BANNER — wax seal strip ────────────── */
+    .seal-banner {
+      background: var(--ml-burgundy);
+      background-image:
+        repeating-linear-gradient(
+          -60deg,
+          transparent, transparent 8px,
+          rgba(255,255,255,0.03) 8px, rgba(255,255,255,0.03) 9px
+        );
+      padding: 8px 16px;
+      text-align: center;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--ml-copper-lt);
+      position: relative;
+    }
+    .seal-banner::before, .seal-banner::after {
+      content: '◆';
+      color: var(--ml-gold);
+      opacity: 0.7;
+      font-size: 8px;
+      margin: 0 8px;
+      vertical-align: middle;
+    }
+
+    /* ── LABEL BODY ────────────────────────────────── */
+    .label-body {
+      background: var(--ml-cream);
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23p)' opacity='0.05'/%3E%3C/svg%3E"),
+        linear-gradient(180deg, rgba(107,26,26,0.04) 0%, transparent 60px);
+      position: relative;
+      border-top: 2px solid var(--ml-burgundy);
+      border-bottom: 2px solid var(--ml-burgundy);
+    }
+
+    /* ── CO-BRAND HEADER ───────────────────────────── */
+    .collab-header {
+      padding: 30px 20px 22px;
+      text-align: center;
+      border-bottom: 1px solid var(--ml-smoke);
+      position: relative;
+    }
+
+    /* decorative rule — distillery crest style */
+    .collab-header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%; transform: translateX(-50%);
+      width: 48px; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--ml-burgundy), transparent);
+    }
+    .collab-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 20px; right: 20px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--ml-copper-dk), transparent);
+      opacity: 0.4;
+    }
+
+    .brand-lockup {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    /* MurLarkey brand block */
+    .brand-ml {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    /* Real logo image */
+    .brand-ml img {
+      max-width: 220px;
+      width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto 8px;
+      border-radius: 4px;
+      filter: drop-shadow(0 2px 8px rgba(26,10,10,0.18));
+    }
+    .brand-ml .ml-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--ml-burgundy-dk);
+    }
+    .brand-ml .ml-sub {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 8.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ml-ink-dim);
+      font-weight: 400;
+    }
+
+    .collab-x {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 400;
+      font-style: italic;
+      color: rgba(107,26,26,0.25);
+      flex-shrink: 0;
+    }
+
+    .brand-cedar {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+    }
+    .brand-cedar .cedar-icon { font-size: 26px; line-height: 1; }
+    .brand-cedar .cedar-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cedar-warm);
+    }
+    .brand-cedar .cedar-sub {
+      font-size: 8.5px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ml-ink-dim);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 300;
+    }
+
+    /* Product hero — distillery label style */
+    .product-hero {
+      margin-top: 4px;
+    }
+    .product-hero .kicker {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--ml-copper-dk);
+      display: block;
+      margin-bottom: 6px;
+    }
+    .product-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 38px;
+      font-weight: 900;
+      line-height: 0.95;
+      color: var(--ml-burgundy-dk);
+      letter-spacing: -0.01em;
+    }
+    .product-hero h1 em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--ml-ink-dim);
+    }
+    .product-hero .subhead {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ml-ink-dim);
+      margin-top: 8px;
+    }
+
+    /* ── ORNAMENTAL RULE ─────────────────────────── */
+    .ornament {
+      display: flex; align-items: center; gap: 10px;
+      padding: 0 20px;
+      max-width: 480px; margin: 16px auto 0;
+    }
+    .ornament::before, .ornament::after {
+      content: ''; flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--ml-copper-dk));
+      opacity: 0.3;
+    }
+    .ornament::after {
+      background: linear-gradient(270deg, transparent, var(--ml-copper-dk));
+    }
+    .ornament span {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ml-copper-dk);
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+
+    /* ── SECTION HEADER ─────────────────────────── */
+    .section-head {
+      padding: 18px 20px 10px;
+      max-width: 480px;
+      margin: 0 auto;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-head-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ml-copper-dk);
+      white-space: nowrap;
+    }
+    .section-head-rule {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--ml-smoke), transparent);
+    }
+
+    /* ── TAP ITEMS (La Colombe format) ───────────── */
+    .taps-wrap {
+      padding: 0 20px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .tap-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 15px 0;
+      border-bottom: 1px solid var(--ml-smoke);
+      cursor: pointer;
+    }
+    .tap-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+    /* tap number — copper accent */
+    .tap-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ml-burgundy);
+      letter-spacing: 0.05em;
+      flex-shrink: 0;
+      padding-top: 3px;
+      width: 18px;
+    }
+
+    .tap-info { flex: 1; }
+    .tap-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ml-ink);
+      line-height: 1.05;
+      margin-bottom: 3px;
+    }
+    .tap-origin {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11.5px;
+      color: var(--ml-copper-dk);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .tap-notes {
+      font-family: 'Barlow', sans-serif;
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--ml-ink-dim);
+      font-style: italic;
+      line-height: 1.5;
+      margin-bottom: 7px;
+    }
+
+    .tap-tags {
+      display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap;
+    }
+    .tap-tag {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 1px;
+    }
+    .tag-ml     { border: 1px solid rgba(107,26,26,0.4); color: var(--ml-burgundy); }
+    .tag-cedar  { border: 1px solid rgba(168,90,32,0.45); color: var(--cedar); }
+    .tag-house  { border: 1px solid rgba(180,140,80,0.45); color: var(--ml-copper-dk); }
+    .tag-flight { background: var(--ml-burgundy-dk); color: var(--ml-copper-lt); }
+
+    .tap-right {
+      display: flex; flex-direction: column; align-items: flex-end;
+      flex-shrink: 0; gap: 4px; padding-top: 3px;
+    }
+    .tap-price {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--ml-ink);
+      line-height: 1;
+    }
+    .tap-price-from {
+      font-size: 10px;
+      color: var(--ml-ink-dim);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      display: block;
+      text-align: right;
+    }
+    .tap-chevron {
+      font-size: 14px;
+      color: rgba(107,26,26,0.25);
+      transition: transform 0.18s, color 0.18s;
+    }
+    .tap-item.open .tap-chevron { transform: rotate(90deg); color: var(--ml-burgundy); }
+
+    /* ── SIZE / POUR PANEL ───────────────────────── */
+    .size-panel {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.28s ease;
+      padding-left: 32px;
+    }
+    .tap-item.open .size-panel { max-height: 220px; }
+    .size-inner {
+      padding: 10px 0 16px;
+      border-top: 1px solid var(--ml-smoke);
+    }
+    .size-note {
+      font-size: 10.5px;
+      color: var(--ml-copper-dk);
+      font-style: italic;
+      margin-bottom: 10px;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+    }
+    .size-row { display: flex; gap: 7px; margin-bottom: 10px; }
+    .size-btn {
+      flex: 1;
+      border: 1px solid rgba(107,26,26,0.18);
+      background: rgba(107,26,26,0.04);
+      border-radius: var(--radius-sm);
+      padding: 9px 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.12s;
+      color: var(--ml-ink);
+    }
+    .size-btn:hover { border-color: var(--ml-burgundy); }
+    .size-btn.sel {
+      border-color: var(--ml-burgundy);
+      background: var(--ml-burgundy);
+      color: #fff;
+    }
+    .size-btn .oz {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .size-btn .price { font-size: 12px; margin-top: 1px; opacity: 0.75; font-family: 'Barlow', sans-serif; }
+    .size-btn.sel .price { opacity: 0.8; }
+
+    .order-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--ml-burgundy);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.15s;
+      box-shadow: 0 2px 6px rgba(62,15,15,0.3);
+    }
+    .order-btn:hover { background: var(--ml-burgundy-dk); }
+
+    /* ── FLIGHT CARD — "Spirits Flight" ──────────── */
+    .flight-wrap {
+      padding: 0 20px 4px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .flight-card {
+      background: var(--ml-burgundy-dk);
+      background-image:
+        repeating-linear-gradient(
+          -55deg,
+          transparent, transparent 10px,
+          rgba(255,255,255,0.025) 10px, rgba(255,255,255,0.025) 11px
+        ),
+        linear-gradient(135deg, rgba(200,148,26,0.06) 0%, transparent 60%);
+      border-radius: var(--radius-lg);
+      padding: 20px 18px 18px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 2px 4px 14px rgba(62,15,15,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    /* gold corner seal */
+    .flight-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 36px 36px 0 0;
+      border-color: var(--ml-gold) transparent transparent transparent;
+    }
+    .flight-corner-text {
+      position: absolute;
+      top: 4px; left: 4px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 7px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ml-burgundy-dk);
+      z-index: 1;
+      line-height: 1.1;
+    }
+    .flight-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 10px; padding-right: 10px;
+    }
+    .flight-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.1;
+    }
+    .flight-title em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--ml-copper-lt);
+      font-size: 17px;
+    }
+    .flight-price {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--ml-gold-lt);
+      line-height: 1;
+    }
+    .flight-desc {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.6;
+      margin-bottom: 14px;
+      font-style: italic;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+    }
+    .flight-pours {
+      display: flex; gap: 6px; margin-bottom: 16px;
+    }
+    .flight-pour {
+      flex: 1;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-sm);
+      padding: 9px 4px;
+      text-align: center;
+    }
+    .flight-pour .f-bar {
+      width: 4px; height: 22px;
+      border-radius: 2px;
+      margin: 0 auto 6px;
+    }
+    .flight-pour .f-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.3;
+    }
+    .flight-btn {
+      width: 100%;
+      padding: 13px;
+      background: var(--ml-gold);
+      color: var(--ml-burgundy-dk);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.15s;
+      box-shadow: 0 2px 8px rgba(200,148,26,0.3);
+    }
+    .flight-btn:hover { background: var(--ml-gold-lt); }
+
+    /* ── PROVENANCE PANEL — barrel label style ────── */
+    .provenance-panel {
+      margin: 4px 20px 0;
+      max-width: 440px;
+      border: 1.5px solid rgba(107,26,26,0.2);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: rgba(255,255,255,0.5);
+    }
+    .prov-title {
+      background: var(--ml-burgundy-dk);
+      color: var(--ml-copper-lt);
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+      font-style: italic;
+      padding: 6px 12px 5px;
+      line-height: 1;
+    }
+    .prov-subtitle {
+      background: var(--ml-burgundy-dk);
+      color: rgba(200,160,100,0.65);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0 12px 8px;
+      border-bottom: 6px solid var(--ml-burgundy);
+      line-height: 1.4;
+    }
+    .prov-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 12px;
+      border-bottom: 1px solid rgba(107,26,26,0.07);
+      font-size: 12px;
+      background: rgba(255,255,255,0.7);
+    }
+    .prov-row .p-label {
+      font-family: 'Barlow', sans-serif;
+      font-weight: 400;
+      color: var(--ml-ink-dim);
+    }
+    .prov-row .p-val {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--ml-ink);
+      letter-spacing: 0.03em;
+      text-align: right;
+    }
+    .prov-row.accent .p-label { color: var(--ml-burgundy); }
+    .prov-row.accent .p-val   { color: var(--ml-burgundy); }
+    .prov-divider { height: 4px; background: rgba(107,26,26,0.06); margin: 2px 0; }
+
+    /* ── QR / BARCODE SECTION ────────────────────── */
+    .barcode-section {
+      padding: 22px 20px 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-top: 1px solid var(--ml-smoke);
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .barcode-qr img {
+      width: 80px; height: 80px;
+      display: block;
+      border-radius: 2px;
+    }
+    .barcode-copy { flex: 1; }
+    .barcode-copy .bc-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ml-ink);
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+    .barcode-copy .bc-sub {
+      font-size: 11px;
+      color: var(--ml-ink-dim);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.55;
+    }
+    .barcode-copy .bc-url {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ml-burgundy);
+      letter-spacing: 0.06em;
+      margin-top: 6px;
+      display: block;
+      text-decoration: none;
+    }
+
+    /* ── LEGAL STRIP ─────────────────────────────── */
+    .legal-strip {
+      padding: 14px 20px 12px;
+      border-top: 1px solid var(--ml-smoke);
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .legal-strip p {
+      font-family: 'Barlow', sans-serif;
+      font-size: 9.5px;
+      font-weight: 300;
+      color: var(--ml-ink-dim);
+      line-height: 1.65;
+      letter-spacing: 0.01em;
+    }
+    .legal-strip strong {
+      font-weight: 700;
+      color: var(--ml-burgundy-dk);
+      text-transform: uppercase;
+      font-size: 8.5px;
+      letter-spacing: 0.12em;
+    }
+
+    /* ── FOOTER / BOTTLE BOTTOM ──────────────────── */
+    .bottle-footer {
+      background: var(--ml-burgundy-dk);
+      background-image:
+        repeating-linear-gradient(
+          -55deg,
+          transparent, transparent 8px,
+          rgba(255,255,255,0.025) 8px, rgba(255,255,255,0.025) 9px
+        );
+      color: rgba(255,255,255,0.45);
+      text-align: center;
+      padding: 26px 16px 36px;
+      font-size: 11px;
+      line-height: 2.1;
+      border-top: 3px solid var(--ml-burgundy);
+      position: relative;
+    }
+    .bottle-footer::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(200,148,26,0.4), transparent);
+    }
+    .bottle-footer a { color: var(--ml-copper-lt); text-decoration: none; }
+    .bottle-footer strong { color: rgba(255,255,255,0.75); }
+    /* wax seal mark */
+    .footer-seal {
+      width: 54px; height: 54px;
+      border-radius: 50%;
+      background: var(--ml-burgundy);
+      border: 2px solid rgba(200,148,26,0.4);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .footer-seal span {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      font-weight: 700;
+      font-style: italic;
+      color: var(--ml-copper-lt);
+      opacity: 0.85;
+    }
+
+    /* ── BOTTLE LABEL BOTTOM EDGE ────────────────── */
+    .bottle-neck-bottom {
+      background: var(--ml-burgundy-dk);
+      height: 8px;
+    }
+
+    /* ── PAYMENT MODAL ───────────────────────────── */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(26,10,10,0.82);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      display: none; align-items: flex-end; justify-content: center;
+    }
+    .overlay.open { display: flex; }
+    .modal {
+      background: var(--ml-cream);
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23p)' opacity='0.05'/%3E%3C/svg%3E");
+      border-radius: 14px 14px 0 0;
+      padding: 20px 20px 36px;
+      width: 100%; max-width: 480px;
+      animation: slideUp 0.22s ease;
+      border-top: 3px solid var(--ml-burgundy);
+      box-shadow: 0 -4px 24px rgba(62,15,15,0.18);
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .modal-drag { width: 32px; height: 3px; background: var(--ml-parchment-dk); border-radius: 2px; margin: 0 auto 18px; }
+    .modal h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 19px;
+      font-weight: 700;
+      margin-bottom: 2px;
+      color: var(--ml-ink);
+    }
+    .modal .m-sub { font-size: 12px; color: var(--ml-ink-dim); margin-bottom: 16px; font-family: 'Barlow', sans-serif; font-weight: 300; }
+    .modal .total {
+      display: flex; justify-content: space-between;
+      font-weight: 700; font-size: 16px;
+      padding: 12px 0;
+      border-top: 1px solid var(--ml-smoke);
+      margin-bottom: 14px;
+      font-family: 'Barlow Condensed', sans-serif;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ml-ink);
+    }
+    .modal .total span:last-child { color: var(--ml-burgundy); }
+    .pay-opts { display: flex; flex-direction: column; gap: 8px; }
+    .pay-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 13px; border-radius: var(--radius-sm); border: none;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 14px; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #fff; text-decoration: none; cursor: pointer;
+      font-weight: 700; transition: opacity 0.12s;
+    }
+    .pay-btn:hover { opacity: 0.87; }
+    .pay-cashapp { background: #00C244; color: #1a0e0e; }
+    .pay-paypal  { background: #003087; }
+    .pay-cancel  { background: none; border: none; color: var(--ml-ink-dim); font-size: 12.5px; padding: 9px; width: 100%; margin-top: 4px; cursor: pointer; font-family: 'Barlow', sans-serif; letter-spacing: 0.03em; }
+
+  </style>
+</head>
+<body>
+<div class="page-content">
+
+<!-- ░░ BOTTLE NECK TOP ░░ -->
+<div class="bottle-neck"></div>
+
+<!-- ░░ EVENT BANNER ░░ -->
+<div class="seal-banner">Tasting Event &nbsp;·&nbsp; MurLarkey Distillery &nbsp;·&nbsp; Prince William, Virginia</div>
+
+<!-- ░░ LABEL BODY ░░ -->
+<div class="label-body">
+
+  <!-- CO-BRAND HEADER -->
+  <div class="collab-header">
+    <div class="brand-lockup">
+
+      <!-- MurLarkey brand -->
+      <div class="brand-ml">
+        <img src="data:image/jpeg;base64,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" alt="MurLarkey Distilled Spirits" style="max-width:220px;margin:0 auto 12px;display:block;border-radius:4px;"/>
+        <span class="ml-name">MurLarkey</span>
+        <span class="ml-sub">Distilled Spirits</span>
+      </div>
+
+      <span class="collab-x">×</span>
+
+      <!-- Cedar Tap brand -->
+      <div class="brand-cedar">
+        <span class="cedar-icon">🌲</span>
+        <span class="cedar-name">Cedar Tap</span>
+        <span class="cedar-sub">Mobile Tap Room</span>
+      </div>
+    </div>
+
+    <!-- Product hero -->
+    <div class="product-hero">
+      <span class="kicker">Craft Spirits · On Tap · Poured Fresh</span>
+      <h1>Cocktails<br><em>on Tap</em></h1>
+      <div class="subhead">Virginia Distillery · Served by Cedar Tap</div>
+    </div>
+  </div>
+
+  <!-- ornamental rule -->
+  <div class="ornament"><span>Virginia's Favorite Distillery</span></div>
+
+  <!-- ── SPIRITS FLIGHT ── -->
+  <div class="section-head">
+    <span class="section-head-label">Best Way to Start</span>
+    <span class="section-head-rule"></span>
+  </div>
+
+  <div class="flight-wrap">
+    <div class="flight-card" onclick="openModal('Spirits Flight','All 4 taps · 1.5oz each','$12',12)">
+      <div class="flight-corner-text">Best<br>Value</div>
+      <div class="flight-top">
+        <div>
+          <div class="flight-title">Spirits<br><em>Flight</em></div>
+          <div style="display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;">
+            <span class="tap-tag tag-flight">4 Pours</span>
+            <span class="tap-tag tag-flight">6oz Total</span>
+          </div>
+        </div>
+        <div class="flight-price">$12</div>
+      </div>
+      <p class="flight-desc">One 1.5oz taste from each tap — the perfect way to explore MurLarkey's Virginia craft spirits lineup before committing to a cocktail pour.</p>
+      <div class="flight-pours">
+        <div class="flight-pour"><div class="f-bar" style="background:linear-gradient(180deg,#c09060,#8a5a28);"></div><div class="f-name">Birthright<br>Bourbon</div></div>
+        <div class="flight-pour"><div class="f-bar" style="background:linear-gradient(180deg,#3a2010,#5a3218);"></div><div class="f-name">Smoke&shy;house<br>Whiskey</div></div>
+        <div class="flight-pour"><div class="f-bar" style="background:linear-gradient(180deg,#c06018,#8a3a10);"></div><div class="f-name">Cinnamon<br>Whiskey</div></div>
+        <div class="flight-pour"><div class="f-bar" style="background:linear-gradient(180deg,#e8e0c8,#c8b888);"></div><div class="f-name">Divine<br>Clarity</div></div>
+      </div>
+      <button class="flight-btn" onclick="event.stopPropagation();openModal('Spirits Flight','All 4 taps · 1.5oz each','$12',12)">Order Flight — $12</button>
+    </div>
+  </div>
+
+  <!-- ── COCKTAILS ON TAP ── -->
+  <div class="section-head">
+    <span class="section-head-label">Cocktails on Tap</span>
+    <span class="section-head-rule"></span>
+  </div>
+
+  <div class="taps-wrap">
+
+    <!-- TAP 1 — Bourbon Old Fashioned -->
+    <div class="tap-item" onclick="toggleTap(this)">
+      <span class="tap-num">01</span>
+      <div class="tap-info">
+        <div class="tap-name">Old Fashioned</div>
+        <div class="tap-origin">Birthright Bourbon · Cedar Tap House</div>
+        <div class="tap-notes">Birthright Bourbon, Demerara simple syrup, Angostura bitters, orange. Stirred and chilled on tap.</div>
+        <div class="tap-tags">
+          <span class="tap-tag tag-ml">MurLarkey</span>
+          <span class="tap-tag tag-cedar">Cedar Tap</span>
+        </div>
+        <div class="size-panel">
+          <div class="size-inner">
+            <div class="size-note">~18 cocktails per keg at 4oz · ~12 at 6oz</div>
+            <div class="size-row">
+              <div class="size-btn sel" onclick="sel(event,this,'4oz',10)"><div class="oz">4oz</div><div class="price">$10</div></div>
+              <div class="size-btn" onclick="sel(event,this,'6oz',13)"><div class="oz">6oz</div><div class="price">$13</div></div>
+            </div>
+            <button class="order-btn" onclick="openFromTap(event,this,'Old Fashioned','Birthright Bourbon · Cedar Tap')">Order — Pay at Window</button>
+          </div>
+        </div>
+      </div>
+      <div class="tap-right">
+        <span class="tap-price-from">from</span>
+        <span class="tap-price">$10</span>
+        <span class="tap-chevron">›</span>
+      </div>
+    </div>
+
+    <!-- TAP 2 — Smoked Bourbon Mule -->
+    <div class="tap-item" onclick="toggleTap(this)">
+      <span class="tap-num">02</span>
+      <div class="tap-info">
+        <div class="tap-name">Smoked Mule</div>
+        <div class="tap-origin">Smokehouse Whiskey · Ginger · Lime</div>
+        <div class="tap-notes">MurLarkey Smokehouse Whiskey, ginger beer reduction, fresh lime. Smoky, spicy, refreshing.</div>
+        <div class="tap-tags">
+          <span class="tap-tag tag-ml">MurLarkey</span>
+          <span class="tap-tag tag-house">Signature</span>
+        </div>
+        <div class="size-panel">
+          <div class="size-inner">
+            <div class="size-note">~18 cocktails per keg at 4oz · ~12 at 6oz</div>
+            <div class="size-row">
+              <div class="size-btn sel" onclick="sel(event,this,'4oz',10)"><div class="oz">4oz</div><div class="price">$10</div></div>
+              <div class="size-btn" onclick="sel(event,this,'6oz',13)"><div class="oz">6oz</div><div class="price">$13</div></div>
+            </div>
+            <button class="order-btn" onclick="openFromTap(event,this,'Smoked Mule','MurLarkey Smokehouse Whiskey · Ginger · Lime')">Order — Pay at Window</button>
+          </div>
+        </div>
+      </div>
+      <div class="tap-right">
+        <span class="tap-price-from">from</span>
+        <span class="tap-price">$10</span>
+        <span class="tap-chevron">›</span>
+      </div>
+    </div>
+
+    <!-- TAP 3 — Cinnamon Whiskey Sour -->
+    <div class="tap-item" onclick="toggleTap(this)">
+      <span class="tap-num">03</span>
+      <div class="tap-info">
+        <div class="tap-name">Cinnamon Sour</div>
+        <div class="tap-origin">Cinnamon Whiskey · Lemon · Honey</div>
+        <div class="tap-notes">MurLarkey Cinnamon Whiskey, house lemon sour, raw honey syrup. Warm spice, bright citrus finish.</div>
+        <div class="tap-tags">
+          <span class="tap-tag tag-ml">MurLarkey</span>
+          <span class="tap-tag tag-house">Fan Favorite</span>
+        </div>
+        <div class="size-panel">
+          <div class="size-inner">
+            <div class="size-note">~18 cocktails per keg at 4oz · ~12 at 6oz</div>
+            <div class="size-row">
+              <div class="size-btn sel" onclick="sel(event,this,'4oz',10)"><div class="oz">4oz</div><div class="price">$10</div></div>
+              <div class="size-btn" onclick="sel(event,this,'6oz',13)"><div class="oz">6oz</div><div class="price">$13</div></div>
+            </div>
+            <button class="order-btn" onclick="openFromTap(event,this,'Cinnamon Sour','MurLarkey Cinnamon Whiskey · Lemon · Honey')">Order — Pay at Window</button>
+          </div>
+        </div>
+      </div>
+      <div class="tap-right">
+        <span class="tap-price-from">from</span>
+        <span class="tap-price">$10</span>
+        <span class="tap-chevron">›</span>
+      </div>
+    </div>
+
+    <!-- TAP 4 — Divine Martini -->
+    <div class="tap-item" onclick="toggleTap(this)">
+      <span class="tap-num">04</span>
+      <div class="tap-info">
+        <div class="tap-name">Divine Martini</div>
+        <div class="tap-origin">Divine Clarity Vodka · Dry Vermouth</div>
+        <div class="tap-notes">MurLarkey's award-winning Divine Clarity Vodka, dry vermouth, olive brine. Crisp, clean, Virginia-made.</div>
+        <div class="tap-tags">
+          <span class="tap-tag tag-ml">MurLarkey</span>
+          <span class="tap-tag tag-ml">Gold Award</span>
+        </div>
+        <div class="size-panel">
+          <div class="size-inner">
+            <div class="size-note">~18 cocktails per keg at 4oz · ~12 at 6oz</div>
+            <div class="size-row">
+              <div class="size-btn sel" onclick="sel(event,this,'4oz',11)"><div class="oz">4oz</div><div class="price">$11</div></div>
+              <div class="size-btn" onclick="sel(event,this,'6oz',14)"><div class="oz">6oz</div><div class="price">$14</div></div>
+            </div>
+            <button class="order-btn" onclick="openFromTap(event,this,'Divine Martini','MurLarkey Divine Clarity Vodka')">Order — Pay at Window</button>
+          </div>
+        </div>
+      </div>
+      <div class="tap-right">
+        <span class="tap-price-from">from</span>
+        <span class="tap-price">$11</span>
+        <span class="tap-chevron">›</span>
+      </div>
+    </div>
+
+  </div><!-- /cocktails on tap -->
+
+  <!-- ── NEAT POURS ── -->
+  <div class="section-head" style="padding-top:20px;">
+    <span class="section-head-label">Neat Pours</span>
+    <span class="section-head-rule"></span>
+  </div>
+
+  <div class="taps-wrap">
+
+    <!-- NEAT 1 — Birthright Bourbon -->
+    <div class="tap-item" onclick="toggleTap(this)">
+      <span class="tap-num">N1</span>
+      <div class="tap-info">
+        <div class="tap-name">Birthright Bourbon</div>
+        <div class="tap-origin">Distillers Select · Virginia Straight</div>
+        <div class="tap-notes">Caramel, vanilla, toasted oak. Virginia-distilled, award-winning. Served neat or on the rocks.</div>
+        <div class="tap-tags">
+          <span class="tap-tag tag-ml">MurLarkey</span>
+          <span class="tap-tag tag-house">Straight Bourbon</span>
+        </div>
+        <div class="size-panel">
+          <div class="size-inner">
+            <div class="size-note">Standard 1.5oz neat pour; 2oz available on request</div>
+            <div class="size-row">
+              <div class="size-btn sel" onclick="sel(event,this,'1.5oz',9)"><div class="oz">1.5oz</div><div class="price">$9</div></div>
+              <div class="size-btn" onclick="sel(event,this,'2oz',11)"><div class="oz">2oz</div><div class="price">$11</div></div>
+            </div>
+            <button class="order-btn" onclick="openFromTap(event,this,'Birthright Bourbon','MurLarkey · Distillers Select · Neat')">Order — Pay at Window</button>
+          </div>
+        </div>
+      </div>
+      <div class="tap-right">
+        <span class="tap-price-from">from</span>
+        <span class="tap-price">$9</span>
+        <span class="tap-chevron">›</span>
+      </div>
+    </div>
+
+    <!-- NEAT 2 — Honey Whiskey -->
+    <div class="tap-item" onclick="toggleTap(this)">
+      <span class="tap-num">N2</span>
+      <div class="tap-info">
+        <div class="tap-name">Honey Whiskey</div>
+        <div class="tap-origin">MurLarkey · Virginia Honey Infused</div>
+        <div class="tap-notes">Smooth whiskey base with natural Virginia honey. Soft sweetness, light floral finish. Approachable and crowd-pleasing.</div>
+        <div class="tap-tags">
+          <span class="tap-tag tag-ml">MurLarkey</span>
+          <span class="tap-tag tag-house">Crowd Favorite</span>
+        </div>
+        <div class="size-panel">
+          <div class="size-inner">
+            <div class="size-note">Standard 1.5oz neat pour; 2oz available on request</div>
+            <div class="size-row">
+              <div class="size-btn sel" onclick="sel(event,this,'1.5oz',8)"><div class="oz">1.5oz</div><div class="price">$8</div></div>
+              <div class="size-btn" onclick="sel(event,this,'2oz',10)"><div class="oz">2oz</div><div class="price">$10</div></div>
+            </div>
+            <button class="order-btn" onclick="openFromTap(event,this,'Honey Whiskey','MurLarkey · Virginia Honey Infused · Neat')">Order — Pay at Window</button>
+          </div>
+        </div>
+      </div>
+      <div class="tap-right">
+        <span class="tap-price-from">from</span>
+        <span class="tap-price">$8</span>
+        <span class="tap-chevron">›</span>
+      </div>
+    </div>
+
+  </div><!-- /neat pours -->
+
+  <!-- ── PROVENANCE PANEL ── -->
+  <div class="section-head" style="padding-top:20px;">
+    <span class="section-head-label">Distillery Facts</span>
+    <span class="section-head-rule"></span>
+  </div>
+  <div style="padding:0 20px 16px; max-width:480px; margin:0 auto;">
+    <div class="provenance-panel">
+      <div class="prov-title">Distillery Provenance</div>
+      <div class="prov-subtitle">Crafted in Virginia · Poured by Cedar Tap Mobile Tap Room</div>
+      <div class="prov-row accent"><span class="p-label">Distillery</span><span class="p-val">MurLarkey Distilled Spirits</span></div>
+      <div class="prov-divider"></div>
+      <div class="prov-row"><span class="p-label">Location</span><span class="p-val">Gainesville, Virginia</span></div>
+      <div class="prov-row"><span class="p-label">Awards</span><span class="p-val">Gold+ in 6 Categories</span></div>
+      <div class="prov-row"><span class="p-label">Signature</span><span class="p-val">Virginia Straight Bourbon</span></div>
+      <div class="prov-row"><span class="p-label">Tap Temp</span><span class="p-val">38°F — Chilled to Serve</span></div>
+      <div class="prov-divider"></div>
+      <div class="prov-row accent"><span class="p-label">Poured by</span><span class="p-val">Cedar Tap Mobile Tap Room</span></div>
+    </div>
+  </div>
+
+  <!-- ── QR / BARCODE ── -->
+  <div class="barcode-section">
+    <div class="barcode-qr" style="text-align:center;">
+      <a href="https://cedartaps.com/murlarkey" target="_blank" title="Scan to open menu" id="qr-link">
+        <img src="/img/qr-murlarkey.svg" alt="QR — Cedar Tap × MurLarkey Menu" style="width:180px;height:auto;border-radius:10px;box-shadow:0 2px 12px rgba(139,26,26,.18);"/>
+      </a>
+      <div style="margin-top:6px;">
+        <a href="/img/qr-murlarkey.svg" download="murlarkey-qr.svg" style="font-size:.65rem;font-family:'Courier New',monospace;color:#8B1A1A;letter-spacing:.05em;text-decoration:none;border-bottom:1px solid #c8941a;padding-bottom:1px;">⬇ Download QR</a>
+      </div>
+    </div>
+    <div class="barcode-copy">
+      <div class="bc-title">Scan to View<br>Full Menu</div>
+      <div class="bc-sub">This QR code opens the Cedar Tap × MurLarkey cocktail menu. Share it with guests or display at the tap station.</div>
+      <a class="bc-url" href="https://cedartaps.com/murlarkey" target="_blank">cedartaps.com/murlarkey</a>
+    </div>
+  </div>
+
+  <!-- ── LEGAL ── -->
+  <div class="legal-strip">
+    <p>
+      <strong>Must be 21+</strong> to purchase. Please drink responsibly. Valid ID required at point of service.<br>
+      <strong>Allergens:</strong> Products may contain grain-based spirits. Cocktails may contain honey or citrus. Ask your server for details.<br>
+      <strong>Distributor:</strong> Cedar Tap Trailers LLC, Woodbridge VA · (202) 810-1861 · cedartaps.com<br>
+      <strong>Spirits by:</strong> MurLarkey Distilled Spirits, Gainesville VA · murlarkey.com<br>
+      All products served from temperature-controlled taps by licensed Cedar Tap operators.
+    </p>
+  </div>
+
+</div><!-- /label-body -->
+
+<!-- ░░ BOTTLE FOOTER ░░ -->
+<footer class="bottle-footer">
+  <div class="footer-seal"><span>CT×ML</span></div>
+  <strong>Cedar Tap Trailers</strong> &nbsp;×&nbsp; <strong>MurLarkey Distilled Spirits</strong><br>
+  <a href="mailto:tom@cedartaps.com">tom@cedartaps.com</a> &nbsp;·&nbsp; (202) 810-1861<br>
+  <a href="https://cedartaps.com" target="_blank">cedartaps.com</a> &nbsp;·&nbsp; <a href="https://murlarkey.com" target="_blank">murlarkey.com</a><br>
+  <a href="/" style="color:rgba(255,255,255,0.28);font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;">← Cedar Tap Home</a>
+</footer>
+
+<!-- ░░ BOTTLE NECK BOTTOM ░░ -->
+<div class="bottle-neck-bottom"></div>
+
+<!-- ░░ PAYMENT MODAL ░░ -->
+<div class="overlay" id="overlay" onclick="closeIfOut(event)">
+  <div class="modal">
+    <div class="modal-drag"></div>
+    <h3 id="m-item">Old Fashioned</h3>
+    <div class="m-sub" id="m-sub">Birthright Bourbon · Cedar Tap · 4oz</div>
+    <div class="total"><span>Total</span><span id="m-price">$10.00</span></div>
+    <div class="pay-opts">
+      <a id="m-cashapp" href="#" class="pay-btn pay-cashapp" target="_blank">Pay with Cash App &nbsp;$CedarTaps</a>
+      <a id="m-paypal" href="#" class="pay-btn pay-paypal" target="_blank">Pay with PayPal</a>
+    </div>
+    <button class="pay-cancel" onclick="closeModal()">Cancel — I'll pay at the window</button>
+  </div>
+</div>
+
+<script data-goatcounter="https://cedartap.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+  function toggleTap(item) {
+    const was = item.classList.contains('open');
+    document.querySelectorAll('.tap-item').forEach(i => i.classList.remove('open'));
+    if (!was) item.classList.add('open');
+  }
+  function sel(e, btn, size, price) {
+    e.stopPropagation();
+    const inner = btn.closest('.size-inner');
+    inner.querySelectorAll('.size-btn').forEach(b => b.classList.remove('sel'));
+    btn.classList.add('sel');
+    const item = btn.closest('.tap-item');
+    item.dataset.sz = size;
+    item.dataset.px = price;
+  }
+  function openFromTap(e, btn, name, sub) {
+    e.stopPropagation();
+    const item = btn.closest('.tap-item');
+    const size  = item.dataset.sz  || '4oz';
+    const price = parseFloat(item.dataset.px || 10);
+    openModal(name, sub + ' · ' + size, '$' + price.toFixed(2), price);
+  }
+  function openModal(name, sub, priceStr, priceNum) {
+    document.getElementById('m-item').textContent  = name;
+    document.getElementById('m-sub').textContent   = sub;
+    document.getElementById('m-price').textContent = typeof priceStr === 'string' ? priceStr : '$' + parseFloat(priceStr).toFixed(2);
+    const note = encodeURIComponent(name + ' — Cedar Tap Trailers');
+    const amt  = parseFloat(priceNum).toFixed(2);
+    document.getElementById('m-cashapp').href = `https://cash.app/$CedarTaps/${amt}?note=${note}`;
+    document.getElementById('m-paypal').href  = `https://paypal.me/cedartaptrailer/${amt}`;
+    document.getElementById('overlay').classList.add('open');
+  }
+  function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+  function closeIfOut(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
+  document.querySelectorAll('.tap-item').forEach(i => {
+    i.dataset.sz = '4oz';
+    i.dataset.px = '10';
+  });
+</script>
+</div><!-- /page-content -->
+</body>
+</html>

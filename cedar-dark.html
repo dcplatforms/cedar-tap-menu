@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cedar Dark — Cedar Tap Trailers</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #1a0a02;
+      --card-bg: #3d1c08;
+      --text-cream: #f5ead8;
+      --text-muted: #c4a882;
+      --gold: #d4a43a;
+      --green: #5a7a3a;
+      --accent: #3d1c08;
+      --accent-light: #7a3a10;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text-cream);
+      font-family: 'Georgia', 'Times New Roman', serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(212,164,58,0.2);
+    }
+    .back-link {
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      font-family: 'Arial', sans-serif;
+    }
+    .back-link:hover { text-decoration: underline; }
+    .brand-mark {
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-cream);
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-family: 'Arial', sans-serif;
+    }
+    .event-badge {
+      background: rgba(212,164,58,0.15);
+      border: 1px solid rgba(212,164,58,0.3);
+      color: var(--gold);
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-family: 'Arial', sans-serif;
+      letter-spacing: 0.04em;
+    }
+
+    /* Hero */
+    .product-hero {
+      background: linear-gradient(160deg, #3d1c08 0%, #1a0a02 60%);
+      padding: 40px 24px 32px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .product-hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 220px; height: 220px;
+      background: radial-gradient(circle, rgba(212,164,58,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .product-emoji {
+      font-size: 3.5rem;
+      display: block;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+    }
+    .product-name {
+      font-size: 2.4rem;
+      font-weight: normal;
+      color: var(--text-cream);
+      letter-spacing: 0.02em;
+      line-height: 1.1;
+    }
+    .product-subtitle {
+      color: var(--gold);
+      font-size: 0.9rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 8px;
+      font-family: 'Arial', sans-serif;
+    }
+    .tap-number {
+      display: inline-block;
+      background: rgba(212,164,58,0.15);
+      border: 1px solid rgba(212,164,58,0.25);
+      color: var(--gold);
+      font-size: 0.7rem;
+      padding: 3px 10px;
+      border-radius: 12px;
+      margin-top: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-family: 'Arial', sans-serif;
+    }
+
+    /* Tasting notes */
+    .tasting-section {
+      padding: 28px 24px;
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .section-label {
+      color: var(--gold);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-family: 'Arial', sans-serif;
+      margin-bottom: 10px;
+    }
+    .flavor-description {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--text-cream);
+      margin-bottom: 20px;
+    }
+    .tasting-notes {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .note-tag {
+      background: rgba(61,28,8,0.6);
+      border: 1px solid rgba(212,164,58,0.2);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-family: 'Arial', sans-serif;
+      letter-spacing: 0.03em;
+    }
+
+    /* Details strip */
+    .detail-strip {
+      background: rgba(61,28,8,0.4);
+      border-top: 1px solid rgba(212,164,58,0.1);
+      border-bottom: 1px solid rgba(212,164,58,0.1);
+      padding: 14px 24px;
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .detail-item {
+      text-align: center;
+    }
+    .detail-value {
+      font-size: 0.82rem;
+      color: var(--text-cream);
+      font-family: 'Arial', sans-serif;
+    }
+    .detail-key {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-family: 'Arial', sans-serif;
+      margin-top: 2px;
+    }
+
+    /* Order section */
+    .order-section {
+      padding: 28px 24px;
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+    }
+    .size-label {
+      color: var(--gold);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-family: 'Arial', sans-serif;
+      margin-bottom: 12px;
+    }
+    .size-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .size-btn {
+      background: rgba(61,28,8,0.5);
+      border: 2px solid rgba(212,164,58,0.25);
+      color: var(--text-muted);
+      padding: 16px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+      font-family: 'Georgia', serif;
+    }
+    .size-btn:hover {
+      border-color: rgba(212,164,58,0.5);
+      color: var(--text-cream);
+    }
+    .size-btn.selected {
+      background: rgba(212,164,58,0.15);
+      border-color: var(--gold);
+      color: var(--text-cream);
+    }
+    .size-oz {
+      font-size: 1.4rem;
+      display: block;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .size-label-text {
+      font-size: 0.72rem;
+      color: inherit;
+      font-family: 'Arial', sans-serif;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .size-price {
+      font-size: 1.1rem;
+      color: var(--gold);
+      font-weight: bold;
+      display: block;
+      margin-top: 6px;
+    }
+
+    .order-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--gold) 0%, #b8891e 100%);
+      color: #1a0a02;
+      border: none;
+      padding: 18px 24px;
+      border-radius: 14px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-family: 'Arial', sans-serif;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 20px rgba(212,164,58,0.3);
+    }
+    .order-btn:active {
+      transform: scale(0.98);
+      box-shadow: 0 2px 10px rgba(212,164,58,0.2);
+    }
+
+    /* Bottom sheet overlay */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 100;
+      backdrop-filter: blur(3px);
+    }
+    .overlay.open { display: block; }
+
+    .bottom-sheet {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: #1f0e04;
+      border-top: 2px solid rgba(212,164,58,0.3);
+      border-radius: 20px 20px 0 0;
+      padding: 24px 24px 40px;
+      z-index: 101;
+      transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .bottom-sheet.open { transform: translateY(0); }
+
+    .sheet-handle {
+      width: 40px; height: 4px;
+      background: rgba(212,164,58,0.3);
+      border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+    .sheet-title {
+      font-size: 1.1rem;
+      color: var(--text-cream);
+      margin-bottom: 4px;
+    }
+    .sheet-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-family: 'Arial', sans-serif;
+      margin-bottom: 22px;
+    }
+    .sheet-amount {
+      color: var(--gold);
+      font-size: 1.5rem;
+      text-align: center;
+      margin-bottom: 22px;
+      font-weight: bold;
+    }
+
+    .pay-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .pay-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-family: 'Arial', sans-serif;
+      font-size: 0.95rem;
+      font-weight: bold;
+      letter-spacing: 0.02em;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+    .pay-btn:active { transform: scale(0.97); opacity: 0.85; }
+    .pay-btn.cashapp {
+      background: #00d632;
+      color: #000;
+    }
+    .pay-btn.paypal {
+      background: #0070ba;
+      color: #fff;
+    }
+    .pay-btn.square {
+      background: #fff;
+      color: #000;
+    }
+    .pay-icon {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .pay-text { flex: 1; }
+    .pay-name { display: block; font-size: 1rem; }
+    .pay-sub { display: block; font-size: 0.72rem; opacity: 0.7; font-weight: normal; margin-top: 1px; }
+
+    .sheet-close {
+      width: 100%;
+      background: transparent;
+      border: 1px solid rgba(212,164,58,0.2);
+      color: var(--text-muted);
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: 'Arial', sans-serif;
+      font-size: 0.85rem;
+      margin-top: 4px;
+    }
+
+    /* Footer */
+    .site-footer {
+      text-align: center;
+      padding: 20px;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-family: 'Arial', sans-serif;
+      letter-spacing: 0.04em;
+      border-top: 1px solid rgba(212,164,58,0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="cafe-menu.html" class="back-link">← Full Menu</a>
+    <div class="brand-mark">🌲 Cedar Tap</div>
+    <div class="event-badge">Jun 14</div>
+  </header>
+
+  <section class="product-hero">
+    <span class="product-emoji">☕</span>
+    <h1 class="product-name">Cedar Dark</h1>
+    <p class="product-subtitle">Organic Dark Roast Nitro Cold Brew</p>
+    <span class="tap-number">Tap 1</span>
+  </section>
+
+  <div class="tasting-section">
+    <p class="section-label">About this brew</p>
+    <p class="flavor-description">
+      Our boldest pour. Organic dark roast beans steeped cold for 20 hours, then charged with nitrogen for a silky, cascading finish that's rich without any bitterness.
+    </p>
+    <div class="tasting-notes">
+      <span class="note-tag">Dark Chocolate</span>
+      <span class="note-tag">Toasted Oak</span>
+      <span class="note-tag">Molasses</span>
+      <span class="note-tag">Smooth Finish</span>
+    </div>
+  </div>
+
+  <div class="detail-strip">
+    <div class="detail-item">
+      <div class="detail-value">Organic</div>
+      <div class="detail-key">Bean Source</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-value">20 hr</div>
+      <div class="detail-key">Cold Steep</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-value">Nitro</div>
+      <div class="detail-key">Pour Type</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-value">Dairy-Free</div>
+      <div class="detail-key">Dietary</div>
+    </div>
+  </div>
+
+  <section class="order-section">
+    <p class="size-label">Choose your size</p>
+    <div class="size-buttons">
+      <button class="size-btn" data-size="12" data-price="8.99" onclick="selectSize(this)">
+        <span class="size-oz">12</span>
+        <span class="size-label-text">oz</span>
+        <span class="size-price">$8.99</span>
+      </button>
+      <button class="size-btn selected" data-size="16" data-price="9.99" onclick="selectSize(this)">
+        <span class="size-oz">16</span>
+        <span class="size-label-text">oz · Popular</span>
+        <span class="size-price">$9.99</span>
+      </button>
+    </div>
+
+    <button class="order-btn" onclick="openSheet()">Order &amp; Pay →</button>
+  </section>
+
+  <!-- Bottom sheet overlay -->
+  <div class="overlay" id="overlay" onclick="closeSheet()"></div>
+  <div class="bottom-sheet" id="sheet">
+    <div class="sheet-handle"></div>
+    <h2 class="sheet-title">Cedar Dark</h2>
+    <p class="sheet-subtitle" id="sheet-subtitle">16 oz Nitro Cold Brew</p>
+    <div class="sheet-amount" id="sheet-amount">$9.99</div>
+    <div class="pay-options">
+      <a href="https://paypal.me/cedartaptrailer" target="_blank" class="pay-btn paypal">
+        <span class="pay-icon">🅿</span>
+        <span class="pay-text">
+          <span class="pay-name">PayPal</span>
+          <span class="pay-sub">Pay with PayPal or card</span>
+        </span>
+      </a>
+      <a href="https://square.link/u/XXXXXXXX" target="_blank" class="pay-btn square">
+        <span class="pay-icon">◼</span>
+        <span class="pay-text">
+          <span class="pay-name">Square</span>
+          <span class="pay-sub">Credit / debit card</span>
+        </span>
+      </a>
+    </div>
+    <button class="sheet-close" onclick="closeSheet()">Cancel</button>
+  </div>
+
+  <footer class="site-footer">
+    Dale City Farmers Market &nbsp;·&nbsp; Sunday June 14, 2026<br>
+    🌲 Cedar Tap Trailers
+  </footer>
+
+  <script>
+    let selectedPrice = '9.99';
+    let selectedSize = '16';
+
+    function selectSize(btn) {
+      document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedPrice = btn.dataset.price;
+      selectedSize = btn.dataset.size;
+    }
+
+    function openSheet() {
+      document.getElementById('sheet-subtitle').textContent = selectedSize + ' oz Nitro Cold Brew';
+      document.getElementById('sheet-amount').textContent = '$' + selectedPrice;
+      document.getElementById('overlay').classList.add('open');
+      requestAnimationFrame(() => {
+        document.getElementById('sheet').classList.add('open');
+      });
+    }
+
+    function closeSheet() {
+      document.getElementById('sheet').classList.remove('open');
+      setTimeout(() => document.getElementById('overlay').classList.remove('open'), 350);
+    }
+  </script>
+</body>
+</html>

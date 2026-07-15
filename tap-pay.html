@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Order & Pay — Cedar Tap</title>
+  <link rel="icon" href="/img/cedar-tap-logo.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cedar:   #1c2e1a;
+      --cedar-m: #2a4427;
+      --gold:    #c8a857;
+      --gold-lt: #e2c97e;
+      --cream:   #f5f0e6;
+      --smoke:   rgba(255,255,255,0.07);
+      --border:  rgba(200,168,87,0.18);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { background: var(--cedar); }
+    body {
+      background: var(--cedar);
+      color: var(--cream);
+      font-family: 'Barlow', sans-serif;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    header {
+      text-align: center;
+      padding: 2rem 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand-row { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.4rem; }
+    .brand-row img { height: 24px; }
+    .brand-row span { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--gold); }
+    header h1 { font-size: 1.5rem; font-family: 'Playfair Display', serif; font-weight: 700; }
+    header p { font-size: 0.85rem; color: rgba(245,240,230,0.6); margin-top: 0.3rem; }
+
+    /* ── TAP SELECTOR ── */
+    .tap-selector {
+      display: flex;
+      overflow-x: auto;
+      gap: 0.5rem;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      scrollbar-width: none;
+    }
+    .tap-selector::-webkit-scrollbar { display: none; }
+    .tap-btn {
+      flex-shrink: 0;
+      padding: 0.5rem 1.1rem;
+      border-radius: 30px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: rgba(245,240,230,0.6);
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: 'Barlow', sans-serif;
+      cursor: pointer;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+    .tap-btn.active, .tap-btn:hover {
+      background: rgba(200,168,87,0.12);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* ── PRODUCT CARD ── */
+    main { flex: 1; padding: 1.25rem; max-width: 480px; margin: 0 auto; width: 100%; }
+
+    .product-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .product-card.visible { display: block; }
+
+    .prod-head {
+      padding: 1.25rem 1.25rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .prod-tap-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.3rem;
+    }
+    .prod-name { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .prod-sub { font-size: 0.82rem; color: rgba(245,240,230,0.55); }
+
+    /* size selector */
+    .size-row { display: flex; gap: 0.6rem; padding: 1rem 1.25rem; }
+    .sz-btn {
+      flex: 1;
+      text-align: center;
+      padding: 0.75rem 0.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .sz-btn.sel { background: rgba(200,168,87,0.15); border-color: var(--gold); }
+    .sz-btn .sz-label { font-size: 0.78rem; color: rgba(245,240,230,0.6); margin-bottom: 0.2rem; }
+    .sz-btn.sel .sz-label { color: var(--cream); }
+    .sz-btn .sz-price { font-size: 1.1rem; font-weight: 700; color: var(--gold); }
+
+    /* qty & total */
+    .qty-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+    .qty-label { font-size: 0.85rem; color: rgba(245,240,230,0.6); }
+    .qty-control { display: flex; align-items: center; gap: 0.75rem; }
+    .qty-btn {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--smoke);
+      color: var(--cream);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color .15s;
+    }
+    .qty-btn:hover { border-color: var(--gold); }
+    .qty-val { font-size: 1rem; font-weight: 700; min-width: 1.5rem; text-align: center; }
+
+    .total-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 1.25rem 1rem;
+      font-size: 0.9rem;
+    }
+    .total-label { color: rgba(245,240,230,0.6); }
+    .total-val { font-size: 1.4rem; font-weight: 700; color: var(--gold); }
+
+    /* pay buttons */
+    .pay-section { padding: 0 1.25rem 1.25rem; display: flex; flex-direction: column; gap: 0.6rem; }
+    .pay-btn {
+      display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+      width: 100%;
+      padding: 0.95rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.92rem;
+      font-weight: 700;
+      font-family: 'Barlow', sans-serif;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: transform .1s, opacity .15s;
+      text-decoration: none;
+    }
+    .pay-btn:active { transform: scale(0.98); }
+    .pay-square { background: #3e4348; color: #fff; }
+    .pay-square:hover { opacity: 0.9; }
+    .pay-cashapp { background: #00d632; color: #000; }
+    .pay-cashapp:hover { opacity: 0.9; }
+    .pay-tap { background: var(--gold); color: var(--cedar); }
+    .pay-tap:hover { background: var(--gold-lt); }
+    .pay-note {
+      font-size: 0.72rem;
+      color: rgba(245,240,230,0.35);
+      text-align: center;
+      padding: 0 1.25rem 0.5rem;
+    }
+
+    /* ── PARTNER SHOWCASE STRIP ── */
+    .partner-strip {
+      border-top: 1px solid var(--border);
+      padding: 1.25rem;
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .partner-strip-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(245,240,230,0.35);
+      margin-bottom: 0.75rem;
+    }
+    .partner-chips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .p-chip {
+      padding: 0.4rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: rgba(245,240,230,0.55);
+      text-decoration: none;
+      transition: all .15s;
+    }
+    .p-chip:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 1.25rem;
+      font-size: 0.72rem;
+      color: rgba(245,240,230,0.25);
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: rgba(245,240,230,0.4); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand-row">
+      <img src="/img/cedar-tap-logo.svg" alt="Cedar Tap" />
+      <span>Cedar Tap</span>
+    </div>
+    <h1>Order &amp; Pay</h1>
+    <p id="event-name">Select your tap and size — we'll pour it fresh.</p>
+  </header>
+
+  <!-- TAP TABS -->
+  <div class="tap-selector" id="tap-tabs">
+    <button class="tap-btn active" onclick="showTap(0,this)">All Taps</button>
+    <button class="tap-btn" onclick="showTap(1,this)">Tap 1 — Coffee</button>
+    <button class="tap-btn" onclick="showTap(2,this)">Tap 2 — Cold Brew</button>
+    <button class="tap-btn" onclick="showTap(3,this)">Tap 3 — Craft Beer</button>
+    <button class="tap-btn" onclick="showTap(4,this)">Tap 4 — Specialty</button>
+  </div>
+
+  <main id="main-content">
+
+    <!-- TAP 1: La Colombe Nitro -->
+    <div class="product-card visible" data-tap="1" id="card-1">
+      <div class="prod-head">
+        <div class="prod-tap-badge">Tap 01 · La Colombe</div>
+        <div class="prod-name">Nitro Draft Latte</div>
+        <div class="prod-sub">Triple-charged nitrogen · smooth, creamy, zero sugar · served cold</div>
+      </div>
+      <div class="size-row" id="sizes-1">
+        <button class="sz-btn sel" onclick="selSize(1,this,7.99)">
+          <div class="sz-label">8 oz</div>
+          <div class="sz-price">$7.99</div>
+        </button>
+        <button class="sz-btn" onclick="selSize(1,this,8.99)">
+          <div class="sz-label">12 oz</div>
+          <div class="sz-price">$8.99</div>
+        </button>
+      </div>
+      <div class="qty-row">
+        <span class="qty-label">Quantity</span>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(1,-1)">−</button>
+          <span class="qty-val" id="qty-1">1</span>
+          <button class="qty-btn" onclick="changeQty(1,1)">+</button>
+        </div>
+      </div>
+      <div class="total-row">
+        <span class="total-label">Total</span>
+        <span class="total-val" id="total-1">$7.99</span>
+      </div>
+      <div class="pay-section">
+        <a class="pay-btn pay-tap" id="square-1" href="#" onclick="squarePay(1,event)">
+          ⬛ Pay with Square
+        </a>
+        <a class="pay-btn pay-cashapp" href="https://cash.app/$CedarTaps/7.99" id="cashapp-1" target="_blank">
+          💸 Cash App $CedarTaps
+        </a>
+      </div>
+      <div class="pay-note">Or pay your server directly. Tap-to-pay accepted.</div>
+    </div>
+
+    <!-- TAP 2: CWJ Cold Brew -->
+    <div class="product-card visible" data-tap="2" id="card-2">
+      <div class="prod-head">
+        <div class="prod-tap-badge">Tap 02 · Commonwealth Joe</div>
+        <div class="prod-name">Nitro Cold Brew</div>
+        <div class="prod-sub">Small-batch, single-origin cold brew on nitrogen · Arlington, VA roasted</div>
+      </div>
+      <div class="size-row" id="sizes-2">
+        <button class="sz-btn sel" onclick="selSize(2,this,7.99)">
+          <div class="sz-label">8 oz</div>
+          <div class="sz-price">$7.99</div>
+        </button>
+        <button class="sz-btn" onclick="selSize(2,this,8.99)">
+          <div class="sz-label">12 oz</div>
+          <div class="sz-price">$8.99</div>
+        </button>
+      </div>
+      <div class="qty-row">
+        <span class="qty-label">Quantity</span>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(2,-1)">−</button>
+          <span class="qty-val" id="qty-2">1</span>
+          <button class="qty-btn" onclick="changeQty(2,1)">+</button>
+        </div>
+      </div>
+      <div class="total-row">
+        <span class="total-label">Total</span>
+        <span class="total-val" id="total-2">$7.99</span>
+      </div>
+      <div class="pay-section">
+        <a class="pay-btn pay-tap" id="square-2" href="#" onclick="squarePay(2,event)">⬛ Pay with Square</a>
+        <a class="pay-btn pay-cashapp" href="https://cash.app/$CedarTaps/7.99" id="cashapp-2" target="_blank">💸 Cash App $CedarTaps</a>
+      </div>
+      <div class="pay-note">Or pay your server directly. Tap-to-pay accepted.</div>
+    </div>
+
+    <!-- TAP 3: Craft Beer -->
+    <div class="product-card visible" data-tap="3" id="card-3">
+      <div class="prod-head">
+        <div class="prod-tap-badge">Tap 03 · Craft Beer</div>
+        <div class="prod-name" id="beer-name">DC Brau El Hefe!</div>
+        <div class="prod-sub" id="beer-sub">Washington DC · Hefeweizen · Local craft · Half barrel</div>
+      </div>
+      <div class="size-row" id="sizes-3">
+        <button class="sz-btn sel" onclick="selSize(3,this,4.99)">
+          <div class="sz-label">5 oz Taste</div>
+          <div class="sz-price">$4.99</div>
+        </button>
+        <button class="sz-btn" onclick="selSize(3,this,8.99)">
+          <div class="sz-label">12 oz</div>
+          <div class="sz-price">$8.99</div>
+        </button>
+        <button class="sz-btn" onclick="selSize(3,this,11.99)">
+          <div class="sz-label">16 oz Pint</div>
+          <div class="sz-price">$11.99</div>
+        </button>
+      </div>
+      <div class="qty-row">
+        <span class="qty-label">Quantity</span>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(3,-1)">−</button>
+          <span class="qty-val" id="qty-3">1</span>
+          <button class="qty-btn" onclick="changeQty(3,1)">+</button>
+        </div>
+      </div>
+      <div class="total-row">
+        <span class="total-label">Total</span>
+        <span class="total-val" id="total-3">$4.99</span>
+      </div>
+      <div class="pay-section">
+        <a class="pay-btn pay-tap" id="square-3" href="#" onclick="squarePay(3,event)">⬛ Pay with Square</a>
+        <a class="pay-btn pay-cashapp" href="https://cash.app/$CedarTaps/4.99" id="cashapp-3" target="_blank">💸 Cash App $CedarTaps</a>
+      </div>
+      <div class="pay-note">Or pay your server directly. Tap-to-pay accepted.</div>
+    </div>
+
+    <!-- TAP 4: Specialty Rotating -->
+    <div class="product-card visible" data-tap="4" id="card-4">
+      <div class="prod-head">
+        <div class="prod-tap-badge">Tap 04 · Specialty Rotating</div>
+        <div class="prod-name" id="spec-name">Today's Special</div>
+        <div class="prod-sub" id="spec-sub">Ask your server — rotating specialty tap · wine, kombucha, or seasonal craft</div>
+      </div>
+      <div class="size-row" id="sizes-4">
+        <button class="sz-btn sel" onclick="selSize(4,this,3.99)">
+          <div class="sz-label">Taste</div>
+          <div class="sz-price">$3.99</div>
+        </button>
+        <button class="sz-btn" onclick="selSize(4,this,9.99)">
+          <div class="sz-label">Pour</div>
+          <div class="sz-price">$9.99</div>
+        </button>
+        <button class="sz-btn" onclick="selSize(4,this,13.99)">
+          <div class="sz-label">Full</div>
+          <div class="sz-price">$13.99</div>
+        </button>
+      </div>
+      <div class="qty-row">
+        <span class="qty-label">Quantity</span>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(4,-1)">−</button>
+          <span class="qty-val" id="qty-4">1</span>
+          <button class="qty-btn" onclick="changeQty(4,1)">+</button>
+        </div>
+      </div>
+      <div class="total-row">
+        <span class="total-label">Total</span>
+        <span class="total-val" id="total-4">$3.99</span>
+      </div>
+      <div class="pay-section">
+        <a class="pay-btn pay-tap" id="square-4" href="#" onclick="squarePay(4,event)">⬛ Pay with Square</a>
+        <a class="pay-btn pay-cashapp" href="https://cash.app/$CedarTaps/3.99" id="cashapp-4" target="_blank">💸 Cash App $CedarTaps</a>
+      </div>
+      <div class="pay-note">Or pay your server directly. Tap-to-pay accepted.</div>
+    </div>
+
+  </main>
+
+  <!-- PARTNER STRIP -->
+  <div class="partner-strip">
+    <div class="partner-strip-label">Explore our partners</div>
+    <div class="partner-chips">
+      <a class="p-chip" href="/lacolombe.html">La Colombe</a>
+      <a class="p-chip" href="/cwj.html">Commonwealth Joe</a>
+      <a class="p-chip" href="/murlarkey.html">Murlarkey</a>
+      <a class="p-chip" href="/beer.html">Beer Menu</a>
+      <a class="p-chip" href="/wine.html">Wine List</a>
+    </div>
+  </div>
+
+  <footer>
+    <a href="/">cedartaps.com</a> · Woodbridge, VA · (202) 810-1861
+  </footer>
+
+  <script>
+    // State
+    const state = {
+      prices: { 1: 7.99, 2: 7.99, 3: 4.99, 4: 3.99 },
+      qty:    { 1: 1,    2: 1,    3: 1,    4: 1    }
+    };
+
+    // Read URL params for event context
+    const params = new URLSearchParams(location.search);
+    if (params.get('tap')) showTap(parseInt(params.get('tap')));
+    if (params.get('event')) {
+      document.getElementById('event-name').textContent = decodeURIComponent(params.get('event'));
+    }
+
+    function showTap(tapNum, btn) {
+      document.querySelectorAll('.tap-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      document.querySelectorAll('.product-card').forEach(c => {
+        if (tapNum === 0) { c.classList.add('visible'); }
+        else { c.classList.toggle('visible', parseInt(c.dataset.tap) === tapNum); }
+      });
+    }
+
+    function selSize(tap, btn, price) {
+      document.querySelectorAll('#sizes-' + tap + ' .sz-btn').forEach(b => b.classList.remove('sel'));
+      btn.classList.add('sel');
+      state.prices[tap] = price;
+      updateTotal(tap);
+    }
+
+    function changeQty(tap, delta) {
+      state.qty[tap] = Math.max(1, Math.min(10, state.qty[tap] + delta));
+      document.getElementById('qty-' + tap).textContent = state.qty[tap];
+      updateTotal(tap);
+    }
+
+    function updateTotal(tap) {
+      const total = (state.prices[tap] * state.qty[tap]).toFixed(2);
+      document.getElementById('total-' + tap).textContent = '$' + total;
+      // Update CashApp link
+      const ca = document.getElementById('cashapp-' + tap);
+      if (ca) ca.href = 'https://cash.app/$CedarTaps/' + total;
+    }
+
+    // Square — opens Square payment link or falls back to contact
+    function squarePay(tap, e) {
+      e.preventDefault();
+      const total = (state.prices[tap] * state.qty[tap]).toFixed(2);
+      // Square checkout link (production)
+      // Replace with actual Square payment link from Square dashboard
+      const squareBase = 'https://square.link/u/CedarTap';
+      const note = encodeURIComponent('Tap ' + tap + ' x' + state.qty[tap] + ' = $' + total);
+      window.open(squareBase + '?amount=' + Math.round(total * 100) + '&note=' + note, '_blank');
+    }
+  </script>
+</body>
+</html>

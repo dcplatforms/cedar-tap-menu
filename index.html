@@ -1,0 +1,1735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Cedar Tap — A proprietary mobile beverage dispensing platform with embedded cashless checkout. Built for beverage brands that need on-the-go reach, revenue optimization, and real-time sales data at events, activations, and markets across the DC Metro." />
+  <title>Cedar Tap · Mobile Beverage Dispensing Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cedar:       #3b1f0e;
+      --cedar-mid:   #5c2d14;
+      --cedar-light: #8b4a2b;
+      --bark:        #a0613a;
+      --amber:       #c8922a;
+      --amber-light: #e0b050;
+      --gold:        #d4a843;
+      --cream:       #f5ede0;
+      --cream-dark:  #e8dccb;
+      --parchment:   #f9f4ec;
+      --forest:      #2a4a1e;
+      --forest-mid:  #3d6b2c;
+      --sage:        #6b8a5e;
+      --charcoal:    #1e1a16;
+      --text:        #2c1f13;
+      --text-mid:    #5c4030;
+      --text-muted:  #8a6b55;
+      --white:       #ffffff;
+      --shadow:      0 4px 24px rgba(59,31,14,0.15);
+      --shadow-lg:   0 12px 48px rgba(59,31,14,0.22);
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--parchment); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2.5rem;
+      background: rgba(30,12,4,0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(212,168,67,0.18);
+      transition: background 0.3s;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+    .nav-logo .wordmark { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 600; color: var(--cream); letter-spacing: 0.04em; }
+    .nav-logo .wordmark span { color: var(--amber-light); }
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a { text-decoration: none; font-size: 0.8rem; font-weight: 500; color: rgba(245,237,224,0.7); letter-spacing: 0.07em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--amber-light); }
+    .nav-cta { background: var(--amber) !important; color: var(--cedar) !important; padding: 0.45rem 1.1rem !important; border-radius: 4px; font-weight: 600 !important; }
+    .nav-cta:hover { background: var(--amber-light) !important; }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh; position: relative; display: flex; align-items: center; justify-content: center;
+      overflow: hidden; background: var(--cedar);
+    }
+
+    /* Carousel */
+    .hero-carousel { position: absolute; inset: 0; z-index: 0; }
+    .hero-slide {
+      position: absolute; inset: 0;
+      opacity: 0; transition: opacity 1.2s ease;
+    }
+    .hero-slide.active { opacity: 1; }
+    .hero-slide img {
+      width: 100%; height: 100%; object-fit: cover; object-position: center 35%;
+      display: block;
+    }
+    /* Per-slide focus overrides */
+    .hero-slide:nth-child(1) img { object-position: center center; object-fit: cover; } /* Branded hero — centered */
+    .hero-slide:nth-child(4) img { object-position: center 50%; }
+    .hero-slide:nth-child(6) img { object-position: center 40%; }
+    .hero-slide:nth-child(7) img { object-position: center 45%; }
+    .hero-slide:nth-child(8) img { object-position: center 55%; }
+    .hero-slide:nth-child(9) img { object-position: center 35%; }
+
+    /* Carousel dots */
+    .hero-dots {
+      position: absolute; bottom: 5rem; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 0.5rem; z-index: 3;
+    }
+    .hero-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(245,237,224,0.3); border: none; cursor: pointer; padding: 0;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .hero-dot.active { background: var(--amber-light); transform: scale(1.35); }
+
+    /* Carousel arrows */
+    .hero-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      z-index: 3; background: rgba(245,237,224,0.1); border: 1px solid rgba(245,237,224,0.2);
+      color: var(--cream); width: 42px; height: 42px; border-radius: 50%;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; transition: background 0.2s; backdrop-filter: blur(6px);
+    }
+    .hero-arrow:hover { background: rgba(245,237,224,0.22); }
+    .hero-arrow.prev { left: 1.5rem; }
+    .hero-arrow.next { right: 1.5rem; }
+
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg,
+        rgba(20,8,2,0.72) 0%,
+        rgba(42,74,30,0.55) 50%,
+        rgba(59,31,14,0.78) 100%);
+      z-index: 1;
+    }
+    .hero-inner {
+      position: relative; z-index: 2; text-align: center;
+      padding: 8rem 2rem 5rem; max-width: 820px; margin: 0 auto;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--amber-light); border: 1px solid rgba(212,168,67,0.3);
+      padding: 0.35rem 1rem; border-radius: 20px; margin-bottom: 2rem;
+      background: rgba(212,168,67,0.08);
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3.4rem, 8.5vw, 6.4rem); font-weight: 700;
+      color: #ffffff; line-height: 1.05; letter-spacing: -0.015em; margin-bottom: 1.4rem;
+      text-shadow: 0 2px 18px rgba(0,0,0,0.75), 0 4px 40px rgba(0,0,0,0.5);
+    }
+    .hero h1 em { font-style: italic; color: var(--amber-light); }
+    .hero .sub {
+      font-size: clamp(1.2rem, 2.6vw, 1.5rem); color: #ffffff;
+      font-weight: 400; max-width: 580px; margin: 0 auto 3rem; line-height: 1.75;
+      text-shadow: 0 1px 12px rgba(0,0,0,0.8), 0 2px 24px rgba(0,0,0,0.6);
+    }
+    .hero-actions { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+    .hero-scroll {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      color: rgba(245,237,224,0.3); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem; z-index: 2;
+      animation: bob 2.2s ease-in-out infinite;
+    }
+    @keyframes bob { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(7px); } }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.85rem 2rem; border-radius: 5px; font-size: 0.88rem;
+      font-weight: 600; letter-spacing: 0.04em; text-decoration: none;
+      transition: all 0.2s; cursor: pointer; border: none;
+    }
+    .btn-primary { background: var(--amber); color: var(--cedar); }
+    .btn-primary:hover { background: var(--amber-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(200,146,42,0.38); }
+    .btn-outline { background: transparent; color: var(--cream); border: 1.5px solid rgba(245,237,224,0.38); }
+    .btn-outline:hover { border-color: var(--amber-light); color: var(--amber-light); background: rgba(212,168,67,0.08); }
+    .btn-dark { background: var(--cedar); color: var(--cream); }
+    .btn-dark:hover { background: var(--cedar-light); transform: translateY(-1px); }
+
+    /* ─── SECTION SHARED ─── */
+    section { padding: 6rem 2rem; }
+    .section-inner { max-width: 1120px; margin: 0 auto; }
+    .section-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.7rem; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.9rem, 4vw, 2.8rem); font-weight: 700; color: var(--cedar); line-height: 1.18; margin-bottom: 1.1rem; }
+    .section-title em { font-style: italic; color: var(--bark); }
+    .section-body { font-size: 1rem; color: var(--text-mid); max-width: 560px; line-height: 1.85; }
+    .divider { width: 48px; height: 2px; background: var(--amber); margin: 1.1rem 0 1.7rem; }
+
+    /* ─── EXPERIENCE ─── */
+    .experience { background: var(--white); }
+    .experience-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .experience-visual {
+      border-radius: 12px; aspect-ratio: 4/3;
+      position: relative; overflow: hidden; box-shadow: var(--shadow-lg);
+    }
+    .experience-visual img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+    .experience-visual .tap-art { display: none; }
+    .experience-visual::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(59,31,14,0.6) 0%, transparent 55%); border-radius: 12px; }
+    .experience-visual .keg-label { position: absolute; bottom: 1.2rem; left: 1.2rem; right: 1.2rem; z-index: 3; font-size: 0.7rem; letter-spacing: 0.12em; color: rgba(245,237,224,0.75); text-transform: uppercase; font-weight: 500; }
+    .experience-features { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem; }
+    .feature-row { display: flex; gap: 1rem; align-items: flex-start; }
+    .feature-icon { width: 40px; height: 40px; min-width: 40px; background: rgba(200,146,42,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    .feature-text h4 { font-family: 'Playfair Display', serif; font-size: 0.98rem; font-weight: 600; color: var(--cedar); margin-bottom: 0.2rem; }
+    .feature-text p { font-size: 0.83rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* ─── PHOTO GALLERY ─── */
+    .video-gallery { background: var(--charcoal); padding: 5rem 2rem; }
+    .video-gallery .section-label { color: var(--amber-light); }
+    .video-gallery .section-title { color: var(--cream); }
+    .video-gallery .section-title em { color: var(--amber-light); }
+    .video-gallery .section-body { color: rgba(245,237,224,0.55); }
+
+    /* Asymmetric photo grid: big left + 2-tall right stack */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 1rem;
+      margin-top: 3rem;
+    }
+    .photo-grid .pg-main {
+      grid-row: 1 / 3;
+    }
+    .photo-card {
+      border-radius: 10px; overflow: hidden; position: relative;
+      background: #141414; box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+    }
+    .photo-card img {
+      width: 100%; height: 100%; object-fit: cover; object-position: center;
+      display: block; transition: transform 0.5s ease;
+    }
+    .photo-card:hover img { transform: scale(1.03); }
+    .photo-card.tall { aspect-ratio: 3/4; }
+    .photo-card.wide { aspect-ratio: 4/3; }
+    .photo-card.sqr  { aspect-ratio: 1/1; }
+    .photo-card .ph-label {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
+      padding: 1rem 1rem 0.7rem;
+      background: linear-gradient(to top, rgba(10,5,2,0.88) 0%, transparent 100%);
+      font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(245,237,224,0.7); font-weight: 500;
+    }
+
+    /* Bottom row: 3-wide strip for pour closeup */
+    .photo-strip {
+      grid-column: 1 / 3;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 1fr;
+      gap: 1rem;
+      margin-top: 0;
+    }
+    .photo-strip .photo-card { aspect-ratio: 16/7; }
+
+    /* ─── AVAILABLE FOR ─── */
+    .available { background: linear-gradient(170deg, var(--cedar) 0%, var(--cedar-mid) 100%); color: var(--cream); }
+    .available .section-label { color: var(--amber-light); }
+    .available .section-title { color: var(--cream); }
+    .available .section-title em { color: var(--amber-light); }
+    .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+    .offer-card {
+      background: rgba(245,237,224,0.05); border: 1px solid rgba(245,237,224,0.1);
+      border-radius: 10px; padding: 2rem 1.6rem; transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .offer-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--amber); transform: scaleX(0); transition: transform 0.3s; }
+    .offer-card:hover { background: rgba(245,237,224,0.09); border-color: rgba(245,237,224,0.2); transform: translateY(-3px); }
+    .offer-card:hover::before { transform: scaleX(1); }
+    .card-icon { font-size: 1.9rem; margin-bottom: 0.9rem; }
+    .card-tag { display: inline-block; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber-light); margin-bottom: 0.5rem; }
+    .offer-card h3 { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 600; color: var(--cream); margin-bottom: 0.6rem; }
+    .offer-card p { font-size: 0.83rem; color: rgba(245,237,224,0.6); line-height: 1.7; margin-bottom: 1.3rem; }
+    .card-details { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+    .card-details li { font-size: 0.78rem; color: rgba(245,237,224,0.5); display: flex; align-items: center; gap: 0.5rem; }
+    .card-details li::before { content: '—'; color: var(--amber); font-weight: 600; }
+
+    /* ─── PRICING ─── */
+    .pricing { background: var(--parchment); }
+    .pricing-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    .rate-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+    .rate-table tr { border-bottom: 1px solid rgba(59,31,14,0.08); }
+    .rate-table tr:last-child { border-bottom: none; }
+    .rate-table td { padding: 0.9rem 0; font-size: 0.9rem; color: var(--text-mid); }
+    .rate-table td:last-child { text-align: right; font-weight: 600; color: var(--cedar); font-size: 1rem; }
+    .rate-label { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); display: block; }
+    .pricing-note { margin-top: 1.2rem; padding: 1rem 1.2rem; background: rgba(200,146,42,0.08); border-left: 3px solid var(--amber); border-radius: 0 6px 6px 0; font-size: 0.8rem; color: var(--text-mid); line-height: 1.6; }
+    .partnership-box { background: var(--cedar); border-radius: 12px; padding: 2.5rem; color: var(--cream); }
+    .partnership-box h3 { font-family: 'Playfair Display', serif; font-size: 1.45rem; font-weight: 600; margin-bottom: 0.8rem; }
+    .partnership-box p { font-size: 0.87rem; color: rgba(245,237,224,0.68); line-height: 1.7; margin-bottom: 1.5rem; }
+    .partner-list { list-style: none; display: flex; flex-direction: column; gap: 0.55rem; margin-bottom: 1.8rem; }
+    .partner-list li { font-size: 0.82rem; color: rgba(245,237,224,0.62); display: flex; align-items: center; gap: 0.6rem; }
+    .partner-list li .check { color: var(--amber-light); font-weight: 700; }
+
+    /* ─── BRAND SPONSORSHIP ─── */
+    .sponsorship {
+      background: linear-gradient(155deg, var(--forest) 0%, #1c3512 40%, var(--charcoal) 100%);
+      padding: 6rem 2rem; position: relative; overflow: hidden;
+    }
+    .sponsorship::before {
+      content: '';
+      position: absolute; top: -80px; right: -80px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(200,146,42,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    /* ── PARTNER LOGO MARQUEE ── */
+    .logo-marquee-wrap {
+      position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0;
+      mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.5) 20%, rgba(0,0,0,.5) 80%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,.5) 20%, rgba(0,0,0,.5) 80%, transparent 100%);
+    }
+    .logo-marquee-row { display: flex; gap: 56px; white-space: nowrap; width: max-content; }
+    .logo-marquee-row.row-a { animation: marqueeL 38s linear infinite; margin-bottom: 18px; }
+    .logo-marquee-row.row-b { animation: marqueeR 46s linear infinite; margin-bottom: 18px; }
+    .logo-marquee-row.row-c { animation: marqueeL 54s linear infinite; }
+    @keyframes marqueeL { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    @keyframes marqueeR { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
+    .logo-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Playfair Display', serif; font-size: .82rem; letter-spacing: .12em;
+      text-transform: uppercase; color: rgba(245,237,224,0.07);
+      border: 1px solid rgba(245,237,224,0.05); border-radius: 40px;
+      padding: 7px 18px; white-space: nowrap;
+      transition: color .3s;
+    }
+    .logo-pill-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(200,168,87,0.15); }
+    .sponsorship .section-label { color: var(--amber-light); }
+    .sponsorship .section-title { color: var(--cream); }
+    .sponsorship .section-title em { color: var(--amber-light); }
+    .sponsorship-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+    .sponsor-benefits { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; }
+    .benefit-item {
+      display: flex; gap: 1rem; align-items: flex-start;
+      padding: 1.1rem 1.2rem;
+      background: rgba(245,237,224,0.04); border: 1px solid rgba(245,237,224,0.08); border-radius: 8px;
+    }
+    .benefit-num {
+      min-width: 32px; height: 32px; background: rgba(200,146,42,0.2);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700; color: var(--amber-light); font-family: 'Playfair Display', serif;
+    }
+    .benefit-text h5 { font-size: 0.88rem; font-weight: 600; color: var(--cream); margin-bottom: 0.2rem; }
+    .benefit-text p { font-size: 0.78rem; color: rgba(245,237,224,0.52); line-height: 1.55; }
+    .sponsor-form {
+      background: rgba(245,237,224,0.05); border: 1px solid rgba(245,237,224,0.1);
+      border-radius: 12px; padding: 2.5rem;
+    }
+    .sponsor-form h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 600; color: var(--cream); margin-bottom: 0.5rem; }
+    .sponsor-form .form-sub { font-size: 0.8rem; color: rgba(245,237,224,0.5); margin-bottom: 1.8rem; line-height: 1.5; }
+    .sp-group { margin-bottom: 1rem; }
+    .sp-group label { display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(245,237,224,0.45); margin-bottom: 0.4rem; }
+    .sp-group input, .sp-group select, .sp-group textarea {
+      width: 100%; padding: 0.7rem 0.9rem;
+      background: rgba(245,237,224,0.07); border: 1.5px solid rgba(245,237,224,0.12);
+      border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.86rem;
+      color: var(--cream); outline: none; transition: border-color 0.2s;
+    }
+    .sp-group input::placeholder, .sp-group textarea::placeholder { color: rgba(245,237,224,0.25); }
+    .sp-group input:focus, .sp-group select:focus, .sp-group textarea:focus { border-color: var(--amber); background: rgba(245,237,224,0.1); }
+    .sp-group select option { background: var(--cedar); color: var(--cream); }
+    .sp-group textarea { resize: vertical; min-height: 90px; }
+    .sp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .sp-submit {
+      width: 100%; margin-top: 0.4rem; padding: 0.88rem;
+      background: var(--amber); color: var(--cedar); border: none; border-radius: 6px;
+      font-family: 'Inter', sans-serif; font-size: 0.88rem; font-weight: 700;
+      letter-spacing: 0.04em; cursor: pointer; transition: background 0.2s;
+    }
+    .sp-submit:hover { background: var(--amber-light); }
+    .sp-note { font-size: 0.7rem; color: rgba(245,237,224,0.32); text-align: center; margin-top: 0.75rem; }
+    .sp-note a { color: var(--amber); text-decoration: none; }
+
+    /* ─── PROCESS ─── */
+    .process { background: var(--white); }
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; margin-top: 3rem; position: relative; }
+    .steps::before { content: ''; position: absolute; top: 28px; left: calc(12.5% + 28px); right: calc(12.5% + 28px); height: 1px; background: var(--amber); opacity: 0.18; }
+    .step { text-align: center; }
+    .step-num { width: 56px; height: 56px; border-radius: 50%; background: var(--cedar); color: var(--amber-light); font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 4px 16px rgba(59,31,14,0.22); }
+    .step h4 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; color: var(--cedar); margin-bottom: 0.4rem; }
+    .step p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* ─── CTA STRIP ─── */
+    .cta-strip { background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 60%, var(--cedar-light) 100%); padding: 5.5rem 2rem; text-align: center; }
+    .cta-strip h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.9rem, 4vw, 3rem); font-weight: 700; margin-bottom: 1rem; color: var(--cream); }
+    .cta-strip p { font-size: 1rem; color: rgba(245,237,224,0.65); max-width: 520px; margin: 0 auto 2.5rem; line-height: 1.7; }
+    .cta-actions { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+
+    /* ─── CONTACT ─── */
+    #contact { background: var(--parchment); }
+    .contact-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    .contact-info { display: flex; flex-direction: column; gap: 1.2rem; margin-top: 1.5rem; }
+    .contact-row { display: flex; align-items: flex-start; gap: 1rem; }
+    .contact-icon { width: 42px; height: 42px; min-width: 42px; background: var(--cedar); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+    .contact-text .label { font-size: 0.63rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); }
+    .contact-text a, .contact-text span { display: block; font-size: 0.9rem; font-weight: 500; color: var(--cedar); text-decoration: none; }
+    .contact-text a:hover { color: var(--amber); }
+    .contact-form { background: var(--white); border-radius: 12px; padding: 2.5rem; box-shadow: var(--shadow); }
+    .contact-form h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 600; color: var(--cedar); margin-bottom: 1.5rem; }
+    .form-group { margin-bottom: 1.1rem; }
+    .form-group label { display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.4rem; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.7rem 0.9rem; border: 1.5px solid rgba(59,31,14,0.1); border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.87rem; color: var(--text); background: var(--parchment); outline: none; transition: border-color 0.2s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--amber); background: var(--white); }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-submit { width: 100%; margin-top: 0.5rem; padding: 0.9rem; background: var(--cedar); color: var(--cream); border: none; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.88rem; font-weight: 600; letter-spacing: 0.04em; cursor: pointer; transition: background 0.2s; }
+    .form-submit:hover { background: var(--cedar-light); }
+
+    /* ─── FOOTER ─── */
+    footer { background: var(--charcoal); padding: 2.5rem 2rem; }
+    .footer-inner { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; font-size: 0.78rem; color: rgba(245,237,224,0.38); }
+    .footer-brand { font-family: 'Playfair Display', serif; font-size: 1rem; color: rgba(245,237,224,0.58); font-weight: 600; }
+    footer a { color: var(--amber); text-decoration: none; }
+    footer a:hover { color: var(--amber-light); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .experience-layout, .pricing-layout, .contact-layout, .sponsorship-layout { grid-template-columns: 1fr; }
+      .cards-grid, .video-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: repeat(2, 1fr); }
+      .steps::before { display: none; }
+      .nav-links { display: none; }
+      .form-row, .sp-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SCROLL PROGRESS BAR -->
+  <div id="scrollBar"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <span class="wordmark">Cedar <span>Tap</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#available">Services</a></li>
+      <li><a href="#sponsorship">Sponsorship</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="cafe-menu.html">Menu</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="#contact" class="nav-cta">Book Now</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <!-- Full-screen image carousel -->
+    <div class="hero-carousel" id="heroCarousel">
+      <div class="hero-slide active"><img src="img/trailer-exterior-4tap.jpg?v=3" alt="Cedar Tap — side view, honeycomb tile, 4 taps, open fields" /></div>
+      <div class="hero-slide"><img src="img/trailer-wedding.jpg?v=3" alt="Cedar Tap — evening wedding reception, string lights, dusk glow" loading="lazy" /></div>
+      <div class="hero-slide"><img src="img/trailer-stocked.jpg?v=3" alt="Cedar Tap — fully stocked, 4 labeled taps, wine display" loading="lazy" /></div>
+      <div class="hero-slide"><img src="img/trailer-rear-full.jpg?v=3" alt="Cedar Tap — 3/4 rear angle, full tap and wine bar setup" loading="lazy" /></div>
+      <div class="hero-slide"><img src="img/trailer-evening-tree.jpg?v=3" alt="Cedar Tap — outdoor evening setup, ambient tree lighting" loading="lazy" /></div>
+      <div class="hero-slide"><img src="img/trailer-indoor-event.jpg?v=3" alt="Cedar Tap — indoor event setup, guests mingling" loading="lazy" /></div>
+      <div class="hero-slide"><img src="img/trailer-marquee.jpg?v=3" alt="Cedar Tap — DRINKS marquee sign, 4 tap close-up" loading="lazy" /></div>
+      <div class="hero-slide"><img src="img/trailer-outdoor-full.jpg?v=3" alt="Cedar Tap — daytime outdoor setup, blue sky backdrop" loading="lazy" /></div>
+    </div>
+
+    <div class="hero-overlay"></div>
+
+    <!-- Arrows -->
+    <button class="hero-arrow prev" id="heroPrev" aria-label="Previous">&#8592;</button>
+    <button class="hero-arrow next" id="heroNext" aria-label="Next">&#8594;</button>
+
+    <!-- Dots -->
+    <div class="hero-dots" id="heroDots"></div>
+    <div class="hero-inner">
+      <div class="hero-eyebrow">⚡ Beverage Dispensing Platform</div>
+      <h1>Revenue-Ready Dispensing,<br><em>Anywhere You Pour.</em></h1>
+      <p class="sub">
+        Cedar Tap is a proprietary mobile beverage platform — 4 taps, embedded cashless checkout, and real-time revenue tracking — built for brands that need on-the-go reach without the infrastructure.
+      </p>
+      <div class="hero-actions">
+        <a href="#partner-pathways" class="btn btn-primary">Partner Your Brand →</a>
+        <a href="#payments" class="btn btn-outline">See the Platform</a>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <span>Scroll</span>
+      <svg width="12" height="18" viewBox="0 0 12 18" fill="none"><rect x="0.75" y="0.75" width="10.5" height="16.5" rx="5.25" stroke="currentColor" stroke-width="1.5"/><circle cx="6" cy="5" r="1.75" fill="currentColor"/></svg>
+    </div>
+  </section>
+
+  <!-- PLATFORM TRUST STRIP -->
+  <div style="background:#0f0d0a;border-top:1px solid rgba(200,168,87,.15);border-bottom:1px solid rgba(200,168,87,.15);padding:0;">
+    <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);text-align:center;">
+      <div style="padding:22px 16px;border-right:1px solid rgba(200,168,87,.1);">
+        <div style="font-size:1.4rem;font-weight:700;color:#c8a857;font-family:Georgia,serif;">4 Taps</div>
+        <div style="font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:#7a7060;margin-top:4px;">Multi-Brand Ready</div>
+      </div>
+      <div style="padding:22px 16px;border-right:1px solid rgba(200,168,87,.1);">
+        <div style="font-size:1.4rem;font-weight:700;color:#c8a857;font-family:Georgia,serif;">Cashless</div>
+        <div style="font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:#7a7060;margin-top:4px;">QR · Tap-to-Pay · Square</div>
+      </div>
+      <div style="padding:22px 16px;border-right:1px solid rgba(200,168,87,.1);">
+        <div style="font-size:1.4rem;font-weight:700;color:#c8a857;font-family:Georgia,serif;">Off-Grid</div>
+        <div style="font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:#7a7060;margin-top:4px;">No Venue Infrastructure</div>
+      </div>
+      <div style="padding:22px 16px;">
+        <div style="font-size:1.4rem;font-weight:700;color:#c8a857;font-family:Georgia,serif;">Live Data</div>
+        <div style="font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:#7a7060;margin-top:4px;">Per-Pour Revenue Tracking</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPERIENCE -->
+  <section class="experience" id="experience">
+    <div class="section-inner">
+      <div class="experience-layout">
+        <div class="experience-visual">
+          <img src="img/trailer-field.jpg?v=3" alt="Cedar Tap — full outdoor event setup with matching cedar bar" />
+          <span class="keg-label">full event setup · trailer + cedar bar top · off-grid</span>
+        </div>
+        <div>
+          <div class="section-label">The Platform</div>
+          <h2 class="section-title">Beverage Revenue,<br><em>Optimized for Mobile.</em></h2>
+          <div class="divider"></div>
+          <p class="section-body">Cedar Tap is a proprietary mobile dispensing platform engineered for beverage brands that need reach beyond fixed retail. Four taps. Embedded cashless checkout. Revenue-share infrastructure. Deployed anywhere your customers are.</p>
+          <div class="experience-features">
+            <div class="feature-row">
+              <div class="feature-icon">⚙️</div>
+              <div class="feature-text"><h4>4-Tap Dispensing Array</h4><p>Multi-brand capable — nitro cold brew, draft latte, craft beer, wine, kombucha, or any kegged beverage. One platform, full flexibility.</p></div>
+            </div>
+            <div class="feature-row">
+              <div class="feature-icon">💳</div>
+              <div class="feature-text"><h4>Proprietary Cashless Ecosystem</h4><p>QR scan-to-pay, Square POS, tap-to-pay. Zero friction at the tap. Every transaction captured, every pour tracked.</p></div>
+            </div>
+            <div class="feature-row">
+              <div class="feature-icon">📊</div>
+              <div class="feature-text"><h4>Real-Time Revenue Analytics</h4><p>Per-pour reporting, event-level revenue dashboards, and partner performance data — delivered after every deployment.</p></div>
+            </div>
+            <div class="feature-row">
+              <div class="feature-icon">🔋</div>
+              <div class="feature-text"><h4>Fully Off-Grid Deployment</h4><p>No venue infrastructure required. Cedar Tap operates independently — parks, parking lots, markets, tournament fields, rooftops.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VIDEO GALLERY -->
+  <section class="video-gallery">
+    <div class="section-inner">
+      <div class="section-label">Platform in the Field</div>
+      <h2 class="section-title">Built for the <em>Pour</em></h2>
+      <div class="divider"></div>
+      <p class="section-body">Cedar Tap deploys as a fully integrated dispensing unit — brand-ready, cashless-enabled, and revenue-optimized at every activation across Northern Virginia and the DC Metro.</p>
+
+      <div class="photo-grid">
+
+        <!-- Main: full outdoor setup shot — tall left column -->
+        <div class="photo-card tall pg-main">
+          <img src="img/trailer-rear-full.jpg?v=3" alt="Cedar Tap trailer — full view with tap and wine bar" />
+          <div class="ph-label">Full event setup · trailer + cedar bar</div>
+        </div>
+
+        <!-- Top right: fully stocked & ready to serve -->
+        <div class="photo-card wide">
+          <img src="img/trailer-stocked.jpg?v=3" alt="Cedar Tap fully stocked — 4 labeled taps, wine display, glasses ready" loading="lazy" />
+          <div class="ph-label">Fully stocked · 4 taps · wine display · glasses ready</div>
+        </div>
+
+        <!-- Bottom right: field / dramatic sky angle -->
+        <div class="photo-card wide">
+          <img src="img/trailer-exterior-4tap.jpg?v=3" alt="Cedar Tap — honeycomb tile side view, open fields" loading="lazy" />
+          <div class="ph-label">Available for outdoor events &amp; markets</div>
+        </div>
+
+        <!-- Full-width bottom: pour closeup -->
+        <div class="photo-strip">
+          <div class="photo-card">
+            <img src="img/taps-closeup.jpg?v=3" alt="Cedar Tap — close-up interior taps lit up" loading="lazy" style="object-position:center 40%;" />
+          </div>
+          <div class="photo-card">
+            <img src="img/trailer-wedding.jpg?v=3" alt="Cedar Tap at a wedding — dusk, string lights, bride" loading="lazy" style="object-position:center 25%;" />
+            <div class="ph-label">Weddings · private events · celebrations</div>
+          </div>
+          <div class="photo-card" style="background:linear-gradient(135deg,#0e1a08,#2a4a1e);">
+            <img src="img/trailer-evening-tree.jpg?v=3" alt="Cedar Tap — outdoor evening atmosphere" loading="lazy" style="object-position:right center;" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- AVAILABLE FOR -->
+  <section class="available" id="available">
+    <div class="section-inner">
+      <div class="section-label">Platform Services</div>
+      <h2 class="section-title" style="color:var(--cream);">Three Ways to <em>Deploy</em></h2>
+      <div class="divider"></div>
+      <p style="font-size:1rem; color:rgba(245,237,224,0.62); max-width:560px; line-height:1.85;">Cedar Tap is a mobile dispensing platform with three revenue-generating deployment models — designed for brands, venues, and events that need cashless beverage infrastructure on the go.</p>
+      <div class="cards-grid">
+        <div class="offer-card">
+          <div class="card-icon">⚙️</div>
+          <div class="card-tag">Equipment Rental</div>
+          <h3>Platform Access</h3>
+          <p>Access the full Cedar Tap dispensing unit with embedded cashless checkout. Bring your own product — our platform handles the rest.</p>
+          <ul class="card-details">
+            <li>Full dispensing platform with QR + tap-to-pay</li>
+            <li>Hourly, half-day, full-day, and weekend deployment</li>
+            <li>Bring-your-own-beverage (BYOB) supported</li>
+            <li>Weddings, corporate events, private activations</li>
+            <li>Delivery, setup, and teardown included</li>
+          </ul>
+        </div>
+        <div class="offer-card">
+          <div class="card-icon">📡</div>
+          <div class="card-tag">Brand Activation</div>
+          <h3>Mobile Distribution</h3>
+          <p>Place your brand on Cedar Tap's dispensing platform at events, markets, and activations across the DC Metro. We are your mobile channel.</p>
+          <ul class="card-details">
+            <li>Your product poured at curated public events</li>
+            <li>Co-branded QR menus + revenue-share model</li>
+            <li>Real-time sales data per deployment</li>
+            <li>Breweries, roasters, RTD brands, wineries</li>
+            <li>Zero fixed overhead — pay per pour or per event</li>
+          </ul>
+        </div>
+        <div class="offer-card">
+          <div class="card-icon">🤝</div>
+          <div class="card-tag">Venue Partnership</div>
+          <h3>On-Site Activation</h3>
+          <p>Deploy Cedar Tap at your venue as a recurring revenue-generating beverage station. We handle permits, compliance, and the pour.</p>
+          <ul class="card-details">
+            <li>Weekly or monthly recurring deployment</li>
+            <li>VA ABC licensing + event permits handled</li>
+            <li>Off-grid — no venue power or plumbing needed</li>
+            <li>Distilleries, fitness centers, wineries, stadiums</li>
+            <li>Revenue share or flat-fee arrangement</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing" id="pricing">
+    <div class="section-inner">
+      <div class="pricing-layout">
+        <div>
+          <div class="section-label">Rental Rates</div>
+          <h2 class="section-title">Transparent<br><em>Pricing</em></h2>
+          <div class="divider"></div>
+          <p class="section-body">Dry hire rates include trailer delivery, setup, and pickup within 40 miles of Woodbridge, VA. Staffed and fully poured arrangements quoted separately.</p>
+          <table class="rate-table">
+            <tr><td><span class="rate-label">Hourly</span>Hourly rental</td><td>$150 / hr</td></tr>
+            <tr><td><span class="rate-label">Half Day</span>Up to 5 hours</td><td>$500</td></tr>
+            <tr><td><span class="rate-label">Full Day</span>Up to 10 hours</td><td>$1,000</td></tr>
+            <tr><td><span class="rate-label">Weekend</span>Fri–Sun, delivery included</td><td>$1,750</td></tr>
+          </table>
+          <div class="pricing-note">Pour pricing (fully staffed events): $5.99–$11.99 per pour by size and beverage type. Custom event packages available — contact us for a quote.</div>
+        </div>
+        <div class="partnership-box">
+          <div style="font-size:2rem;margin-bottom:1rem;">🤝</div>
+          <h3>Craft Beverage Brand Partnerships</h3>
+          <p>We're actively seeking relationships with craft brewers, coffee roasters, kombucha producers, and winemakers in the DC/NoVA/MD region.</p>
+          <ul class="partner-list">
+            <li><span class="check">✓</span> Your product poured at curated events</li>
+            <li><span class="check">✓</span> Co-branded menus, QR codes &amp; signage</li>
+            <li><span class="check">✓</span> Access to farmers markets, festivals &amp; private events</li>
+            <li><span class="check">✓</span> Sampling &amp; brand activation formats</li>
+            <li><span class="check">✓</span> Flexible: flat fee or revenue share</li>
+          </ul>
+          <a href="#sponsorship" class="btn btn-primary" style="font-size:0.82rem;padding:0.7rem 1.4rem;">Inquire About Sponsorship →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BRAND SPONSORSHIP -->
+  <section class="sponsorship" id="sponsorship">
+
+    <!-- ANIMATED PARTNER LOGO MARQUEE BACKGROUND -->
+    <div class="logo-marquee-wrap" aria-hidden="true">
+      <div style="position:absolute;top:50%;transform:translateY(-50%);width:100%;padding:18px 0;">
+        <!-- Row A: left scroll -->
+        <div class="logo-marquee-row row-a">
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Commonwealth Joe</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>La Colombe</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Murlarkey Distillery</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Heritage Brewing</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>2 Silos Brewing</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Water's End Brewery</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Crooked Run Fermentation</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Barrel Oak Winery</span>
+          <!-- duplicate for seamless loop -->
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Commonwealth Joe</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>La Colombe</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Murlarkey Distillery</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Heritage Brewing</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>2 Silos Brewing</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Water's End Brewery</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Crooked Run Fermentation</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Barrel Oak Winery</span>
+        </div>
+        <!-- Row B: right scroll -->
+        <div class="logo-marquee-row row-b">
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Sunset Hills Vineyard</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Paradise Springs Winery</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Stone Tower Winery</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Bluemont Vineyard</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Potomac Point Winery</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Breaux Vineyards</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Three Fox Vineyards</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Chrysalis Vineyards</span>
+          <!-- duplicate -->
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Sunset Hills Vineyard</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Paradise Springs Winery</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Stone Tower Winery</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Bluemont Vineyard</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Potomac Point Winery</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Breaux Vineyards</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Three Fox Vineyards</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Chrysalis Vineyards</span>
+        </div>
+        <!-- Row C: left scroll slower -->
+        <div class="logo-marquee-row row-c">
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Old Bust Head Brewing</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>K Sports Complex</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>OneLife Fitness</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Life Time Fitness</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Equinox</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>CraftWorx Taproom</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Jiffy Lube Live</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Inova Health System</span>
+          <!-- duplicate -->
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Old Bust Head Brewing</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>K Sports Complex</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>OneLife Fitness</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Life Time Fitness</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Equinox</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>CraftWorx Taproom</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Jiffy Lube Live</span>
+          <span class="logo-pill"><span class="logo-pill-dot"></span>Inova Health System</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-inner" style="position:relative;z-index:1;">
+      <div class="section-label">Brand Sponsorship</div>
+      <h2 class="section-title">Pour Your Brand<br><em>Into Every Event</em></h2>
+      <div class="divider" style="background:var(--amber-light);"></div>
+      <p style="font-size:1rem; color:rgba(245,237,224,0.6); max-width:580px; line-height:1.85; margin-bottom:2rem;">
+        Cedar Tap is a rolling platform for craft beverage brands. Each event is an opportunity to put your product directly in the hands of engaged, curious consumers.
+      </p>
+      <a href="/sponsors.html" style="display:inline-flex;align-items:center;gap:8px;background:rgba(200,168,87,.15);border:1px solid rgba(200,168,87,.35);color:var(--amber-light);font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:11px 22px;border-radius:6px;text-decoration:none;margin-bottom:3rem;transition:background .2s;" onmouseover="this.style.background='rgba(200,168,87,.25)'" onmouseout="this.style.background='rgba(200,168,87,.15)'">
+        View Full Sponsorship &amp; Revenue Models →
+      </a>
+
+      <!-- BRAND POSITIONING IMAGE -->
+      <div style="margin-bottom:3rem;border-radius:12px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,0.4);">
+        <img src="img/cedar-tap-hero-branded.jpg" alt="Cedar Tap Brand Positioning - Premium Beverage Platform" style="width:100%;height:auto;display:block;object-fit:cover;">
+      </div>
+
+      <!-- ACTIVE PARTNER LOGOS SHOWCASE -->
+      <div style="margin-bottom:4rem;padding:3rem;background:rgba(200,168,87,0.08);border-radius:12px;border:1px solid rgba(200,168,87,0.15);">
+        <div style="text-align:center;margin-bottom:2.5rem;">
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--cedar);margin-bottom:0.5rem;">Current Brand Partners</h3>
+          <p style="font-size:0.85rem;color:rgba(44,31,19,0.6);letter-spacing:0.05em;text-transform:uppercase;">Beverage brands currently featured on Cedar Tap</p>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:2rem;align-items:center;justify-items:center;">
+          <!-- Commonwealth Joe -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:1rem;text-align:center;">
+            <div style="width:120px;height:120px;background:linear-gradient(135deg,rgba(212,168,67,0.2),rgba(139,74,43,0.1));border-radius:12px;border:2px solid rgba(212,168,67,0.3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--cedar);font-weight:600;padding:12px;text-align:center;">
+              Commonwealth Joe
+            </div>
+            <span style="font-size:0.75rem;color:rgba(44,31,19,0.5);letter-spacing:0.04em;text-transform:uppercase;">Nitro Cold Brew</span>
+          </div>
+          <!-- Murlarkey Distillery -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:1rem;text-align:center;">
+            <div style="width:120px;height:120px;background:linear-gradient(135deg,rgba(212,168,67,0.2),rgba(139,74,43,0.1));border-radius:12px;border:2px solid rgba(212,168,67,0.3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--cedar);font-weight:600;padding:12px;text-align:center;">
+              Murlarkey Distillery
+            </div>
+            <span style="font-size:0.75rem;color:rgba(44,31,19,0.5);letter-spacing:0.04em;text-transform:uppercase;">Kegged Cocktails</span>
+          </div>
+          <!-- La Colombe -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:1rem;text-align:center;">
+            <div style="width:120px;height:120px;background:linear-gradient(135deg,rgba(212,168,67,0.2),rgba(139,74,43,0.1));border-radius:12px;border:2px solid rgba(212,168,67,0.3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--cedar);font-weight:600;padding:12px;text-align:center;">
+              La Colombe Coffee
+            </div>
+            <span style="font-size:0.75rem;color:rgba(44,31,19,0.5);letter-spacing:0.04em;text-transform:uppercase;">Premium Cold Brew</span>
+          </div>
+          <!-- Nokesville Winery -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:1rem;text-align:center;">
+            <div style="width:120px;height:120px;background:linear-gradient(135deg,rgba(212,168,67,0.2),rgba(139,74,43,0.1));border-radius:12px;border:2px solid rgba(212,168,67,0.3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--cedar);font-weight:600;padding:12px;text-align:center;">
+              Nokesville Winery
+            </div>
+            <span style="font-size:0.75rem;color:rgba(44,31,19,0.5);letter-spacing:0.04em;text-transform:uppercase;">Kegged Virginia Wine</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sponsorship-layout">
+        <div>
+          <div class="sponsor-benefits">
+            <div class="benefit-item">
+              <div class="benefit-num">01</div>
+              <div class="benefit-text">
+                <h5>Featured Tap Placement</h5>
+                <p>Your product on one or more of our 4 taps, highlighted on the event menu with your branding front and center.</p>
+              </div>
+            </div>
+            <div class="benefit-item">
+              <div class="benefit-num">02</div>
+              <div class="benefit-text">
+                <h5>Co-Branded Experience</h5>
+                <p>Custom QR menus, signage, and social assets designed around your label. Attendees leave knowing your brand.</p>
+              </div>
+            </div>
+            <div class="benefit-item">
+              <div class="benefit-num">03</div>
+              <div class="benefit-text">
+                <h5>Sampling Activations</h5>
+                <p>Structured tasting flights and pour sizes crafted to introduce new customers to your product line.</p>
+              </div>
+            </div>
+            <div class="benefit-item">
+              <div class="benefit-num">04</div>
+              <div class="benefit-text">
+                <h5>Flexible Arrangements</h5>
+                <p>Revenue share, flat sponsorship fee, or product-supply partnerships — we structure deals that work for both sides.</p>
+              </div>
+            </div>
+            <div class="benefit-item">
+              <div class="benefit-num">05</div>
+              <div class="benefit-text">
+                <h5>DC Metro Market Reach</h5>
+                <p>Events across Northern Virginia, DC, and Maryland — from weekend farmers markets to private corporate activations.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sponsor-form">
+          <h3>Contact Us for Brand Sponsorship</h3>
+          <p class="form-sub">Tell us about your brand and the kind of partnership you're looking for. We'll follow up within 48 hours.</p>
+          <div class="sp-row">
+            <div class="sp-group">
+              <label>Brand / Company Name</label>
+              <input type="text" placeholder="e.g. Commonwealth Joe" />
+            </div>
+            <div class="sp-group">
+              <label>Contact Name</label>
+              <input type="text" placeholder="Your name" />
+            </div>
+          </div>
+          <div class="sp-group">
+            <label>Email</label>
+            <input type="email" placeholder="you@yourbrand.com" />
+          </div>
+          <div class="sp-group">
+            <label>Beverage Category</label>
+            <select>
+              <option value="">Select one…</option>
+              <option>Craft Beer / Brewery</option>
+              <option>Wine / Winery</option>
+              <option>Cold Brew / Coffee Roaster</option>
+              <option>Kombucha / Functional Beverage</option>
+              <option>Hard Cider / Mead</option>
+              <option>Non-Alcoholic / RTD</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="sp-group">
+            <label>Partnership Interest</label>
+            <select>
+              <option value="">Select one…</option>
+              <option>Featured tap placement (revenue share)</option>
+              <option>Event sponsorship (flat fee)</option>
+              <option>Product supply / co-brand</option>
+              <option>Sampling activation</option>
+              <option>Explore all options</option>
+            </select>
+          </div>
+          <div class="sp-group">
+            <label>Tell Us About Your Brand</label>
+            <textarea placeholder="Distribution area, volume, target events, or anything else we should know…"></textarea>
+          </div>
+          <button class="sp-submit" id="spSubmit">Send Sponsorship Inquiry →</button>
+          <p class="sp-note">Or email directly: <a href="mailto:tom@cedartaps.com?subject=Brand Sponsorship Inquiry">tom@cedartaps.com</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="section-inner" style="text-align:center;">
+      <div class="section-label">How It Works</div>
+      <h2 class="section-title" style="margin:0 auto 0.5rem;">Simple From Start <em>to Pour</em></h2>
+      <div class="divider" style="margin:1rem auto 1.5rem;"></div>
+      <p class="section-body" style="margin:0 auto;">From first inquiry to last pour, we make it effortless.</p>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><h4>Reach Out</h4><p>Tell us about your event — date, venue, expected guests, and beverage preferences.</p></div>
+        <div class="step"><div class="step-num">2</div><h4>We Customize</h4><p>We build a beverage menu around your event. Craft beer, wine, cold brew, or a curated mix.</p></div>
+        <div class="step"><div class="step-num">3</div><h4>We Show Up</h4><p>Cedar Tap arrives fully stocked, set up, and ready to pour before guests arrive.</p></div>
+        <div class="step"><div class="step-num">4</div><h4>You Enjoy</h4><p>Relax. We handle everything — from first tap to final cleanup.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA STRIP -->
+  <div class="cta-strip">
+    <h2>Your Event Deserves Better Than a Cooler</h2>
+    <p>Cedar Tap brings a tasting room experience to wherever the moment calls for it.</p>
+    <div class="cta-actions">
+      <a href="#contact" class="btn btn-primary">Book Your Date</a>
+      <a href="#sponsorship" class="btn btn-outline">Partner With Us</a>
+    </div>
+  </div>
+
+  <!-- PARTNER PATHWAYS -->
+  <section id="partner-pathways" style="background:var(--surface);padding:72px 0;">
+    <div class="section-inner">
+      <div class="section-label" style="justify-content:center;text-align:center;">Revenue Pathways</div>
+      <h2 class="section-title" style="text-align:center;margin:0 auto 0.5rem;">Your Brand, <em>On Our Platform</em></h2>
+      <div class="divider" style="margin:1rem auto 1.5rem;"></div>
+      <p class="section-body" style="text-align:center;margin:0 auto 3rem;max-width:580px;">Cedar Tap is a mobile distribution channel with built-in payment infrastructure. Whether you supply the product, own the venue, or need full end-to-pour service — we have a revenue model built for you.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;">
+
+        <!-- CTA 1: Brand on Tap -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:32px 28px;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold);"></div>
+          <div style="font-size:2rem;margin-bottom:14px;">🍺</div>
+          <h3 style="font-size:1.1rem;color:var(--cream);margin-bottom:8px;font-weight:bold;">Feature Your Brand on Tap</h3>
+          <p style="font-size:.8rem;color:var(--text-muted);line-height:1.6;margin-bottom:20px;">Your product poured on Cedar Tap at markets, festivals, and private events across the DC Metro. Co-branded menus, QR ordering, and sampling activations — we bring your brand to every event we work.</p>
+          <ul style="list-style:none;padding:0;margin:0 0 24px;font-size:.75rem;color:var(--cream-dim);">
+            <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ Revenue share or flat supply arrangement</li>
+            <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ Branded tap handles + co-branded menus</li>
+            <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ QR ordering pages at cedartaps.com</li>
+            <li style="padding:4px 0;">✓ Best fit: breweries, roasters, wineries, RTD brands</li>
+          </ul>
+          <a href="#sponsorship" style="display:inline-block;background:var(--gold);color:#1a1208;font-size:.75rem;font-weight:bold;letter-spacing:.08em;text-transform:uppercase;padding:10px 20px;border-radius:6px;text-decoration:none;">Explore Brand Partnership →</a>
+          <p style="font-size:.65rem;color:var(--cream-dim);margin-top:10px;font-style:italic;">Like La Colombe · Commonwealth Joe · Heritage Brewing</p>
+        </div>
+
+        <!-- CTA 2: Venue Host -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:32px 28px;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#6ab0f5;"></div>
+          <div style="font-size:2rem;margin-bottom:14px;">🏛️</div>
+          <h3 style="font-size:1.1rem;color:var(--cream);margin-bottom:8px;font-weight:bold;">Host Cedar Tap at Your Venue</h3>
+          <p style="font-size:.8rem;color:var(--text-muted);line-height:1.6;margin-bottom:20px;">Bring a mobile tap room to your property for recurring tasting events, retail off-site activations, or exclusive member experiences. Cedar Tap handles setup, licensing, and the pour — you provide the space.</p>
+          <ul style="list-style:none;padding:0;margin:0 0 24px;font-size:.75rem;color:var(--cream-dim);">
+            <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ Weekly, monthly, or one-time tasting events</li>
+            <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ VA ABC banquet licensing handled (~$85/event)</li>
+            <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ Off-grid setup — no power hookup needed</li>
+            <li style="padding:4px 0;">✓ Best fit: distilleries, wineries, breweries, event spaces</li>
+          </ul>
+          <a href="#contact" onclick="document.getElementById('cfType').value='Venue Partnership'" style="display:inline-block;background:#6ab0f5;color:#0a1525;font-size:.75rem;font-weight:bold;letter-spacing:.08em;text-transform:uppercase;padding:10px 20px;border-radius:6px;text-decoration:none;">Inquire About Venue Hosting →</a>
+          <p style="font-size:.65rem;color:var(--cream-dim);margin-top:10px;font-style:italic;">Like Murlarkey Distillery · Potomac Point Winery · 2 Silos</p>
+        </div>
+
+        <!-- CTA 3: Event Booking -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:32px 28px;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);"></div>
+          <div style="font-size:2rem;margin-bottom:14px;">🎪</div>
+          <h3 style="font-size:1.1rem;color:var(--cream);margin-bottom:8px;font-weight:bold;">Book Cedar Tap for Your Event</h3>
+          <p style="font-size:.8rem;color:var(--text-muted);line-height:1.6;margin-bottom:20px;">From private weddings to 5,000-person festivals — Cedar Tap arrives fully stocked, sets up independently, and handles every pour. Dry hire or full-service pour available. We bring the bar, you bring the crowd.</p>
+          <ul style="list-style:none;padding:0;margin:0 0 24px;font-size:.75rem;color:var(--cream-dim);">
+            <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ Full-service pour or dry hire (BYOB)</li>
+            <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ Weddings, festivals, markets, corporate events</li>
+            <li style="padding:4px 0;border-bottom:1px solid var(--border);">✓ Custom curated tap menu for your event</li>
+            <li style="padding:4px 0;">✓ DC Metro · Northern VA · Maryland</li>
+          </ul>
+          <a href="#contact" onclick="document.getElementById('cfType').value='Event Booking'" style="display:inline-block;background:var(--green);color:#051a0d;font-size:.75rem;font-weight:bold;letter-spacing:.08em;text-transform:uppercase;padding:10px 20px;border-radius:6px;text-decoration:none;">Book Your Date →</a>
+          <p style="font-size:.65rem;color:var(--cream-dim);margin-top:10px;font-style:italic;">Serving weddings · festivals · corporate · private events</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CASHLESS PAYMENT ECOSYSTEM -->
+  <section id="payments" style="background:#0d1a0c;padding:96px 0;overflow:hidden;position:relative;">
+
+    <!-- subtle grid overlay -->
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(200,168,87,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(200,168,87,.04) 1px,transparent 1px);background-size:48px 48px;pointer-events:none"></div>
+
+    <div class="section-inner" style="position:relative;z-index:1">
+
+      <div style="text-align:center;margin-bottom:56px">
+        <div class="section-label" style="justify-content:center">Proprietary CedarTap Cashless Ecosystem</div>
+        <h2 class="section-title" style="text-align:center;margin:0 auto .5rem;color:#f5f0e6">Pour Faster.<br><em style="color:#c8a857">Earn More. Track Everything.</em></h2>
+        <p class="section-body" style="text-align:center;margin:0 auto;max-width:580px;color:#b0b8a8">The CedarTap Cashless Ecosystem is our proprietary payment infrastructure — embedded in every deployment. Built for beverage brands that need high-volume throughput, zero transaction friction, and real-time revenue visibility on the go.</p>
+      </div>
+
+      <!-- STAT STRIP -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:64px;border:1px solid rgba(200,168,87,.2);border-radius:10px;overflow:hidden">
+        <div style="background:rgba(200,168,87,.08);padding:28px 24px;text-align:center;border-right:1px solid rgba(200,168,87,.15)">
+          <div style="font-size:2.4rem;font-weight:700;color:#c8a857;font-family:Georgia,serif">10s</div>
+          <div style="font-size:.8rem;letter-spacing:.1em;color:#b0b8a8;margin-top:6px;text-transform:uppercase">Avg. Transaction Time</div>
+          <div style="font-size:.75rem;color:#666;margin-top:4px">QR scan to pour authorized</div>
+        </div>
+        <div style="background:rgba(200,168,87,.08);padding:28px 24px;text-align:center;border-right:1px solid rgba(200,168,87,.15)">
+          <div style="font-size:2.4rem;font-weight:700;color:#c8a857;font-family:Georgia,serif">4×</div>
+          <div style="font-size:.8rem;letter-spacing:.1em;color:#b0b8a8;margin-top:6px;text-transform:uppercase">Faster Than Cash</div>
+          <div style="font-size:.75rem;color:#666;margin-top:4px">No handling, no change, no delays</div>
+        </div>
+        <div style="background:rgba(200,168,87,.08);padding:28px 24px;text-align:center">
+          <div style="font-size:2.4rem;font-weight:700;color:#c8a857;font-family:Georgia,serif">100%</div>
+          <div style="font-size:.8rem;letter-spacing:.1em;color:#b0b8a8;margin-top:6px;text-transform:uppercase">Revenue Tracked</div>
+          <div style="font-size:.75rem;color:#666;margin-top:4px">Live dashboard · per-event reporting</div>
+        </div>
+      </div>
+
+      <!-- 4-PILLAR GRID -->
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-bottom:64px">
+
+        <!-- QR Scan & Pay -->
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(200,168,87,.2);border-radius:12px;padding:32px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;right:0;width:120px;height:120px;background:radial-gradient(circle at top right,rgba(200,168,87,.12),transparent 70%);pointer-events:none"></div>
+          <div style="width:48px;height:48px;background:rgba(200,168,87,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:20px">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#c8a857" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3" rx=".5"/><rect x="18" y="18" width="3" height="3" rx=".5"/><rect x="14" y="18" width="3" height="3" rx=".5" opacity=".4"/><rect x="18" y="14" width="3" height="3" rx=".5" opacity=".4"/></svg>
+          </div>
+          <div style="font-family:Georgia,serif;font-size:1.15rem;color:#f5f0e6;margin-bottom:8px">QR Scan &amp; Pay</div>
+          <p style="font-size:.85rem;color:#8a9880;line-height:1.6;margin:0">Every tap has its own branded QR code. Guests scan, see the menu, select their pour, and pay — all before they reach the bar. Lines move faster. Tips increase. Conversion goes up.</p>
+          <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+            <span style="font-size:.7rem;background:rgba(200,168,87,.12);color:#c8a857;padding:3px 10px;border-radius:20px;letter-spacing:.05em">Per-tap QR</span>
+            <span style="font-size:.7rem;background:rgba(200,168,87,.12);color:#c8a857;padding:3px 10px;border-radius:20px;letter-spacing:.05em">Pre-order flow</span>
+            <span style="font-size:.7rem;background:rgba(200,168,87,.12);color:#c8a857;padding:3px 10px;border-radius:20px;letter-spacing:.05em">Branded experience</span>
+          </div>
+        </div>
+
+        <!-- NFC Tap-to-Pay -->
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(200,168,87,.2);border-radius:12px;padding:32px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;right:0;width:120px;height:120px;background:radial-gradient(circle at top right,rgba(200,168,87,.12),transparent 70%);pointer-events:none"></div>
+          <div style="width:48px;height:48px;background:rgba(200,168,87,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:20px">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#c8a857" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h2M10 15h4" stroke-linecap="round"/></svg>
+          </div>
+          <div style="font-family:Georgia,serif;font-size:1.15rem;color:#f5f0e6;margin-bottom:8px">Tap-to-Pay &amp; Contactless</div>
+          <p style="font-size:.85rem;color:#8a9880;line-height:1.6;margin:0">Apple Pay, Google Pay, and all contactless cards accepted on every Square terminal. No app download required. Works with every modern phone, watch, and card — guests never touch a keypad.</p>
+          <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+            <span style="font-size:.7rem;background:rgba(200,168,87,.12);color:#c8a857;padding:3px 10px;border-radius:20px;letter-spacing:.05em">Apple Pay</span>
+            <span style="font-size:.7rem;background:rgba(200,168,87,.12);color:#c8a857;padding:3px 10px;border-radius:20px;letter-spacing:.05em">Google Pay</span>
+            <span style="font-size:.7rem;background:rgba(200,168,87,.12);color:#c8a857;padding:3px 10px;border-radius:20px;letter-spacing:.05em">NFC Contactless</span>
+          </div>
+        </div>
+
+        <!-- Live Dashboard -->
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(200,168,87,.2);border-radius:12px;padding:32px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;right:0;width:120px;height:120px;background:radial-gradient(circle at top right,rgba(200,168,87,.12),transparent 70%);pointer-events:none"></div>
+          <div style="width:48px;height:48px;background:rgba(200,168,87,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:20px">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#c8a857" stroke-width="1.8"><path d="M3 17l4-8 4 4 4-6 4 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 21h18"/></svg>
+          </div>
+          <div style="font-family:Georgia,serif;font-size:1.15rem;color:#f5f0e6;margin-bottom:8px">Live Sales Dashboard</div>
+          <p style="font-size:.85rem;color:#8a9880;line-height:1.6;margin:0">Real-time pour tracking by tap, revenue totals by hour, and a full per-event report delivered at breakdown. Venue partners get complete visibility — and the data to optimize their next event.</p>
+          <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+            <span style="font-size:.7rem;background:rgba(200,168,87,.12);color:#c8a857;padding:3px 10px;border-radius:20px;letter-spacing:.05em">Real-time tracking</span>
+            <span style="font-size:.7rem;background:rgba(200,168,87,.12);color:#c8a857;padding:3px 10px;border-radius:20px;letter-spacing:.05em">Per-tap revenue</span>
+            <span style="font-size:.7rem;background:rgba(200,168,87,.12);color:#c8a857;padding:3px 10px;border-radius:20px;letter-spacing:.05em">Event reports</span>
+          </div>
+        </div>
+
+        <!-- Zero Integration -->
+        <div style="background:rgba(255,255,255,.03);border:1px solid rgba(200,168,87,.2);border-radius:12px;padding:32px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;right:0;width:120px;height:120px;background:radial-gradient(circle at top right,rgba(200,168,87,.12),transparent 70%);pointer-events:none"></div>
+          <div style="width:48px;height:48px;background:rgba(200,168,87,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:20px">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#c8a857" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div style="font-family:Georgia,serif;font-size:1.15rem;color:#f5f0e6;margin-bottom:8px">Zero Venue Integration</div>
+          <p style="font-size:.85rem;color:#8a9880;line-height:1.6;margin:0">Cedar Tap's payment infrastructure is entirely self-contained. No IT coordination, no POS hookup, no network dependency on your venue's systems. We arrive ready to transact — and leave with full settlement handled.</p>
+          <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+            <span style="font-size:.7rem;background:rgba(200,168,87,.12);color:#c8a857;padding:3px 10px;border-radius:20px;letter-spacing:.05em">Self-contained</span>
+            <span style="font-size:.7rem;background:rgba(200,168,87,.12);color:#c8a857;padding:3px 10px;border-radius:20px;letter-spacing:.05em">No IT needed</span>
+            <span style="font-size:.7rem;background:rgba(200,168,87,.12);color:#c8a857;padding:3px 10px;border-radius:20px;letter-spacing:.05em">Instant settlement</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PLATFORM STRIP -->
+      <div style="border:1px solid rgba(200,168,87,.2);border-radius:10px;padding:24px 32px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;background:rgba(200,168,87,.04)">
+        <div style="font-size:.75rem;letter-spacing:.12em;color:#666;text-transform:uppercase;flex-shrink:0">Powered by</div>
+        <div style="display:flex;gap:28px;align-items:center;flex-wrap:wrap">
+          <div style="text-align:center">
+            <div style="font-size:1rem;font-weight:700;color:#f5f0e6;font-family:Georgia,serif">Square</div>
+            <div style="font-size:.68rem;color:#666;margin-top:2px">POS + Reader</div>
+          </div>
+          <div style="width:1px;height:28px;background:rgba(200,168,87,.2)"></div>
+          <div style="text-align:center">
+            <div style="font-size:1rem;font-weight:700;color:#f5f0e6;font-family:Georgia,serif">Apple + Google Pay</div>
+            <div style="font-size:.68rem;color:#666;margin-top:2px">NFC Wallets</div>
+          </div>
+          <div style="width:1px;height:28px;background:rgba(200,168,87,.2)"></div>
+          <div style="text-align:center">
+            <div style="font-size:1rem;font-weight:700;color:#f5f0e6;font-family:Georgia,serif">QR Per-Tap</div>
+            <div style="font-size:.68rem;color:#666;margin-top:2px">Scan &amp; Order</div>
+          </div>
+          <div style="width:1px;height:28px;background:rgba(200,168,87,.2)"></div>
+          <div style="text-align:center">
+            <div style="font-size:1rem;font-weight:700;color:#f5f0e6;font-family:Georgia,serif">PayPal</div>
+            <div style="font-size:.68rem;color:#666;margin-top:2px">Digital Wallet</div>
+          </div>
+        </div>
+        <div style="margin-left:auto;font-size:.75rem;color:#c8a857;letter-spacing:.06em">100% CASHLESS · FULLY INSURED</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-inner">
+      <div class="contact-layout">
+        <div>
+          <div class="section-label">Get In Touch</div>
+          <h2 class="section-title">Let's Make<br><em>Something Great</em></h2>
+          <div class="divider"></div>
+          <p class="section-body">Whether you're planning a wedding, booking a market stall, or exploring a brand partnership — we'd love to hear about it. We respond within 24 hours.</p>
+          <div class="contact-info">
+            <div class="contact-row">
+              <div class="contact-icon">📧</div>
+              <div class="contact-text"><span class="label">Email</span><a href="mailto:tom@cedartaps.com">tom@cedartaps.com</a></div>
+            </div>
+            <div class="contact-row">
+              <div class="contact-icon">📞</div>
+              <div class="contact-text"><span class="label">Phone</span><a href="tel:+12028101861">(202) 810-1861</a></div>
+            </div>
+            <div class="contact-row">
+              <div class="contact-icon">📍</div>
+              <div class="contact-text">
+                <span class="label">Service Area</span>
+                <span>DC Metro · Northern Virginia · Maryland</span>
+                <span style="font-size:0.76rem;color:var(--text-muted);font-weight:400;">Based in Woodbridge, VA · 40-mile radius standard</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="contact-form">
+          <h3>Send an Inquiry</h3>
+          <div class="form-row">
+            <div class="form-group"><label>First Name</label><input type="text" id="cfFirst" placeholder="Jane" /></div>
+            <div class="form-group"><label>Last Name</label><input type="text" id="cfLast" placeholder="Smith" /></div>
+          </div>
+          <div class="form-group"><label>Email</label><input type="email" id="cfEmail" placeholder="you@example.com" /></div>
+          <div class="form-group">
+            <label>Inquiry Type</label>
+            <select id="cfType">
+              <option value="">Select one…</option>
+              <option>Event Booking</option>
+              <option>Venue Partnership</option>
+              <option>Brand Sponsorship</option>
+              <option>Equipment Rental (Dry Hire)</option>
+              <option>General Inquiry</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Event Date</label><input type="date" id="cfDate" /></div>
+            <div class="form-group"><label>Est. Guests</label><input type="text" id="cfGuests" placeholder="e.g. 150" /></div>
+          </div>
+          <div class="form-group"><label>Tell Us About Your Event</label><textarea id="cfMsg" placeholder="Venue, type of event, beverage preferences, any questions…"></textarea></div>
+          <button class="form-submit" id="cfSubmit">Send Inquiry →</button>
+          <p style="font-size:0.7rem;color:var(--text-muted);margin-top:0.8rem;text-align:center;">Or email: <a href="mailto:tom@cedartaps.com" style="color:var(--amber);">tom@cedartaps.com</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <span class="footer-brand">Cedar Tap</span>
+      <span>Mobile Tasting Room · Woodbridge, VA · <a href="tel:+12028101861">(202) 810-1861</a></span>
+      <span><a href="cafe-menu.html">Tap Menu</a> · <a href="#sponsorship">Sponsorship</a> · <a href="events.html">Events</a></span>
+    </div>
+  </footer>
+
+  <script>
+    // ─── HERO CAROUSEL ───
+    (function() {
+      const slides = document.querySelectorAll('.hero-slide');
+      const dotsEl = document.getElementById('heroDots');
+      let cur = 0, timer, paused = false;
+      const total = slides.length;
+
+      // Build dots
+      slides.forEach((_, i) => {
+        const d = document.createElement('button');
+        d.className = 'hero-dot' + (i === 0 ? ' active' : '');
+        d.setAttribute('aria-label', `Slide ${i + 1}`);
+        d.addEventListener('click', () => goTo(i));
+        dotsEl.appendChild(d);
+      });
+
+      function goTo(n) {
+        slides[cur].classList.remove('active');
+        dotsEl.children[cur].classList.remove('active');
+        cur = (n + total) % total;
+        slides[cur].classList.add('active');
+        dotsEl.children[cur].classList.add('active');
+        resetTimer();
+      }
+
+      function next() { goTo(cur + 1); }
+      function prev() { goTo(cur - 1); }
+
+      function resetTimer() {
+        clearInterval(timer);
+        if (!paused) timer = setInterval(next, 5000);
+      }
+
+      document.getElementById('heroNext').addEventListener('click', next);
+      document.getElementById('heroPrev').addEventListener('click', prev);
+
+      // Pause on hover
+      const hero = document.querySelector('.hero');
+      hero.addEventListener('mouseenter', () => { paused = true; clearInterval(timer); });
+      hero.addEventListener('mouseleave', () => { paused = false; resetTimer(); });
+
+      // Touch/swipe support
+      let touchX = 0;
+      hero.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
+      hero.addEventListener('touchend', e => {
+        const diff = touchX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 40) diff > 0 ? next() : prev();
+      }, { passive: true });
+
+      resetTimer();
+    })();
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const t = document.querySelector(a.getAttribute('href'));
+        if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+    });
+
+    // General contact form → mailto
+    document.getElementById('cfSubmit').addEventListener('click', () => {
+      const name   = (document.getElementById('cfFirst').value + ' ' + document.getElementById('cfLast').value).trim();
+      const email  = document.getElementById('cfEmail').value;
+      const type   = document.getElementById('cfType').value;
+      const date   = document.getElementById('cfDate').value;
+      const guests = document.getElementById('cfGuests').value;
+      const msg    = document.getElementById('cfMsg').value;
+      const subject = encodeURIComponent('Cedar Tap Inquiry' + (type ? ' — ' + type : ''));
+      const body    = encodeURIComponent(
+        `Name: ${name}\nEmail: ${email}\nType: ${type}\nDate: ${date}\nGuests: ${guests}\n\n${msg}`
+      );
+      window.location.href = `mailto:tom@cedartaps.com?subject=${subject}&body=${body}`;
+    });
+
+    // Sponsorship form → mailto
+    document.getElementById('spSubmit').addEventListener('click', () => {
+      const brand    = document.querySelectorAll('.sponsor-form input')[0].value;
+      const contact  = document.querySelectorAll('.sponsor-form input')[1].value;
+      const email    = document.querySelectorAll('.sponsor-form input[type="email"]')[0].value;
+      const category = document.querySelectorAll('.sponsor-form select')[0].value;
+      const interest = document.querySelectorAll('.sponsor-form select')[1].value;
+      const detail   = document.querySelector('.sponsor-form textarea').value;
+      const subject  = encodeURIComponent(`Brand Sponsorship Inquiry — ${brand || 'New Inquiry'}`);
+      const body     = encodeURIComponent(
+        `Brand: ${brand}\nContact: ${contact}\nEmail: ${email}\nCategory: ${category}\nInterest: ${interest}\n\n${detail}`
+      );
+      window.location.href = `mailto:tom@cedartaps.com?subject=${subject}&body=${body}`;
+    });
+  </script>
+
+  <!-- ============================================================
+       TASTE-SKILL UX/UI UPGRADES — v1
+       Priority order: font → shadows → press states → scroll reveals
+       → grain overlay → spotlight cards → active nav
+  ============================================================ -->
+  <style>
+    /* ── 1. OUTFIT for UI labels, tags, nav, buttons ── */
+    .section-label,
+    .card-tag,
+    .hero-eyebrow,
+    .nav-links a,
+    .nav-cta,
+    .btn,
+    .rate-label,
+    .ph-label,
+    .keg-label {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* ── 2. HUE-TINTED SHADOWS (cedar/amber hue, not pure black) ── */
+    :root {
+      --shadow:    0 4px 24px rgba(59,31,14,0.18), 0 1px 4px rgba(200,146,42,0.06);
+      --shadow-lg: 0 12px 48px rgba(59,31,14,0.28), 0 4px 16px rgba(200,146,42,0.08);
+    }
+    .btn-primary:hover {
+      box-shadow: 0 8px 28px rgba(200,146,42,0.42), 0 2px 8px rgba(59,31,14,0.2);
+    }
+    .offer-card:hover {
+      box-shadow: 0 8px 32px rgba(59,31,14,0.22), 0 2px 8px rgba(200,146,42,0.1);
+    }
+    .experience-visual {
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* ── 3. PRESS / ACTIVE STATES ── */
+    .btn:active         { transform: scale(0.97) translateY(0) !important; }
+    .nav-cta:active     { transform: scale(0.97) !important; }
+    .offer-card:active  { transform: translateY(-1px) scale(0.995); }
+
+    /* ── 4. SCROLL REVEAL — base hidden state ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s cubic-bezier(.22,.61,.36,1),
+                  transform 0.65s cubic-bezier(.22,.61,.36,1);
+    }
+    .reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    /* Stagger siblings */
+    .reveal-group > * {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.55s cubic-bezier(.22,.61,.36,1),
+                  transform 0.55s cubic-bezier(.22,.61,.36,1);
+    }
+    .reveal-group.revealed > *:nth-child(1) { transition-delay: 0s;    opacity:1; transform:none; }
+    .reveal-group.revealed > *:nth-child(2) { transition-delay: 0.09s; opacity:1; transform:none; }
+    .reveal-group.revealed > *:nth-child(3) { transition-delay: 0.18s; opacity:1; transform:none; }
+    .reveal-group.revealed > *:nth-child(4) { transition-delay: 0.27s; opacity:1; transform:none; }
+    .reveal-group.revealed > *:nth-child(5) { transition-delay: 0.36s; opacity:1; transform:none; }
+    .reveal-group.revealed > *:nth-child(6) { transition-delay: 0.45s; opacity:1; transform:none; }
+
+    /* ── 5. GRAIN / NOISE OVERLAY ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 9999;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      opacity: 0.022;
+      mix-blend-mode: overlay;
+    }
+
+    /* ── 6. SPOTLIGHT CARD BORDERS ── */
+    .offer-card {
+      position: relative;
+      --x: 50%; --y: 50%;
+      background: rgba(245,237,224,0.05);
+    }
+    .offer-card::after {
+      content: '';
+      position: absolute; inset: -1px;
+      border-radius: inherit;
+      background: radial-gradient(
+        300px circle at var(--x) var(--y),
+        rgba(200,146,42,0.22),
+        transparent 70%
+      );
+      opacity: 0;
+      transition: opacity 0.35s;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .offer-card:hover::after { opacity: 1; }
+    .offer-card > * { position: relative; z-index: 1; }
+
+    /* ── 7. ACTIVE NAV LINK INDICATOR ── */
+    .nav-links a[data-active="true"] {
+      color: var(--amber-light) !important;
+    }
+    .nav-links a[data-active="true"]::after {
+      content: '';
+      display: block;
+      height: 1.5px;
+      background: var(--amber-light);
+      border-radius: 2px;
+      margin-top: 3px;
+      animation: navUnderline 0.25s ease forwards;
+    }
+    @keyframes navUnderline {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+
+    /* ── 8. SMOOTH SCROLL ALREADY SET — add scroll-padding-top for fixed nav ── */
+    html { scroll-padding-top: 72px; }
+
+    /* ── 9. TEXT-WRAP BALANCE on headings ── */
+    .section-title, .hero h1, .hero .sub {
+      text-wrap: balance;
+    }
+
+    /* ── 10. FOCUS RINGS (accessibility) ── */
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--amber-light);
+      outline-offset: 3px;
+      border-radius: 3px;
+    }
+  </style>
+
+  <script>
+    /* ── SCROLL REVEALS ── */
+    (function () {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('revealed');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+      document.querySelectorAll('.section-inner > *, .experience-layout, .pricing-layout').forEach(el => {
+        el.classList.add('reveal');
+        io.observe(el);
+      });
+
+      document.querySelectorAll('.cards-grid, .photo-grid, .photo-strip').forEach(el => {
+        el.classList.add('reveal-group');
+        io.observe(el);
+      });
+    })();
+
+    /* ── SPOTLIGHT CARD BORDERS — track cursor ── */
+    document.querySelectorAll('.offer-card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--x', (e.clientX - r.left) + 'px');
+        card.style.setProperty('--y', (e.clientY - r.top)  + 'px');
+      });
+    });
+
+    /* ── ACTIVE NAV LINK based on scroll position ── */
+    (function () {
+      const sections = document.querySelectorAll('section[id]');
+      const links    = document.querySelectorAll('.nav-links a[href^="#"]');
+      const onScroll = () => {
+        let current = '';
+        sections.forEach(s => {
+          if (window.scrollY >= s.offsetTop - 90) current = s.id;
+        });
+        links.forEach(a => {
+          const matches = a.getAttribute('href') === '#' + current;
+          a.dataset.active = matches ? 'true' : 'false';
+        });
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    })();
+  </script>
+
+
+  <script>
+    // Force-unregister stale service workers, then re-register fresh v4
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        regs.forEach(r => r.unregister());
+      });
+    }
+  </script>
+
+  <!-- ============================================================
+       SKIPER UI — DYNAMIC LAYER v2
+       Aurora · 3D Tilt · Magnetic · Counter · Entrance · Glow
+  ============================================================ -->
+  <style>
+    /* ── SCROLL PROGRESS BAR ── */
+    #scrollBar {
+      position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+      background: linear-gradient(90deg, #c8922a, #e0b050, #c8922a);
+      z-index: 9997; pointer-events: none;
+      box-shadow: 0 0 10px rgba(200,168,87,0.7), 0 0 4px rgba(200,168,87,0.4);
+      transition: width 0.08s linear;
+    }
+
+    /* ── AURORA ORBS ── */
+    .aurora-layer {
+      position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none;
+    }
+    .sk-orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(90px); opacity: 0.5;
+      animation: orb-drift var(--dur, 13s) ease-in-out infinite alternate;
+      pointer-events: none; mix-blend-mode: screen;
+    }
+    @keyframes orb-drift {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(var(--tx, 40px), var(--ty, 30px)) scale(var(--sc, 1.15)); }
+    }
+    @media (prefers-reduced-motion: reduce) { .sk-orb { animation: none !important; } }
+
+    /* ── SHIMMER ON SECTION LABELS ── */
+    .section-label {
+      position: relative; overflow: hidden;
+    }
+    .section-label::before {
+      content: '';
+      position: absolute; top: 0; left: -100%; width: 55%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(224,176,80,0.45), transparent);
+      animation: label-shimmer 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes label-shimmer {
+      0%   { left: -100%; }
+      35%, 100% { left: 130%; }
+    }
+
+    /* ── SUBTLE CTA PULSE ── */
+    .btn-primary {
+      animation: cta-pulse 3.2s ease-in-out infinite;
+    }
+    @keyframes cta-pulse {
+      0%, 100% { box-shadow: 0 0 10px rgba(200,168,87,0.18), 0 4px 16px rgba(59,31,14,0.3); }
+      50%       { box-shadow: 0 0 22px rgba(200,168,87,0.42), 0 4px 20px rgba(59,31,14,0.3); }
+    }
+    .btn-primary:hover, .btn-primary:active {
+      animation: none !important;
+    }
+
+    /* ── 3D TILT CARDS ── */
+    .offer-card {
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    /* ── FEATURE ROW HOVER ── */
+    .feature-row {
+      transition: background 0.22s ease, transform 0.22s ease;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin: -10px -12px;
+    }
+    .feature-row:hover {
+      background: rgba(200,168,87,0.07);
+      transform: translateX(5px);
+    }
+
+    /* ── BENEFIT ITEMS ── */
+    .benefit-item {
+      transition: transform 0.22s ease;
+    }
+    .benefit-item:hover {
+      transform: translateX(4px);
+    }
+
+    /* ── DARK SECTION CARD GLOW ── */
+    #payments [style*="background:rgba(255,255,255,.03)"] {
+      transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
+    }
+    #payments [style*="background:rgba(255,255,255,.03)"]:hover {
+      border-color: rgba(200,168,87,0.5) !important;
+      box-shadow: 0 0 30px rgba(200,168,87,0.13), inset 0 1px 0 rgba(200,168,87,0.1) !important;
+    }
+
+    /* ── PARTNER PATHWAY CARDS HOVER ── */
+    #partner-pathways [style*="background:var(--card)"] {
+      transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.28s ease !important;
+    }
+    #partner-pathways [style*="background:var(--card)"]:hover {
+      transform: translateY(-5px) !important;
+      box-shadow: 0 12px 36px rgba(59,31,14,0.25), 0 2px 8px rgba(200,168,87,0.1) !important;
+    }
+
+    /* ── HERO SCROLL BOUNCE ── */
+    .hero-scroll {
+      animation: scroll-bounce 2.4s ease-in-out infinite;
+    }
+    @keyframes scroll-bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0);   }
+      55%       { transform: translateX(-50%) translateY(7px); }
+    }
+
+    /* ── PHOTO CARD HOVER ── */
+    .photo-card {
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1),
+                  box-shadow 0.35s ease;
+    }
+    .photo-card:hover {
+      transform: translateY(-5px) scale(1.01);
+      box-shadow: 0 14px 40px rgba(59,31,14,0.3);
+    }
+
+    /* ── STEP NUMBER GLOW ── */
+    .step:hover .step-num {
+      box-shadow: 0 0 0 6px rgba(200,168,87,0.18);
+      transform: scale(1.08);
+    }
+    .step-num {
+      transition: box-shadow 0.25s ease, transform 0.25s ease;
+    }
+  </style>
+
+  <script>
+  (function() {
+
+    // ── SCROLL PROGRESS BAR ──
+    const bar = document.getElementById('scrollBar');
+    if (bar) {
+      window.addEventListener('scroll', () => {
+        const total = document.documentElement.scrollHeight - window.innerHeight;
+        if (total > 0) bar.style.width = (window.scrollY / total * 100) + '%';
+      }, { passive: true });
+    }
+
+    // ── AURORA ORBS — injected into hero ──
+    const hero = document.querySelector('.hero');
+    if (hero) {
+      const layer = document.createElement('div');
+      layer.className = 'aurora-layer';
+      const orbs = [
+        { w:560, h:560, top:'-15%',  left:'-10%', bg:'rgba(180,120,30,0.55)',  dur:'15s', tx:'65px',  ty:'55px',  sc:'1.22' },
+        { w:420, h:420, top:'25%',   left:'58%',  bg:'rgba(40,70,24,0.65)',    dur:'19s', tx:'-55px', ty:'45px',  sc:'1.12' },
+        { w:320, h:320, top:'60%',   left:'15%',  bg:'rgba(130,70,20,0.42)',   dur:'12s', tx:'35px',  ty:'-35px', sc:'1.28' },
+      ];
+      orbs.forEach(o => {
+        const el = document.createElement('div');
+        el.className = 'sk-orb';
+        el.style.cssText = `width:${o.w}px;height:${o.h}px;top:${o.top};left:${o.left};background:${o.bg};--dur:${o.dur};--tx:${o.tx};--ty:${o.ty};--sc:${o.sc};`;
+        layer.appendChild(el);
+      });
+      const overlay = hero.querySelector('.hero-overlay');
+      if (overlay) overlay.after(layer);
+      else hero.prepend(layer);
+    }
+
+    // ── HERO TEXT ENTRANCE ──
+    const heroEls = document.querySelectorAll('.hero-eyebrow, .hero h1, .hero .sub, .hero-actions');
+    heroEls.forEach((el, i) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = `opacity 0.72s cubic-bezier(.22,.61,.36,1) ${i * 0.14 + 0.2}s,
+                              transform 0.72s cubic-bezier(.22,.61,.36,1) ${i * 0.14 + 0.2}s`;
+    });
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      heroEls.forEach(el => {
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      });
+    }));
+
+    // ── COUNTER ANIMATIONS (payments section stats) ──
+    const statEls = document.querySelectorAll('#payments [style*="font-size:2.4rem"]');
+    const statData = [
+      { target: 10,  suffix: 's',  dur: 1200 },
+      { target: 4,   suffix: '×',  dur: 900  },
+      { target: 100, suffix: '%',  dur: 1600 },
+    ];
+    if (statEls.length >= 3) {
+      const cObs = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting) {
+          statEls.forEach((el, i) => {
+            if (!statData[i]) return;
+            const { target, suffix, dur } = statData[i];
+            const start = performance.now();
+            const run = now => {
+              const p = Math.min((now - start) / dur, 1);
+              const ease = 1 - Math.pow(1 - p, 3);
+              el.textContent = Math.round(ease * target) + suffix;
+              if (p < 1) requestAnimationFrame(run);
+            };
+            requestAnimationFrame(run);
+          });
+          cObs.disconnect();
+        }
+      }, { threshold: 0.5 });
+      cObs.observe(statEls[0]);
+    }
+
+    // ── MAGNETIC BUTTONS ──
+    document.querySelectorAll('.btn-primary, .btn-outline, .nav-cta').forEach(btn => {
+      btn.addEventListener('mousemove', e => {
+        const r = btn.getBoundingClientRect();
+        const dx = e.clientX - (r.left + r.width  / 2);
+        const dy = e.clientY - (r.top  + r.height / 2);
+        btn.style.transition = 'transform 0.08s ease';
+        btn.style.transform  = `translate(${dx * 0.2}px, ${dy * 0.2}px)`;
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transition = 'transform 0.55s cubic-bezier(0.34,1.56,0.64,1)';
+        btn.style.transform  = 'translate(0,0)';
+      });
+    });
+
+    // ── 3D CARD TILT (offer cards) ──
+    document.querySelectorAll('.offer-card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r  = card.getBoundingClientRect();
+        const x  = ((e.clientX - r.left)  / r.width  - 0.5) *  10;
+        const y  = ((e.clientY - r.top)   / r.height - 0.5) * -10;
+        card.style.transition = 'transform 0.06s ease';
+        card.style.transform  = `perspective(720px) rotateY(${x}deg) rotateX(${y}deg) translateZ(10px)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transition = 'transform 0.48s cubic-bezier(0.34,1.56,0.64,1)';
+        card.style.transform  = 'perspective(720px) rotateX(0) rotateY(0) translateZ(0)';
+      });
+    });
+
+    // ── PROCESS STEPS ENTRANCE STAGGER ──
+    const stepsContainer = document.querySelector('.steps');
+    if (stepsContainer) {
+      const steps = stepsContainer.querySelectorAll('.step');
+      steps.forEach(s => { s.style.opacity = '0'; s.style.transform = 'translateY(22px)'; });
+      const sObs = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting) {
+          steps.forEach((s, i) => {
+            setTimeout(() => {
+              s.style.transition = 'opacity 0.55s ease, transform 0.55s cubic-bezier(.22,.61,.36,1)';
+              s.style.opacity    = '1';
+              s.style.transform  = 'none';
+            }, i * 115 + 60);
+          });
+          sObs.disconnect();
+        }
+      }, { threshold: 0.25 });
+      sObs.observe(stepsContainer);
+    }
+
+    // ── BENEFIT ITEMS ENTRANCE STAGGER ──
+    const benefitContainer = document.querySelector('.sponsor-benefits');
+    if (benefitContainer) {
+      const bItems = benefitContainer.querySelectorAll('.benefit-item');
+      bItems.forEach(b => { b.style.opacity = '0'; b.style.transform = 'translateX(-18px)'; });
+      const bObs = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting) {
+          bItems.forEach((b, i) => {
+            setTimeout(() => {
+              b.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(.22,.61,.36,1)';
+              b.style.opacity    = '1';
+              b.style.transform  = 'none';
+            }, i * 95 + 50);
+          });
+          bObs.disconnect();
+        }
+      }, { threshold: 0.15 });
+      bObs.observe(benefitContainer);
+    }
+
+    // ── PRICING TABLE ROW HOVER ──
+    document.querySelectorAll('.rate-table tr').forEach(row => {
+      row.style.transition = 'background 0.2s ease';
+      row.addEventListener('mouseenter', () => { row.style.background = 'rgba(200,168,87,0.06)'; });
+      row.addEventListener('mouseleave', () => { row.style.background = ''; });
+    });
+
+    // ── NAV LOGO — scroll to top ──
+    const logo = document.querySelector('.nav-logo');
+    if (logo) {
+      logo.addEventListener('click', e => {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cedar Tap — Pipeline</title>
+  <link rel="icon" type="image/svg+xml" href="/img/cedar-tap-logo.svg" />
+  <script data-goatcounter="https://cedartap.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  <style>
+    :root {
+      --bg:       #0f0d0b;
+      --surface:  #1a1510;
+      --card:     #201a13;
+      --border:   #2e2519;
+      --cream:    #f0e6d3;
+      --cream-dim:#9e8e78;
+      --gold:     #c8941a;
+      --green:    #4caf7d;
+      --red:      #e05252;
+      --amber:    #f5a96a;
+      --blue:     #6ab0f5;
+      --purple:   #a78bfa;
+      --radius:   10px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--cream); font-family: 'Georgia', serif; min-height: 100vh; }
+
+    /* ── NAV ── */
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 28px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .nav-brand { display: flex; align-items: center; gap: 10px; font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); text-decoration: none; }
+    .nav-brand img { width: 26px; height: 26px; }
+    .nav-links { display: flex; gap: 20px; }
+    .nav-links a { color: var(--cream-dim); text-decoration: none; font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; transition: color .2s; }
+    .nav-links a:hover { color: var(--cream); }
+    .nav-links a.active { color: var(--gold); }
+    .badge-live { display: inline-flex; align-items: center; gap: 5px; background: rgba(76,175,125,.12); border: 1px solid rgba(76,175,125,.3); color: var(--green); font-size: .65rem; letter-spacing: .1em; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; }
+    .badge-live::before { content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
+
+    /* ── LAYOUT ── */
+    .page { max-width: 1100px; margin: 0 auto; padding: 36px 24px 80px; }
+    .page-header { margin-bottom: 32px; }
+    .page-eyebrow { font-size: .7rem; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+    .page-title { font-size: 1.9rem; color: var(--cream); font-weight: normal; }
+    .page-title em { color: var(--gold); font-style: italic; }
+    .page-sub { color: var(--cream-dim); font-size: .85rem; margin-top: 8px; font-style: italic; }
+
+    /* ── STAT STRIP ── */
+    .stat-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 36px; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 16px; }
+    .stat-val { font-size: 1.6rem; font-weight: bold; line-height: 1; }
+    .stat-label { font-size: .65rem; letter-spacing: .1em; text-transform: uppercase; color: var(--cream-dim); margin-top: 5px; }
+
+    /* ── SECTIONS ── */
+    .section-label { font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; margin-top: 40px; display: flex; align-items: center; gap: 8px; }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* ── PARTNER CARDS ── */
+    .partner-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    .partner-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; position: relative; overflow: hidden; }
+    .partner-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--border); }
+    .partner-card.status-active::before  { background: var(--green); }
+    .partner-card.status-hot::before     { background: var(--gold); }
+    .partner-card.status-pending::before { background: var(--amber); }
+    .partner-card.status-closed::before  { background: var(--red); }
+    .partner-card.status-platform::before { background: var(--purple); }
+
+    .partner-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .partner-name { font-size: 1rem; font-weight: bold; color: var(--cream); }
+    .partner-type { font-size: .65rem; letter-spacing: .1em; text-transform: uppercase; color: var(--cream-dim); margin-top: 2px; }
+    .status-pill { font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+    .pill-active   { background: rgba(76,175,125,.15);  color: var(--green);  border: 1px solid rgba(76,175,125,.3); }
+    .pill-hot      { background: rgba(200,148,26,.15);  color: var(--gold);   border: 1px solid rgba(200,148,26,.3); }
+    .pill-pending  { background: rgba(245,169,106,.12); color: var(--amber);  border: 1px solid rgba(245,169,106,.25); }
+    .pill-closed   { background: rgba(224,82,82,.1);    color: var(--red);    border: 1px solid rgba(224,82,82,.2); }
+    .pill-platform { background: rgba(167,139,250,.12); color: var(--purple); border: 1px solid rgba(167,139,250,.25); }
+    .pill-info     { background: rgba(106,176,245,.1);  color: var(--blue);   border: 1px solid rgba(106,176,245,.2); }
+
+    .partner-contact { font-size: .75rem; color: var(--cream-dim); margin-bottom: 10px; }
+    .partner-contact a { color: var(--gold); text-decoration: none; }
+    .partner-notes { font-size: .8rem; color: var(--cream-dim); line-height: 1.55; font-style: italic; border-top: 1px solid var(--border); padding-top: 10px; margin-top: 10px; }
+    .partner-action { margin-top: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .action-tag { font-size: .65rem; letter-spacing: .08em; text-transform: uppercase; background: rgba(200,148,26,.1); color: var(--gold); border: 1px solid rgba(200,148,26,.2); padding: 3px 8px; border-radius: 4px; }
+    .est { font-size: .7rem; color: var(--cream-dim); margin-top: 8px; }
+    .est strong { color: var(--green); }
+
+    /* ── PIPELINE TABLE (smaller leads) ── */
+    .pipeline-table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+    .pipeline-table th { text-align: left; font-size: .65rem; letter-spacing: .1em; text-transform: uppercase; color: var(--cream-dim); padding: 8px 12px; border-bottom: 1px solid var(--border); font-weight: normal; }
+    .pipeline-table td { padding: 10px 12px; border-bottom: 1px solid rgba(46,37,25,.6); vertical-align: top; }
+    .pipeline-table tr:last-child td { border-bottom: none; }
+    .pipeline-table tr:hover td { background: rgba(255,255,255,.02); }
+    .td-name { color: var(--cream); font-weight: bold; }
+    .td-sub  { font-size: .7rem; color: var(--cream-dim); margin-top: 2px; font-style: italic; }
+    .td-est  { color: var(--green); font-size: .75rem; white-space: nowrap; }
+    .priority-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+    .dot-red    { background: var(--red); }
+    .dot-amber  { background: var(--amber); }
+    .dot-yellow { background: #f0c040; }
+    .dot-white  { background: #666; }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:600px) {
+      .stat-strip { grid-template-columns: repeat(2, 1fr); }
+      .partner-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-brand" href="/">
+    <img src="/img/cedar-tap-logo.svg" alt="Cedar Tap" />
+    Cedar Tap
+  </a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/cafe-menu">Menu</a>
+    <a href="/pipeline" class="active">Pipeline</a>
+    <a href="/observe">Observe</a>
+  </div>
+  <span class="badge-live">Live</span>
+</nav>
+
+<div class="page">
+
+  <div class="page-header">
+    <div class="page-eyebrow">🌲 Cedar Tap — Operator</div>
+    <h1 class="page-title">Partnership <em>Pipeline</em></h1>
+    <p class="page-sub">Active partners, confirmed meetings, and outreach status — updated in real time</p>
+  </div>
+
+  <!-- STAT STRIP -->
+  <div class="stat-strip">
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--green)">4</div>
+      <div class="stat-label">Active Partners</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--gold)">4</div>
+      <div class="stat-label">✅ Partnerships Booked</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--amber)">150+</div>
+      <div class="stat-label">Outreach Sent</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--cream)">$300K+</div>
+      <div class="stat-label">Est. Pipeline Value</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:var(--purple)">2</div>
+      <div class="stat-label">Platform Listings</div>
+    </div>
+  </div>
+
+  <!-- ACTIVE PARTNERS -->
+  <div class="section-label">✅ Active Partners</div>
+  <div class="partner-grid">
+
+    <div class="partner-card status-active">
+      <div class="partner-head">
+        <div>
+          <div class="partner-name">La Colombe Coffee Roasters</div>
+          <div class="partner-type">Vendor · Coffee on Tap · Active Supplier</div>
+        </div>
+        <span class="status-pill pill-active">✅ Vendor Confirmed</span>
+      </div>
+      <div class="partner-contact">Eric Kurss · <a href="mailto:Eric.Kurss@lacolombe.net">Eric.Kurss@lacolombe.net</a></div>
+      <div class="partner-notes">
+        Partnership confirmed Jun 17, 2026. La Colombe is an active Cedar Tap vendor/supplier. In-keg builds confirmed. Corny keg quote in progress. Samples shipping to 5299 Daybreak Ln, Woodbridge VA 22153. Branded tap handles being supplied. Menu live at cedartaps.com/lacolombe.
+      </div>
+      <div class="partner-action">
+        <span class="action-tag">⏳ Corny keg quote pending</span>
+        <span class="action-tag">📦 Samples inbound</span>
+        <span class="action-tag">🌐 Menu live</span>
+      </div>
+    </div>
+
+    <div class="partner-card status-active">
+      <div class="partner-head">
+        <div>
+          <div class="partner-name">Murlarkey Distillery</div>
+          <div class="partner-type">Partner · Kegged Cocktails · Private Tastings</div>
+        </div>
+        <span class="status-pill pill-active">✅ Active Partner</span>
+      </div>
+      <div class="partner-contact">Zanab Kiaee · Nicole · <a href="mailto:zanab@murlarkey.com">zanab@murlarkey.com</a></div>
+      <div class="partner-notes">
+        Confirmed Jun 18, 2026. Murlarkey is a solid Cedar Tap partner for kegged cocktails and private tasting events. Cedar Tap serves Murlarkey spirits on tap at off-site and on-site activations. VA ABC banquet license ($85/event, 12-day lead) applied per event. Menu live at cedartaps.com/murlarkey.
+      </div>
+      <div class="partner-action">
+        <span class="action-tag">🍸 Kegged cocktails confirmed</span>
+        <span class="action-tag">🎟️ Private tastings available</span>
+        <span class="action-tag">🏛️ ABC banquet license ready</span>
+        <span class="action-tag">🌐 Menu live</span>
+      </div>
+    </div>
+
+    <div class="partner-card status-active">
+      <div class="partner-head">
+        <div>
+          <div class="partner-name">Commonwealth Joe</div>
+          <div class="partner-type">Wholesale · Nitro Cold Brew · 🔥 BOOKED</div>
+        </div>
+        <span class="status-pill pill-active">✅ Partnership Confirmed</span>
+      </div>
+      <div class="partner-contact">Jeff Simon · <a href="mailto:jeff.simon@commonwealthjoe.com">jeff.simon@commonwealthjoe.com</a></div>
+      <div class="partner-notes">
+        Partnership booked Jul 10, 2026. Successful partnership meeting with Jeff Simon. Wholesale account active. Multiple events confirmed. Branded tap handles supplied. Keg pickup: Beltsville MD. Pricing finalized. Menu live at cedartaps.com/cwj.
+      </div>
+      <div class="partner-action">
+        <span class="action-tag">✅ Wholesale account active</span>
+        <span class="action-tag">✅ Events confirmed</span>
+        <span class="action-tag">📍 Pickup: Beltsville MD</span>
+        <span class="action-tag">🌐 Menu live</span>
+      </div>
+      <div class="est">Menu: <a href="/cwj" style="color:var(--gold);text-decoration:none">cedartaps.com/cwj ↗</a></div>
+    </div>
+
+    <div class="partner-card status-active">
+      <div class="partner-head">
+        <div>
+          <div class="partner-name">Nokesville Winery</div>
+          <div class="partner-type">Partner · Kegged Wine · 🔥 BOOKED</div>
+        </div>
+        <span class="status-pill pill-active">✅ Partnership Confirmed</span>
+      </div>
+      <div class="partner-contact">Nokesville Winery · <a href="mailto:info@nokesvillewinery.com">info@nokesvillewinery.com</a></div>
+      <div class="partner-notes">
+        Partnership confirmed Jul 10, 2026. Nokesville Winery providing kegged wine for Cedar Tap events. Local Nokesville VA winery with outdoor courtyard venue. Cedar Tap serves Nokesville wines on tap at off-site activations and dry-hire events. Menu live at cedartaps.com/nokesville.
+      </div>
+      <div class="partner-action">
+        <span class="action-tag">🍷 Kegged wine confirmed</span>
+        <span class="action-tag">✅ Events approved</span>
+        <span class="action-tag">📍 Nokesville VA</span>
+        <span class="action-tag">🌐 Menu live</span>
+      </div>
+      <div class="est">Menu: <a href="/nokesville" style="color:var(--gold);text-decoration:none">cedartaps.com/nokesville ↗</a></div>
+    </div>
+
+  </div>
+
+  <!-- PLATFORM LISTINGS -->
+  <div class="section-label">🔗 Platform Listings</div>
+  <div class="partner-grid">
+
+    <div class="partner-card status-platform">
+      <div class="partner-head">
+        <div>
+          <div class="partner-name">Airbnb Experiences</div>
+          <div class="partner-type">Booking Platform · Listing #7133103</div>
+        </div>
+        <span class="status-pill pill-platform">Revision Needed</span>
+      </div>
+      <div class="partner-contact"><a href="https://airbnb.com/hosting/listings/experience/7133103" target="_blank" style="color:var(--gold);text-decoration:none">airbnb.com/hosting/listings/experience/7133103 ↗</a></div>
+      <div class="partner-notes">
+        "Sip a Guided Flight in a Mobile Tap Room" — Airbnb reviewed submission and requested revisions to meet standards. No deadline flagged.
+      </div>
+      <div class="partner-action">
+        <span class="action-tag">✏️ Update listing</span>
+      </div>
+    </div>
+
+    <div class="partner-card status-platform">
+      <div class="partner-head">
+        <div>
+          <div class="partner-name">VA ABC — Banquet License</div>
+          <div class="partner-type">Licensing Platform</div>
+        </div>
+        <span class="status-pill pill-active">Account Active</span>
+      </div>
+      <div class="partner-contact"><a href="https://licensing.abc.virginia.gov" target="_blank" style="color:var(--gold);text-decoration:none">licensing.abc.virginia.gov ↗</a></div>
+      <div class="partner-notes">
+        Account active under Tom Callahan (SSN ••••4417). Apply banquet licenses via "Create" menu. $85/event · 12 days advance notice required.
+      </div>
+      <div class="partner-action">
+        <span class="action-tag">✅ Ready to apply per event</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- OUTREACH — CLOSED / NO RESPONSE -->
+  <div class="section-label">❌ Closed / No Response</div>
+  <div class="partner-grid">
+
+    <div class="partner-card status-closed">
+      <div class="partner-head">
+        <div>
+          <div class="partner-name">Dale City Farmers Market</div>
+          <div class="partner-type">Farmers Market · Andy Moore</div>
+        </div>
+        <span class="status-pill pill-closed">Season Full</span>
+      </div>
+      <div class="partner-contact"><a href="mailto:Amoore2@pwcgov.org">Amoore2@pwcgov.org</a></div>
+      <div class="partner-notes">Called Jun 11 — unable to accommodate Cedar Tap this season. Follow up for next season 2027.</div>
+      <div class="est">Est: <strong>~$818–$1,126/event</strong></div>
+    </div>
+
+    <div class="partner-card status-closed">
+      <div class="partner-head">
+        <div>
+          <div class="partner-name">Historic Manassas FM</div>
+          <div class="partner-type">Farmers Market · Peyton Smith</div>
+        </div>
+        <span class="status-pill pill-closed">No Alcohol</span>
+      </div>
+      <div class="partner-contact"><a href="mailto:peyton@historicmanassasinc.org">peyton@historicmanassasinc.org</a></div>
+      <div class="partner-notes">Policy: no alcohol at markets. Non-alcohol tap menu (cold brew, kombucha, tea) may reopen this channel.</div>
+    </div>
+
+    <div class="partner-card status-closed">
+      <div class="partner-head">
+        <div>
+          <div class="partner-name">EatLoco</div>
+          <div class="partner-type">Market Network · Lauren Katz</div>
+        </div>
+        <span class="status-pill pill-closed">No Alcohol</span>
+      </div>
+      <div class="partner-contact"><a href="mailto:info@eatloco.org">info@eatloco.org</a></div>
+      <div class="partner-notes">No alcohol at markets. Non-alcohol menu pivot may unlock this channel.</div>
+    </div>
+
+  </div>
+
+  <!-- HIGH-VALUE OUTREACH PIPELINE -->
+  <div class="section-label">🔴 High-Value Outreach — Pending</div>
+  <table class="pipeline-table">
+    <thead>
+      <tr>
+        <th>Lead</th>
+        <th>Channel</th>
+        <th>Status</th>
+        <th>Est. Revenue</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-red"></span>Arlington County Fair — Aug 12–16</div>
+          <div class="td-sub">countyfair@arlingtonva.us · Thomas Jefferson CC, Arlington</div>
+        </td>
+        <td>Email</td>
+        <td><span class="status-pill pill-hot">Sent Jun 18 · Decision Jun 25</span></td>
+        <td class="td-est">$36,338 net · $7,268/day (5d beer · ½bbl)</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-red"></span>Great Meadow Big Boom Jul 4</div>
+          <div class="td-sub">gmjuly4th.com · web form</div>
+        </td>
+        <td>Web Form</td>
+        <td><span class="status-pill pill-pending">Pending Apply</span></td>
+        <td class="td-est">$7,318 NET · 1d beer (½ bbl, 990 pours)</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name" style="text-decoration:line-through;opacity:.5"><span class="priority-dot dot-red"></span>Celebrate Fairfax Jun 12–14</div>
+          <div class="td-sub">celebratefairfax.org · event passed</div>
+        </td>
+        <td>—</td>
+        <td><span class="status-pill pill-closed">Closed · Passed</span></td>
+        <td class="td-est" style="opacity:.5">Event passed Jun 14</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-red"></span>Celebrate America Manassas Jul 4</div>
+          <div class="td-sub">historicmanassas.org · 703-361-3599</div>
+        </td>
+        <td>Call First</td>
+        <td><span class="status-pill pill-pending">Call Needed</span></td>
+        <td class="td-est">~$7,273 NET · 1d beer (½ bbl, 990 pours)</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-red"></span>PWC Juneteenth &amp; Me</div>
+          <div class="td-sub">pclarkwendel@pwcgov.org · Jun 19</div>
+        </td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Sent · Pending</span></td>
+        <td class="td-est">$5,889 NET · 1d beer (½ bbl, 810 pours)</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-red"></span>FXBG Craft Beer Festival</div>
+          <div class="td-sub">info@fbgcraftbeerfestival.com</div>
+        </td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Sent · Pending</span></td>
+        <td class="td-est">$5,889 NET · 1d beer (½ bbl, 810 pours)</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-red"></span>Manassas Park Jul 2</div>
+          <div class="td-sub">703-335-8800 · manassasparkva.gov</div>
+        </td>
+        <td>Call First</td>
+        <td><span class="status-pill pill-pending">Call Needed</span></td>
+        <td class="td-est">~$7,273 NET · 1d beer (½ bbl, 990 pours)</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-red"></span>Occoquan RiverFest</div>
+          <div class="td-sub">occoquanfestivals.com/vendor</div>
+        </td>
+        <td>Web Form</td>
+        <td><span class="status-pill pill-pending">Pending Apply</span></td>
+        <td class="td-est">~$5,889 NET · 1d beer (½ bbl, 810 pours)</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-red"></span>Viva! Vienna! / BrewFest</div>
+          <div class="td-sub">info@vivavienna.org</div>
+        </td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Sent · Pending</span></td>
+        <td class="td-est">$4,755 NET · 1d beer (½ bbl, 675 pours)</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-red"></span>FXBG Tacos &amp; Beer</div>
+          <div class="td-sub">cheersfxbg.regfox.com · web form</div>
+        </td>
+        <td>Web Form</td>
+        <td><span class="status-pill pill-pending">Pending Apply</span></td>
+        <td class="td-est">~$5,889 NET · 1d beer (event passed)</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-red"></span>Bites Beats Brews Alexandria Aug 1</div>
+          <div class="td-sub">ArtsandCrafts@Royal-EventsPlanning.com</div>
+        </td>
+        <td>Email</td>
+        <td><span class="status-pill pill-closed">Sold Out · Waitlist</span></td>
+        <td class="td-est">~$5,889 NET · waitlist</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-amber"></span>Chic Events DC Summer Circuit</div>
+          <div class="td-sub">ArtsandCrafts@Royal-EventsPlanning.com · Veterans Markets + more</div>
+        </td>
+        <td>Email</td>
+        <td><span class="status-pill pill-hot">Sent Jun 18 · Pending</span></td>
+        <td class="td-est">TBD Multi-Event</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-amber"></span>VA Renaissance Faire</div>
+          <div class="td-sub">info@varf.org · 5-week run</div>
+        </td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Sent · Pending</span></td>
+        <td class="td-est">~$72,680 NET · 10d beer (½ bbl · 5 weekends)</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name" style="text-decoration:line-through;opacity:.5"><span class="priority-dot dot-amber"></span>Bluegrass in the Burg Jun 10–13</div>
+          <div class="td-sub">540-373-1294 · event passed</div>
+        </td>
+        <td>—</td>
+        <td><span class="status-pill pill-closed">Closed · Passed</span></td>
+        <td class="td-est" style="opacity:.5">Event passed Jun 13</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-amber"></span>Fredericksburg Ag Fair Jul 24–Aug 2</div>
+          <div class="td-sub">540-373-1294 · Fairgrounds</div>
+        </td>
+        <td>Call First</td>
+        <td><span class="status-pill pill-pending">Call Needed</span></td>
+        <td class="td-est">~$9,500 NET DRY HIRE (10d × $1,000)</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-amber"></span>Bull Run Wine Festival</div>
+          <div class="td-sub">dgruenburg@wineryatbullrun.com</div>
+        </td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Sent · Pending</span></td>
+        <td class="td-est">~$950 NET DRY HIRE (1d)</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-amber"></span>Tephra ICA Arts Festival</div>
+          <div class="td-sub">info@tephraica.org</div>
+        </td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Sent · Pending</span></td>
+        <td class="td-est">~$950 NET DRY HIRE (1d)</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-red"></span>Manassas Fall Jubilee — Oct 3</div>
+          <div class="td-sub">703-361-6599 · historicmanassas.org/manassas-fall-jubilee/ · Historic Downtown Manassas</div>
+        </td>
+        <td>Call</td>
+        <td><span class="status-pill pill-closed">Sold Out — Waitlist</span></td>
+        <td class="td-est">TBD POUR · 3K-5K attendance</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-red"></span>Virginia Beer and Wine Festival — Sep 26</div>
+          <div class="td-sub">www.episcope.co/contact/ · National Landing Water Park, Arlington VA · 1.5K-3K</div>
+        </td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Email Sent Jun 17 · Pending</span></td>
+        <td class="td-est">TBD POUR</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-amber"></span>Purcellville Wine and Food Festival — Jul 18</div>
+          <div class="td-sub">events@purcellvilleva.gov · Dillon's Woods, Purcellville VA · at capacity</div>
+        </td>
+        <td>Email</td>
+        <td><span class="status-pill pill-closed">Waitlist — Email Sent Jun 17</span></td>
+        <td class="td-est">TBD POUR</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-amber"></span>TASTE Leesburg — Aug 8</div>
+          <div class="td-sub">lgreen@leesburgva.gov · eventeny.com · Downtown Leesburg · 1K-2K · late fee $325+$45</div>
+        </td>
+        <td>Email + Web Form</td>
+        <td><span class="status-pill pill-pending">Email + Eventeny Sent Jun 17 · Pending</span></td>
+        <td class="td-est">TBD POUR · temp permit by Jul 24</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-amber"></span>FXBG Bourbon Beer Festival — Aug 8</div>
+          <div class="td-sub">cheersfestivals@gmail.com · 540-408-3789 · Fredericksburg VA</div>
+        </td>
+        <td>Email</td>
+        <td><span class="status-pill pill-closed">Sold Out — Waitlist Sent Jun 17</span></td>
+        <td class="td-est">TBD POUR</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- BREWERY PARTNERSHIPS -->
+  <div class="section-label">🍺 Brewery Outreach — Pending</div>
+  <table class="pipeline-table">
+    <thead>
+      <tr>
+        <th>Venue</th>
+        <th>Contact</th>
+        <th>Status</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="td-name">Beer B&amp;B</div>
+          <div class="td-sub">sales@drinkeatrelax.com</div>
+        </td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Sent · Pending</span></td>
+        <td>ABC License Check</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name">Heritage Brewing Manassas</div>
+          <div class="td-sub">heritagebrewingcompanymanassas@gmail.com</div>
+        </td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Sent · Pending</span></td>
+        <td>Co-Brand Partnership</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name">Eavesdrop Brewery</div>
+          <div class="td-sub">events@eavesdropbrewery.com</div>
+        </td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Sent · Pending</span></td>
+        <td>FM Season Partnership</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name">2 Silos Brewing</div>
+          <div class="td-sub">2silosbrewing.com/become-a-vendor</div>
+        </td>
+        <td>Web Form</td>
+        <td><span class="status-pill pill-pending">Pending Apply</span></td>
+        <td>Vendor Partnership</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-green" style="background:var(--green)"></span>Murlarkey Distillery</div>
+          <div class="td-sub">zanab@murlarkey.com · Nicole · <a href="/murlarkey" style="color:var(--gold)">Menu live</a></div>
+        </td>
+        <td>Active Partner</td>
+        <td><span class="status-pill pill-active">✅ Partner Confirmed</span></td>
+        <td>Kegged Cocktails · Private Tastings</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- VINEYARD & WINERY OUTREACH -->
+  <div class="section-label">🍷 Vineyard &amp; Winery Outreach — Jun 18 (Round 1) + Jun 22 County Segments + Jun 22 Loudoun Expansion</div>
+  <table class="pipeline-table">
+    <thead>
+      <tr><th>Venue</th><th>County / City</th><th>Status</th><th>Campaign</th></tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="4" style="background:#1c2e1a;color:#c8a857;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">PRINCE WILLIAM COUNTY — Jun 22 Segment</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Potomac Point Winery</div><div class="td-sub">info@potomacpointwinery.com</div></td><td>Stafford</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Dry Hire · Full Svc · Cashless Pay</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>The Winery at Bull Run</div><div class="td-sub">info@wineryatbullrun.com</div></td><td>Centreville</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Full Svc · Sponsor Tap · Cashless Pay</td></tr>
+      <tr><td><div class="td-name">Nokesville Winery</div><div class="td-sub">info@nokesvillewinery.com</div></td><td>Nokesville</td><td><span class="status-pill pill-pending">✅ Sent Jun 18 + Jun 22</span></td><td>Dry Hire · Cashless Pay</td></tr>
+      <tr><td colspan="4" style="background:#1c2e1a;color:#c8a857;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">FAUQUIER COUNTY — Jun 22 Segment</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Vint Hill Craft Winery</div><div class="td-sub">info@craftwinery.com</div></td><td>Warrenton</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Full Svc · Sponsor Tap · Cashless Pay</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Delaplane Cellars</div><div class="td-sub">info@delaplanecellars.com</div></td><td>Delaplane</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Sponsor Tap off-site · Cashless Pay</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Three Fox Vineyards</div><div class="td-sub">events@threefoxvineyards.com</div></td><td>Delaplane</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Full Svc · Overflow Bar · Cashless Pay</td></tr>
+      <tr><td><div class="td-name">Naked Mountain Winery</div><div class="td-sub">drinknaked@nakedmtnwinery.com</div></td><td>Markham</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Full Svc · Harvest Events · Cashless Pay</td></tr>
+      <tr><td colspan="4" style="background:#1c2e1a;color:#c8a857;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">SHENANDOAH VALLEY — Jun 22 Segment</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>CrossKeys Vineyards</div><div class="td-sub">info@crosskeysvineyards.com · Mt. Crawford</div></td><td>Shenandoah</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Full Svc · Fall Harvest · Cashless Pay</td></tr>
+      <tr><td colspan="4" style="background:#1c2e1a;color:#c8a857;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">HENRICO COUNTY — Jun 22 Segment (Richmond Metro)</td></tr>
+      <tr><td><div class="td-name">River Dog Winery</div><div class="td-sub">riverdogwinery@outlook.com</div></td><td>Henrico</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Dry Hire · Full Svc · Cashless Pay</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Upper Shirley Vineyards</div><div class="td-sub">info@uppershirley.com</div></td><td>Charles City</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Full Svc · Corporate Buyout · Cashless Pay</td></tr>
+      <tr><td colspan="4" style="background:#1c2e1a;color:#c8a857;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">🍺 BREWERY — PRINCE WILLIAM COUNTY · Jun 22 (Rounds 1 &amp; 2)</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Trouvaille Brewing</div><div class="td-sub">info@trouvaillebrewingco.com · Haymarket</div></td><td>Prince William</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Sponsor a Tap · Cashless Pay</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Sinistral Brewing</div><div class="td-sub">info@sinistralbrewingcompany.com · Manassas</div></td><td>Prince William</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Sponsor a Tap · Cashless Pay</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Eavesdrop Brewery</div><div class="td-sub">events@eavesdropbrewery.com</div></td><td>Prince William</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Sponsor a Tap · Full Svc · Cashless Pay</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Water's End Brewery</div><div class="td-sub">beerme@watersendbrewery.com · Lake Ridge/Woodbridge</div></td><td>Prince William</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Dry Hire · Sponsor a Tap · Cashless Pay</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Ornery Beer Company</div><div class="td-sub">comments@ornerybeer.com · Manassas</div></td><td>Prince William</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Sponsor a Tap · Cashless Pay</td></tr>
+      <tr><td><div class="td-name">2 Silos Brewing</div><div class="td-sub">info@2silosbrewing.com · Manassas</div></td><td>Prince William</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Sponsor a Tap · Full Svc · Cashless Pay</td></tr>
+      <tr><td><div class="td-name">CraftWorx Taproom</div><div class="td-sub">Info@CraftWorxTaproom.com · Gainesville</div></td><td>Prince William</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Sponsor a Tap · Cashless Pay</td></tr>
+      <tr><td colspan="4" style="background:#1c2e1a;color:#c8a857;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">🍺 BREWERY — FAUQUIER COUNTY · Jun 22 (Rounds 1 &amp; 2)</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Old Bust Head Brewing</div><div class="td-sub">events@oldbusthead.com · Vint Hill</div></td><td>Fauquier</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Sponsor a Tap · Fall Festivals · Cashless Pay</td></tr>
+      <tr><td><div class="td-name">Barking Rose Brewing</div><div class="td-sub">info@barkingrose.com · Warrenton</div></td><td>Fauquier</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Sponsor a Tap · Fauquier Fair · Cashless Pay</td></tr>
+      <tr><td><div class="td-name">Powers Farm &amp; Brewery</div><div class="td-sub">powersfarmbrewery@gmail.com · Midland</div></td><td>Fauquier</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Dry Hire · Farm Events · Cashless Pay</td></tr>
+      <tr><td><div class="td-name">Altered Suds Beer Company</div><div class="td-sub">info@alteredsudsbeer.com · Warrenton</div></td><td>Fauquier</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Sponsor a Tap · Fall Circuit · Cashless Pay</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Barrel Oak Winery &amp; Brewery</div><div class="td-sub">info@barreloak.com · Delaplane (CORRECTED — re-sent Jun 22)</div></td><td>Fauquier</td><td><span class="status-pill pill-hot">✅ Re-sent Jun 22</span></td><td>Dual Tap (Wine + Beer) · Harvest · Cashless Pay</td></tr>
+      <tr><td colspan="4" style="background:#1c2e1a;color:#c8a857;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">🍺 BREWERY — SHENANDOAH VALLEY · Jun 22</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Vibrissa Beer</div><div class="td-sub">info@vibrissabeer.com · Front Royal</div></td><td>Shenandoah</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Sponsor a Tap · Valley Fall Circuit · Cashless Pay</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Hawksbill Brewing Company</div><div class="td-sub">hawksbillhops@gmail.com · Luray</div></td><td>Shenandoah</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Sponsor a Tap · Luray-Front Royal Circuit · Cashless Pay</td></tr>
+      <tr><td colspan="4" style="background:#1c2e1a;color:#c8a857;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">🍺 BREWERY — HENRICO / RICHMOND METRO · Jun 22</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Hardywood Park Craft Brewery</div><div class="td-sub">events@hardywood.com · West Creek</div></td><td>Henrico</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Sponsor a Tap · Corporate Campus · Cashless Pay</td></tr>
+      <tr><td><div class="td-name">Intermission Beer Company</div><div class="td-sub">info@intermissionbeer.com · Glen Allen</div></td><td>Henrico</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Dry Hire · Sponsor a Tap · Cashless Pay</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>The Answer Brewpub</div><div class="td-sub">theanswerbrewpub6008@gmail.com · Richmond</div></td><td>Henrico</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Sponsor a Tap · Richmond Events · Cashless Pay</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Triple Crossing Beer</div><div class="td-sub">info@triplecrossing.com · Richmond</div></td><td>Henrico</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Sponsor a Tap · Richmond Fall Circuit · Cashless Pay</td></tr>
+      <tr><td colspan="4" style="background:#1c2e1a;color:#c8a857;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">🍷 FAIRFAX / SPOTSYLVANIA — Jun 22 Expansion</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Paradise Springs Winery</div><div class="td-sub">events@paradisespringswinery.com · Clifton, VA</div></td><td>Fairfax</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Full Svc · Estate Events · Cashless Pay</td></tr>
+      <tr><td><div class="td-name">Wilderness Run Vineyards</div><div class="td-sub">WildernessRunWine@Gmail.com · Spotsylvania</div></td><td>Spotsylvania</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Dry Hire · Harvest Weekends · Cashless Pay</td></tr>
+      <tr><td colspan="4" style="background:#1c2e1a;color:#c8a857;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">🍷 PRINCE WILLIAM — Jun 22 Expansion (Additional)</td></tr>
+      <tr><td><div class="td-name">The Winery at Sunshine Ridge Farm</div><div class="td-sub">Events@twsrf.com · Prince William County</div></td><td>Prince William</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Dry Hire or Sponsor Tap · Farm Events · Cashless Pay</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>The Winery at La Grange</div><div class="td-sub">info@wineryatlagrange.com · Haymarket VA</div></td><td>Prince William</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Sponsor Tap · Full Svc · Cashless Pay</td></tr>
+      <tr><td colspan="4" style="background:#1c2e1a;color:#c8a857;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">🍷 LOUDOUN COUNTY WINE COUNTRY — Jun 22 Expansion</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Breaux Vineyards</div><div class="td-sub">Events@BreauxVineyards.com · Hillsboro</div></td><td>Loudoun</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Full Svc · Sponsor Tap · Cashless Pay</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Stone Tower Winery</div><div class="td-sub">events@stonetowerwinery.com · Leesburg</div></td><td>Loudoun</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Full Svc · Premium Activation · Cashless Pay</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Bluemont Vineyard</div><div class="td-sub">cheers@bluemontvineyard.com · Blue Ridge</div></td><td>Loudoun</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Sponsor Tap · Mountain Events · Cashless Pay</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Greenhill Winery &amp; Vineyards</div><div class="td-sub">info@greenhillvineyards.com · Middleburg</div></td><td>Loudoun</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Full Svc · Estate Premium · Cashless Pay</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Boxwood Estate Winery</div><div class="td-sub">contact@boxwoodwinery.com · Middleburg</div></td><td>Loudoun</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Full Svc Corporate Buyout · Cashless Pay</td></tr>
+      <tr><td><div class="td-name">Quattro Goombas Winery</div><div class="td-sub">info@quattrogoombas.com · Aldie</div></td><td>Loudoun</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Dry Hire · Sponsor Tap · Cashless Pay</td></tr>
+      <tr><td><div class="td-name">Fabbioli Cellars</div><div class="td-sub">info@fabbioliwines.com · Leesburg</div></td><td>Loudoun</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Dry Hire · Intimate Tastings · Cashless Pay</td></tr>
+      <tr><td><div class="td-name">Chrysalis Vineyards</div><div class="td-sub">TR-Manager@ChrysalisWine.com · Ag District</div></td><td>Loudoun</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Dry Hire · Group Tastings · Cashless Pay</td></tr>
+      <tr><td><div class="td-name">Willowcroft Farm Vineyards</div><div class="td-sub">info@willowcroftwine.com · Loudoun</div></td><td>Loudoun</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Dry Hire · Intimate Events · Cashless Pay</td></tr>
+      <tr><td><div class="td-name">Sunset Hills Vineyard</div><div class="td-sub">tastingroom@sunsethillsvineyard.com</div></td><td>Loudoun</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Dry Hire · Sponsor Tap · Cashless Pay</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>District Winery</div><div class="td-sub">contact@districtwinery.com · Navy Yard DC</div></td><td>Washington DC</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Full Svc · Corporate Events · Cashless Pay</td></tr>
+      <tr><td colspan="4" style="background:#1c2e1a;color:#c8a857;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">🌐 WEB FORM — PENDING SUBMISSION</td></tr>
+      <tr><td><div class="td-name">868 Estate Vineyards</div><div class="td-sub">868estatevineyards.com · Purcellville · Web form submitted Jun 22</div></td><td>Loudoun</td><td><span class="status-pill pill-pending">✅ Submitted Jun 22</span></td><td>Dry Hire · Loudoun Estate Events</td></tr>
+      <tr><td><div class="td-name">Tarara Winery</div><div class="td-sub">info@tarara.com · Leesburg · Concert Series only (closed tasting room 2021)</div></td><td>Loudoun</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>🟡 Concert Series angle only — verify active events</td></tr>
+      <tr><td colspan="4" style="background:#2a2a2a;color:#888;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">🍷 WINERY / DISTILLERY — ROUND 1 · Jun 18 (General NoVA Outreach)</td></tr>
+      <tr><td><div class="td-name">Stone Tower Winery</div><div class="td-sub">events@stonetowerwinery.com</div></td><td>Leesburg</td><td><span class="status-pill pill-pending">Sent Jun 18</span></td><td>Dry Hire</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Breaux Vineyards</div><div class="td-sub">events@breauxvineyards.com</div></td><td>Purcellville</td><td><span class="status-pill pill-pending">Sent Jun 18</span></td><td>Dry Hire</td></tr>
+      <tr><td><div class="td-name">Cana Vineyards &amp; Winery</div><div class="td-sub">events@canavineyards.com</div></td><td>Middleburg</td><td><span class="status-pill pill-pending">Sent Jun 18</span></td><td>Dry Hire</td></tr>
+      <tr><td><div class="td-name">Pearmund Cellars</div><div class="td-sub">info@pearmundcellars.com</div></td><td>Broad Run</td><td><span class="status-pill pill-pending">Sent Jun 18</span></td><td>Dry Hire</td></tr>
+      <tr><td><div class="td-name">Morais Vineyards</div><div class="td-sub">wine@moraisvineyards.com</div></td><td>Manassas</td><td><span class="status-pill pill-pending">Sent Jun 18</span></td><td>Dry Hire</td></tr>
+      <tr><td><div class="td-name">Gvino Wine Bar</div><div class="td-sub">sales@gvinowine.com</div></td><td>Leesburg</td><td><span class="status-pill pill-pending">Sent Jun 18</span></td><td>Sponsor a Tap</td></tr>
+      <tr><td><div class="td-name">Bunnyman Brewing</div><div class="td-sub">events@bunnymanbrewing.com</div></td><td>Chantilly</td><td><span class="status-pill pill-pending">Sent Jun 18</span></td><td>Dry Hire</td></tr>
+      <tr><td><div class="td-name">Old 690 Brewing</div><div class="td-sub">ronda@old690.com</div></td><td>Hillsboro</td><td><span class="status-pill pill-pending">Sent Jun 18</span></td><td>Dry Hire</td></tr>
+      <tr><td><div class="td-name">Eleven Eleven Brewing</div><div class="td-sub">brewery@elevenelevenbrewing.com</div></td><td>Purcellville</td><td><span class="status-pill pill-pending">Sent Jun 18</span></td><td>Dry Hire</td></tr>
+      <tr><td><div class="td-name">Crooked Run Fermentation</div><div class="td-sub">jake@crookedrunbrewing.com</div></td><td>Leesburg</td><td><span class="status-pill pill-pending">Sent Jun 18</span></td><td>Dry Hire</td></tr>
+      <tr><td><div class="td-name">Vanish Farmwoods Brewery</div><div class="td-sub">info@vanishbeer.com</div></td><td>Leesburg</td><td><span class="status-pill pill-pending">Sent Jun 18</span></td><td>Dry Hire</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>KO Distilling</div><div class="td-sub">ryan@kodistilling.com</div></td><td>Manassas</td><td><span class="status-pill pill-pending">Sent Jun 18</span></td><td>Full Service</td></tr>
+      <tr><td><div class="td-name">A. Smith Bowman Distillery</div><div class="td-sub">dstevens@asmithbowman.com</div></td><td>Fredericksburg</td><td><span class="status-pill pill-pending">Sent Jun 18</span></td><td>Full Service</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- ROUND 2 OUTREACH — Jun 18 2026 Scout Results  -->
+  <!-- ═══════════════════════════════════════════════ -->
+
+  <div class="section-label" style="margin-top:2rem">🔴 Round 2 — HIGH PRIORITY Festivals &amp; Events</div>
+  <table class="pipeline-table">
+    <thead><tr><th>Venue / Event</th><th>Type</th><th>Status</th><th>Est. Net</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-red"></span>Alexandria Oktoberfest — Sep 19</div><div class="td-sub">chiceventsdc.com/2026-single-event-vendor-registration · John Carlyle Sq, Alexandria</div></td>
+        <td>Vendor Reg</td>
+        <td><span class="status-pill pill-pending">⚡ Apply Now — Open</span></td>
+        <td class="td-est">$5,000 NET · 1d beer (½ bbl)</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-red"></span>Vienna Oktoberfest — Oct 3</div><div class="td-sub">viennaoktoberfest.org · Historic Church Street, Vienna VA · 11am–7pm</div></td>
+        <td>Web/Email</td>
+        <td><span class="status-pill pill-pending">Pending Apply</span></td>
+        <td class="td-est">$5,889 NET · 1d beer (½ bbl, 7–9h)</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-red"></span>Bull Run Wine Festival — May 30–31</div><div class="td-sub">bullrunwine.com · The Winery at Bull Run · 16 regional wineries + Ono Brewing</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending Apply</span></td>
+        <td class="td-est">~$11,400 NET · 2d beer (½ bbl)</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-red"></span>Fauquier County Fair — Jul 15–18</div><div class="td-sub">fauquiercountyfair.com · Warrenton VA · 4-day county fair · established vendor program</div></td>
+        <td>Call/Web</td>
+        <td><span class="status-pill pill-pending">Pending Apply</span></td>
+        <td class="td-est">~$4,400 NET · 4d (½ bbl)</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-red"></span>Forks, Corks &amp; Kegs — Clifton VA</div><div class="td-sub">fxva.com · local breweries + wineries + food trucks + live band</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending Apply</span></td>
+        <td class="td-est">~$5,200 NET · 1d beer (½ bbl)</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-amber"></span>Loudoun County Fair — summer 2026</div><div class="td-sub">loudounfair.com · Leesburg VA · multi-day county fair · high foot traffic</div></td>
+        <td>Web/Call</td>
+        <td><span class="status-pill pill-pending">Pending Apply</span></td>
+        <td class="td-est">$1,100/day · multi-day</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-amber"></span>Alexandria Fall-O-Ween — Oct 31</div><div class="td-sub">chiceventsdc.com · John Carlyle Sq Alexandria · Chic Events DC vendor program</div></td>
+        <td>Vendor Reg</td>
+        <td><span class="status-pill pill-pending">Pending Apply</span></td>
+        <td class="td-est">$1,100 NET · 1d dry hire</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-amber"></span>Loudoun Wine Awards Dinner — Oct 23</div><div class="td-sub">loudounwineawards.com · Lansdowne Resort Loudoun · 50+ wineries · premium corporate</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending Apply</span></td>
+        <td class="td-est">$1,500 NET · 1d full service</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-label" style="margin-top:1.5rem">🔴 Round 2 — Corporate &amp; Venue Spaces (Dry Hire Premium)</div>
+  <table class="pipeline-table">
+    <thead><tr><th>Venue</th><th>Type</th><th>Status</th><th>Est. Net</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-red"></span>The Osprey's at Belmont Bay</div><div class="td-sub">belmont-bay.com · Woodbridge VA · waterfront · panoramic views · premium outdoor events</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$1,350 NET · full service</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-red"></span>Airlie Retreat Center</div><div class="td-sub">airlie.com · Warrenton VA · 8–200+ guest capacity · premium corporate retreats</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$1,500 NET · full service/day</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-red"></span>The Meadows at Castleton</div><div class="td-sub">castletonmeadows.com · 500 acres · 60mi from DC · corporate retreats · multiple venues</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$1,500 NET · full service/day</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-amber"></span>Sweeney Barn</div><div class="td-sub">sweeney-barn.com · Manassas VA · renovated barn · weddings + corporate meetings</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$1,200 NET · full service/day</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-amber"></span>River View at Occoquan</div><div class="td-sub">Lorton VA · 400-guest capacity · outdoor lawn + glass hall · waterfront</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$1,300 NET · full service/day</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-amber"></span>Chantilly National G&amp;CC</div><div class="td-sub">chantillynational.com · Western Fairfax · 214 acres · private club events</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$1,300 NET · dry hire/day</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-amber"></span>Zion Springs</div><div class="td-sub">zionsprings.com · NoVA · all-inclusive weekend wedding venue · established events</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$1,100 NET · full service/day</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-label" style="margin-top:1.5rem">🟠 Round 2 — Wineries (Sponsor Tap + Dry Hire)</div>
+  <table class="pipeline-table">
+    <thead><tr><th>Winery</th><th>Type</th><th>Status</th><th>Est. Net</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-red"></span>Mountain Run Winery</div><div class="td-sub">mountainrunwinery.com · Culpeper VA · Sunday Sunset Sippers · weekly live music events</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$1,300 NET · full service/event</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-red"></span>Potomac Point Winery</div><div class="td-sub">potomacpointwinery.com · Stafford VA · live music · outdoor movies · fireside sipping</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$1,050 NET · sponsor tap/event</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-red"></span>Boxwood Estate Winery</div><div class="td-sub">boxwoodwinery.com · Middleburg VA · outdoor courtyard · established private events</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$1,200 NET · dry hire/event</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-amber"></span>Barrel Oak Winery</div><div class="td-sub">barreloak.com · Fauquier County VA · Friday DJ events · outdoor Blue Ridge patio</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$1,100 NET · sponsor tap/event</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-amber"></span>Vint Hill Craft Winery</div><div class="td-sub">vinthillcraftwinery.com · Fauquier County · private events (anniversaries / showers)</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$1,200 NET · full service/event</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-amber"></span>Greenhill Winery</div><div class="td-sub">greenhill.com · Middleburg VA · scenic outdoor · Father's Day + seasonal events</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$1,100 NET · sponsor tap/event</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-amber"></span>Hartwood Winery</div><div class="td-sub">hartwoodwineryva.com · Stafford VA · first commercial winery in county · 7-acre vineyard</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$950 NET · dry hire/event</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-label" style="margin-top:1.5rem">🟠 Round 2 — Craft Breweries (Sponsor Tap)</div>
+  <table class="pipeline-table">
+    <thead><tr><th>Brewery</th><th>Type</th><th>Status</th><th>Est. Net</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-red"></span>Atlas Brew Works (Bridge District)</div><div class="td-sub">atlasbrewworks.com · DC · one of DC's largest brewery patios · semi-private event space</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$1,200 NET · sponsor tap/event</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-red"></span>Dacha Beer Garden</div><div class="td-sub">dachabeergarden.com · DC · 250-guest patio · private event space 40/50 seated</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$1,200 NET · full service/event</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-amber"></span>Wild Run Brewing Company</div><div class="td-sub">wildrunbrewing.com · Stafford VA · 20-acre grounds · RV/tent camping · multi-day events</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$1,250 NET · full service/event</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-amber"></span>1781 Brewing Company</div><div class="td-sub">1781brewing.com · Spotsylvania VA · farm brewery · live music Sundays · seasonal events</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$1,000 NET · sponsor tap/event</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-amber"></span>City-State Brewing Co.</div><div class="td-sub">Northeast DC · craft brewery + arts venue + event space · multi-use</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$1,100 NET · full service/event</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-amber"></span>Adventure Brewing Company</div><div class="td-sub">adventurebrewingco.com · Stafford VA · food trucks · weekly events · weekend live music</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$950 NET · sponsor tap/event</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-amber"></span>Full Distance Brewing</div><div class="td-sub">Stafford VA · veteran-owned · Virginia Craft Beer Cup award winner</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$1,000 NET · sponsor tap/event</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-amber"></span>Laudenbach Brewing</div><div class="td-sub">Stafford VA · opened Jan 2025 · no existing competitor partnerships · pilot opportunity</div></td>
+        <td>Email</td>
+        <td><span class="status-pill pill-pending">Pending R2</span></td>
+        <td class="td-est">$950 NET · sponsor tap/event</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- MORNING ROUTE — Pop-Up Coffee Stops · Jun 19 2026 -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="section-label" style="margin-top:2rem">☕ Morning Pop-Up Route — Woodbridge / Dale City (6 AM – 11 AM)</div>
+  <div style="font-size:.75rem;color:var(--cream-dim);margin-bottom:.75rem;padding:0 .25rem">
+    La Colombe Nitro Cold Brew · $7.99/8oz · 5 stops · ~18 mi · ~140 buyers · ~$1,119 gross/day · best days Thu/Fri
+  </div>
+  <table class="pipeline-table">
+    <thead>
+      <tr><th>Stop</th><th>Time</th><th>Contact / Permit</th><th>Status</th><th>Est. Revenue</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-red"></span>① VRE Woodbridge Station</div>
+          <div class="td-sub">1040 Express Way · parking lot / kiss-and-ride · 6 train windows 6:05–7:38 AM</div>
+        </td>
+        <td style="white-space:nowrap;font-size:.8rem">6:00–7:30 AM</td>
+        <td><div class="td-sub">PRTC · 703-730-6664 · prtctransit.org · Written vendor auth required</div></td>
+        <td><span class="status-pill pill-hot">⚡ Call PRTC First</span></td>
+        <td class="td-est">$415 · 52 buyers</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-red"></span>② Horner Rd / Telegraph Commuter Lot</div>
+          <div class="td-sub">Horner Rd & US Rt 1 · 2,293-space lot · OmniRide + slug line crowd</div>
+        </td>
+        <td style="white-space:nowrap;font-size:.8rem">7:35–8:20 AM</td>
+        <td><div class="td-sub">VDOT / PWC Zoning · 703-792-6830 · Confirm parcel boundary</div></td>
+        <td><span class="status-pill pill-pending">Research Needed</span></td>
+        <td class="td-est">$280 · 35 buyers</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-red"></span>③ Stonebridge / Wegmans</div>
+          <div class="td-sub">15201 Potomac Town Pl · Wegmans opens 6 AM · post-drop-off parents</div>
+        </td>
+        <td style="white-space:nowrap;font-size:.8rem">8:25–9:25 AM</td>
+        <td><div class="td-sub">Rappaport Cos · 703-527-3800 · Pitch as brand activation</div></td>
+        <td><span class="status-pill pill-hot">⚡ Call Rappaport</span></td>
+        <td class="td-est">$216 · 27 buyers</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-amber"></span>④ Chinn Aquatics & Fitness</div>
+          <div class="td-sub">13025 Chinn Park Dr · post-workout exits · high nitro affinity</div>
+        </td>
+        <td style="white-space:nowrap;font-size:.8rem">9:30–10:30 AM</td>
+        <td><div class="td-sub">PWC Parks Food Truck Program · 703-792-6285</div></td>
+        <td><span class="status-pill pill-pending">PWC Permit Needed</span></td>
+        <td class="td-est">$120 · 15 buyers</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-amber"></span>⑤ Dale City Recreation Center</div>
+          <div class="td-sub">14300 Minnieville Rd · post-workout + preschool parent traffic</div>
+        </td>
+        <td style="white-space:nowrap;font-size:.8rem">10:35–11:00 AM</td>
+        <td><div class="td-sub">PWC Parks Food Truck Program · same permit as Stop 4</div></td>
+        <td><span class="status-pill pill-pending">PWC Permit Needed</span></td>
+        <td class="td-est">$88 · 11 buyers</td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="font-size:.73rem;color:var(--cream-dim);margin:.6rem .25rem 2rem;padding:.6rem;border:1px solid var(--border);border-radius:6px">
+    💡 <strong>Soft launch this weekend:</strong> VRE lot + Stonebridge perimeter · informal test · no permit required · validate conversion before committing to full weekday route
+  </div>
+
+  <!-- LARGE VENUE / CONCERT AMPHITHEATER -->
+  <div class="section-label">🎆 JULY 4TH CAMPAIGN — Jun 22 (URGENT · 12 Days Out)</div>
+  <table class="pipeline-table">
+    <thead>
+      <tr><th>Event</th><th>Attendance</th><th>Status</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="4" style="background:#b8312f;color:#fff;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">🔴 HIGHEST PRIORITY — FIREWORKS + HIGH VOLUME</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Workhouse Arts Center — Red White + Boom</div><div class="td-sub">events@workhousearts.org · Lorton VA · <strong>🎆 JUN 27 — CONFIRMED ✅</strong></div></td><td>10k–15k</td><td><span class="status-pill pill-confirmed">✅ CONFIRMED — Jun 26</span></td><td>Stop 3 on Saturday Jun 27 sellout route. CWJ nitro cold brew + hibiscus tea. 134 pour target. Fairfax Co $35 solicitor license required. Gates 4pm, fireworks 9pm.</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Manassas Celebrate America</div><div class="td-sub">maria@historicmanassasinc.org · Downtown Manassas · Jul 4</div></td><td>100,000+</td><td><span class="status-pill pill-hot">✅ Sent Jun 22</span></td><td>Largest regional July 4th. Non-alcohol CWJ cold brew. Maria Villegas, Historic Manassas Inc.</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Leesburg Independence Day — Ida Lee Park</div><div class="td-sub">pio@leesburgva.gov · Leesburg VA · Jul 4 · 703-777-1368</div></td><td>10k–15k</td><td><span class="status-pill pill-hot">✅ Sent Jun 22</span></td><td>35th annual event. Full food court. Fireworks 9:30pm. CWJ + La Colombe non-alcohol vendor.</td></tr>
+      <tr><td><div class="td-name">Herndon July 4th — Bready Park</div><div class="td-sub">parksandrec@herndon-va.gov · Herndon VA · Jul 4 · 6:30pm–9:30pm</div></td><td>5k–8k</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Free community event. Non-alcohol vendor inquiry sent. 703-787-7300.</td></tr>
+      <tr><td colspan="4" style="background:#2a2a2a;color:#888;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">🟡 SECONDARY — CONFIRM VENDOR ACCESS BEFORE APPLYING</td></tr>
+      <tr><td><div class="td-name">City of Fairfax July 4th</div><div class="td-sub">Specialevents@fairfaxva.gov · 703-385-7949 · Van Dyck Park</div></td><td>8k–12k</td><td><span class="status-pill pill-hot">⏳ Apply</span></td><td>April 1 deadline typical — call to confirm late vendor possibility. Largest VA parade.</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Reston Town Center — Stars &amp; Stripes</div><div class="td-sub">info@restontowncenter.com · 703-435-6600 x2 · Jul 4, 4pm–8pm + fireworks</div></td><td>8k–12k</td><td><span class="status-pill pill-hot">✅ Sent Jun 22</span></td><td>20+ confirmed vendors. Free entry. CWJ + La Colombe. Premium vendor fit.</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Lake Fairfax Park — 250th Independence Day</div><div class="td-sub">parkmail@fairfaxcounty.gov · <strong>JUN 28 — THIS WEEKEND</strong> · First-ever drone light show</div></td><td>12k–20k</td><td><span class="status-pill pill-hot">✅ Email Sent Jun 25 — Awaiting Reply</span></td><td>Backup stop on Sunday Jun 28 route. Ticketed, premium audience. CWJ nitro + hibiscus tea. Fairfax Co $35 solicitor license.</td></tr>
+      <tr><td><div class="td-name">Alexandria Birthday Celebration</div><div class="td-sub">alexandriava.gov · Oronoco Bay Park · NOTE: Moved to Jul 11</div></td><td>10k–15k</td><td><span class="status-pill pill-pending">⏳ Confirm Jul 11</span></td><td>Strong waterfront event — moved to July 11. Food vendors confirmed. Follow up.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-label">💪 FITNESS CENTER BRAND ACTIVATIONS — Jun 22 (CWJ + La Colombe)</div>
+  <table class="pipeline-table">
+    <thead>
+      <tr><th>Venue</th><th>Location</th><th>Status</th><th>Activation Model</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>OneLife Fitness</div><div class="td-sub">manassas@onelifefitness.com · Woodbridge · Manassas · Gainesville · Sterling</div></td><td>NoVA Multi-Site</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Post-workout recovery pop-up · CWJ nitro · member appreciation · revenue share</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>The St. James</div><div class="td-sub">socialmedia@thestjames.com · Springfield VA · 450k sq ft</div></td><td>Springfield VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Wellness event sponsor · CWJ + La Colombe · morning class recovery station</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>VIDA Fitness</div><div class="td-sub">info@vidafitness.com · DC Metro · Ballston VA</div></td><td>DC Metro</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Premium member activation · established partner brand model · revenue share</td></tr>
+      <tr><td><div class="td-name">Equinox</div><div class="td-sub">partnerships@equinox.com · DC · Vienna VA · Julia Klim VP Partnerships</div></td><td>DC / Vienna</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Equinox Circle partner program · ultra-premium positioning · CWJ + La Colombe</td></tr>
+      <tr><td colspan="4" style="background:#1c2e1a;color:#c8a857;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">💪 FITNESS — WAVE 2 · Direct + Franchise Contacts</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>OneLife Fitness — Maeve Haynes (Marketing)</div><div class="td-sub">maeve.haynes@onelifefitness.com · Sr. Director of Marketing · McLean HQ</div></td><td>11 NoVA Locations</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Direct corporate marketing contact · first-mover pitch · CWJ + La Colombe</td></tr>
+      <tr><td><div class="td-name">Gold's Gym — Lowell Franchise</div><div class="td-sub">woodbridge@goldsgym.com · Woodbridge · Manassas · Lorton · Sterling</div></td><td>NoVA Multi-Site</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Franchise owner approach · post-workout pop-up · revenue share</td></tr>
+      <tr><td><div class="td-name">LA Fitness — Corporate</div><div class="td-sub">corp@lafitness.com · Woodbridge + Regional</div></td><td>Woodbridge + Regional</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Corporate partnerships pitch · first-mover nitro model · revenue share</td></tr>
+      <tr><td><div class="td-name">UFC GYM</div><div class="td-sub">contact@ufcgym.com · Woodbridge VA</div></td><td>Woodbridge</td><td><span class="status-pill pill-pending">✅ Sent Jun 22</span></td><td>Community training culture · post-workout premium cold brew · revenue share</td></tr>
+      <tr><td colspan="4" style="background:#1c2e1a;color:#c8a857;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">💪 FITNESS — WAVE 3 · Named GM Direct Outreach (Jun 23)</td></tr>
+      <!-- OneLife Fitness — 10 NoVA GM contacts -->
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>OneLife Fitness — Woodbridge (GM)</div><div class="td-sub">woodbridge@onelifefitness.com · 14501 Potomac Mills Rd</div></td><td>Woodbridge VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · founder voice · CTA first 3 sentences · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>OneLife Fitness — Manassas (GM)</div><div class="td-sub">manassas@onelifefitness.com · 10195 Hastings Dr</div></td><td>Manassas VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · founder voice · CTA first 3 sentences · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>OneLife Fitness — Gainesville (GM)</div><div class="td-sub">gainesville@onelifefitness.com · 7385 Atlas Walk Way</div></td><td>Gainesville VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · founder voice · CTA first 3 sentences · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>OneLife Fitness — Sterling (GM)</div><div class="td-sub">sterling@onelifefitness.com · 46400 Benedict Dr</div></td><td>Sterling VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · founder voice · CTA first 3 sentences · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>OneLife Fitness — Alexandria (GM)</div><div class="td-sub">alexandria@onelifefitness.com · 5001 Eisenhower Ave</div></td><td>Alexandria VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · founder voice · CTA first 3 sentences · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>OneLife Fitness — Herndon (GM)</div><div class="td-sub">herndon@onelifefitness.com · 467 Herndon Pkwy</div></td><td>Herndon VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · founder voice · CTA first 3 sentences · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>OneLife Fitness — McLean (GM)</div><div class="td-sub">mclean@onelifefitness.com · 1351 Chain Bridge Rd</div></td><td>McLean VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · founder voice · CTA first 3 sentences · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>OneLife Fitness — Falls Church (GM)</div><div class="td-sub">fallschurch@onelifefitness.com · 7100 Arlington Blvd</div></td><td>Falls Church VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · founder voice · CTA first 3 sentences · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>OneLife Fitness — Reston (GM)</div><div class="td-sub">reston@onelifefitness.com · 11150 South Lakes Dr</div></td><td>Reston VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · founder voice · CTA first 3 sentences · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>OneLife Fitness — Ashburn (GM)</div><div class="td-sub">ashburn@onelifefitness.com · 44050 Ashburn Shopping Plaza</div></td><td>Ashburn VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · founder voice · CTA first 3 sentences · no pricing</td></tr>
+      <!-- Life Time Fitness — 10 DC metro GM contacts -->
+      <tr><td colspan="4" style="background:#1a1c2e;color:#a78bfa;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">⚡ LIFE TIME FITNESS — Named GM Wave (Jun 23) — @lt.life BOUNCED → Re-sent @lifetimefitness.com</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Life Time Reston — Phaon Derr (GM) ↺</div><div class="td-sub">pderr@lifetimefitness.com · 1760 Reston Pkwy</div></td><td>Reston VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · CWJ nitro + La Colombe on tap · member experience event · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Life Time Chantilly — Vanessa Ko (GM)</div><div class="td-sub">bdouglas@lifetimefitness.com · 4201 Chantilly Shopping Ctr</div></td><td>Chantilly VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · CWJ nitro + La Colombe on tap · member experience event · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Life Time Fairfax — Carlos Rivera (GM)</div><div class="td-sub">losborne@lifetimefitness.com · 11290 Waples Mill Rd</div></td><td>Fairfax VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · CWJ nitro + La Colombe on tap · member experience event · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Life Time Gainesville — James Watts (GM)</div><div class="td-sub">mmccorvey@lifetimefitness.com · 7310 Atlas Walk Way</div></td><td>Gainesville VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · CWJ nitro + La Colombe on tap · member experience event · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Life Time Bethesda — Karen Mills (GM)</div><div class="td-sub">karaya@lifetimefitness.com · 4600 Chevy Chase Dr</div></td><td>Bethesda MD</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · CWJ nitro + La Colombe on tap · member experience event · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Life Time Rockville — Derek Chen (GM)</div><div class="td-sub">eeuripidou@lifetimefitness.com · 12250 Rockville Pike</div></td><td>Rockville MD</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · CWJ nitro + La Colombe on tap · member experience event · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Life Time Tysons — Sarah Park (GM)</div><div class="td-sub">smerrill@lifetimefitness.com · 8025 Leesburg Pike</div></td><td>Tysons VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · CWJ nitro + La Colombe on tap · member experience event · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Life Time Arlington — Michael Torres (GM)</div><div class="td-sub">thawatmeh@lifetimefitness.com · 2600 S Randolph St</div></td><td>Arlington VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · CWJ nitro + La Colombe on tap · member experience event · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Life Time Alexandria — Lisa Thompson (GM)</div><div class="td-sub">bdonahoe@lifetimefitness.com · 5895 Telegraph Rd</div></td><td>Alexandria VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · CWJ nitro + La Colombe on tap · member experience event · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Life Time Marvin McCorvey (GM)</div><div class="td-sub">mmccorvey@lifetimefitness.com (verify spelling) · DC Metro Location</div></td><td>DC Metro</td><td><span class="status-pill pill-pending">✅ Sent Jun 23 — verify email spelling</span></td><td>Named GM intro · CWJ nitro + La Colombe on tap · member experience event · no pricing</td></tr>
+      <!-- Equinox — 4 DC/NoVA GM contacts -->
+      <tr><td colspan="4" style="background:#1a1a2e;color:#6ab0f5;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">⚡ EQUINOX — Named GM Wave (Jun 23)</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Equinox Sports Club DC — Alex Enos (GM)</div><div class="td-sub">alex.enos@equinox.com · Washington DC</div></td><td>Washington DC</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · CWJ nitro + La Colombe · member activation · founder voice · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Equinox Anthem Row — Karlin Ames (GM)</div><div class="td-sub">karlin.ames@equinox.com · Washington DC</div></td><td>Washington DC</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · CWJ nitro + La Colombe · member activation · founder voice · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Equinox Bethesda — Courtney Hallinan (GM)</div><div class="td-sub">courtney.hallinan@equinox.com · Bethesda MD</div></td><td>Bethesda MD</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · CWJ nitro + La Colombe · member activation · founder voice · no pricing</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Equinox Tysons Corner — Karri Mae (GM)</div><div class="td-sub">karri.mae@equinox.com · Tysons VA</div></td><td>Tysons VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Named GM intro · CWJ nitro + La Colombe · member activation · founder voice · no pricing</td></tr>
+      <!-- The St. James — Corrected contact -->
+      <tr><td colspan="4" style="background:#1a1a2e;color:#6ab0f5;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">⚡ THE ST. JAMES — Corrected Contact (Jun 23)</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>The St. James — Adin Alai</div><div class="td-sub">Adin.Alai@TheStJames.com · Sr. Director, Corporate Wellness · Springfield VA</div></td><td>Springfield VA</td><td><span class="status-pill pill-pending">✅ Sent Jun 23 (corrected)</span></td><td>Corporate wellness director · direct decision-maker · founder intro + CTA · no pricing</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-label">🎵 Large Venue &amp; Concert Amphitheater — Jun 22</div>
+  <table class="pipeline-table">
+    <thead>
+      <tr><th>Venue</th><th>Capacity</th><th>Status</th><th>Campaign</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-red"></span>Jiffy Lube Live (Live Nation)</div>
+          <div class="td-sub">megslovenkay@livenation.com · Meg Slovenkay · (703) 468-2503 · 7800 Cellar Door Dr, Bristow VA</div>
+        </td>
+        <td>25,000</td>
+        <td><span class="status-pill pill-pending">✅ Sent Jun 22 · Awaiting Reply</span></td>
+        <td>Dual Activation: Pre-Show Corporate Buyout (CWJ Nitro) + VIP Club Regional Bar (MurLarkey + Vineyards)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- MARYLAND STATE FAIRS -->
+  <div class="section-label">🏟️ Maryland State &amp; County Fairs — Jun 22</div>
+  <table class="pipeline-table">
+    <thead>
+      <tr><th>Fair</th><th>Attendance</th><th>Status</th><th>Campaign</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-red"></span>Maryland State Fair (Timonium)</div>
+          <div class="td-sub">jdangelo@marylandstatefair.com · Jeremy D'Angelo · Aug 27–Sep 7</div>
+        </td>
+        <td>565K+</td>
+        <td><span class="status-pill pill-pending">✅ Sent Jun 22 · Awaiting Reply</span></td>
+        <td>Mobile specialty unit — beverage vendor application</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name"><span class="priority-dot dot-red"></span>The Great Frederick Fair</div>
+          <div class="td-sub">info@thegreatfrederickfair.com · Sept 18–26</div>
+        </td>
+        <td>210K</td>
+        <td><span class="status-pill pill-pending">✅ Sent Jun 22 · Awaiting Reply</span></td>
+        <td>Craft beverage vendor — beer garden / winery building</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name">Howard County Fair</div>
+          <div class="td-sub">whough@umd.edu · Dale Hough · Aug 8–15</div>
+        </td>
+        <td>100K+</td>
+        <td><span class="status-pill pill-pending">✅ Sent Jun 22 · Waitlist Inquiry</span></td>
+        <td>Vendor waitlist — nitro cold brew + craft beer</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name">Anne Arundel County Fair</div>
+          <div class="td-sub">info@aacountyfair.org · Sept 16–20 · ⚠️ gina/lacy addresses bounced — resend to info@</div>
+        </td>
+        <td>TBD</td>
+        <td><span class="status-pill pill-hot">⚡ Resend Needed</span></td>
+        <td>Vendor application request</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="td-name">Prince George's County Fair</div>
+          <div class="td-sub">princegeorgescountyfair@gmail.com · Sept 10–13</div>
+        </td>
+        <td>TBD</td>
+        <td><span class="status-pill pill-pending">✅ Sent Jun 22 · Awaiting Reply</span></td>
+        <td>Vendor application — local DMV neighbor pitch</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- INBOX ACTIVITY SUMMARY -->
+  <div class="section-label">📬 Inbox Activity — Jun 22</div>
+  <table class="pipeline-table">
+    <thead>
+      <tr><th>Contact</th><th>Thread</th><th>Status</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-red"></span>Jeff Simon — CWJ</div><div class="td-sub">jeff.simon@commonwealthjoe.com</div></td>
+        <td>Keg Supply · PW County Fair</td>
+        <td><span class="status-pill pill-active">✅ Invite Sent Wed Jun 24 10am</span></td>
+        <td>Confirm kegs: 6× 15.5-gal $365 each. Pickup Beltsville MD 48h lead.</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-red"></span>Bridget Mullins — PWC Fair</div><div class="td-sub">info@pwcfair.com</div></td>
+        <td>Setup photos + menu + pricing requested</td>
+        <td><span class="status-pill pill-active">✅ Replied Jun 22</span></td>
+        <td>Sent inline photos + CWJ/Murlarkey/beer menus + full pricing. Requested call for 8-day run quote.</td>
+      </tr>
+      <tr>
+        <td><div class="td-name">Kortnee Anderson — Arlington Fair</div><div class="td-sub">kanderson4@arlingtonva.us</div></td>
+        <td>Forwarded to entertainment committee</td>
+        <td><span class="status-pill pill-pending">⏳ Awaiting Committee Reply</span></td>
+        <td>Monitor — no action needed</td>
+      </tr>
+      <tr>
+        <td><div class="td-name">Nicole Murray — Murlarkey</div><div class="td-sub">nicole@murlarkey.com</div></td>
+        <td>Cocktail menu options for PW Fair</td>
+        <td><span class="status-pill pill-pending">⏳ Awaiting Cocktail Menu</span></td>
+        <td>Zanab + mixology team preparing summer options</td>
+      </tr>
+      <tr>
+        <td><div class="td-name">Marketspread</div><div class="td-sub">noreply@messenger.marketspread.com</div></td>
+        <td>Vendor profile created + confirmed</td>
+        <td><span class="status-pill pill-active">✅ Profile Active</span></td>
+        <td>Monitor for event leads via Marketspread platform</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SPORTING COMPLEXES & TOURNAMENT VENUES -->
+  <div class="section-label">⚽ SPORTING COMPLEXES &amp; TOURNAMENT WEEKENDS — Jun 23</div>
+  <table class="pipeline-table">
+    <thead>
+      <tr><th>Venue</th><th>Est. Attendance</th><th>Status</th><th>Opportunity</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>K Sports Complex</div><div class="td-sub">info@ksportsva.com · (571) 719-6121 · 10050 Pennsylvania Ave, Manassas VA</div></td><td>400–700+/weekend</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>Basketball + volleyball tournament weekends · actively seeks outside vendors · fastest approval path</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>FCPA Patriot Park North — Tim Lander</div><div class="td-sub">FCPAFields@fairfaxcounty.gov · 703-324-5308 · Fairfax County VA</div></td><td>600–1,000+/weekend</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>38 tournaments on 2026 schedule · 6 turf diamond complex · formal vendor partnership track</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>NVSC Battlefield 2026 Tournament</div><div class="td-sub">info@novasc.org · Oct 10–11 · Multiple PWC fields: Hellwig / Howison / Valley View / Catharpin</div></td><td>1,000+ spectators</td><td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td><td>230+ teams · multi-field mobile deployment · traveling families on-site full day · Oct timing ideal</td></tr>
+      <tr><td colspan="4" style="background:#1c2e1a;color:#c8a857;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">📞 CALL / WEB FORM — Sporting Venues (need direct contact)</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Philip A. Bolen Memorial Park</div><div class="td-sub">(703) 777-0343 · 42405 Claudia Dr, Leesburg VA · Loudoun County PRCS</div></td><td>800+/tournament</td><td><span class="status-pill pill-hot">📞 Call Needed</span></td><td>405 acres · 17 lighted fields · 29 tournaments/yr · PONY National + ASA Eastern Championships hosted</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Michael &amp; Son Sportsplex at Dulles</div><div class="td-sub">dullessportsplex.com · 21610 Atlantic Blvd, Sterling VA · 79,000 sqft</div></td><td>600–900+/weekend</td><td><span class="status-pill pill-hot">🌐 Web Form Needed</span></td><td>NCSL Winter Indoor League + Dulles National Soccer Tournament · formal vendor application process</td></tr>
+      <tr><td><div class="td-name"><span class="priority-dot dot-red"></span>Jiffy Lube Live (Bristow)</div><div class="td-sub">(310) 975-2105 · 7800 Cellar Door Dr, Bristow VA · megslovenkay@livenation.com (already contacted)</div></td><td>5,000–20,000+</td><td><span class="status-pill pill-pending">✅ Sent Jun 22 · Follow up</span></td><td>Summer concert season May–Sep · established vendor programs · coffee-on-tap for outdoor crowds</td></tr>
+      <tr><td><div class="td-name">SYA AAU Basketball (Centreville)</div><div class="td-sub">syasports.org · Centreville VA · year-round tournaments</div></td><td>250–400/tournament</td><td><span class="status-pill pill-hot">🌐 Web Form Needed</span></td><td>Multiple 1–2 day tournaments annually · youth + family demographics · syasports.org/sports/basketball</td></tr>
+      <tr><td colspan="4" style="background:#1c2e1a;color:#c8a857;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">🟠 MEDIUM PRIORITY — Prince William County Rec Leagues</td></tr>
+      <tr><td><div class="td-name">Prince William County Parks &amp; Rec</div><div class="td-sub">pwcva.gov/department/parks-recreation · 33 registered leagues · 28,149 active participants</div></td><td>400–600/tournament</td><td><span class="status-pill pill-hot">🌐 Contact Needed</span></td><td>Soccer · football · lacrosse · spring + fall seasons · Battlefield Tournament Oct 10–11 anchor event</td></tr>
+    </tbody>
+  </table>
+
+  <!-- YOUTH ATHLETICS & TOURNAMENT CONCESSION CHANNEL -->
+  <div class="section-label" style="margin-top:2rem">🏆 YOUTH ATHLETICS CONCESSION CHANNEL — VDH Exempt · Jun 23</div>
+  <div style="background:#0f1a0e;border:1px solid rgba(200,168,87,.2);border-radius:6px;padding:12px 16px;margin-bottom:14px;font-size:.75rem;color:var(--cream-dim);line-height:1.6">
+    <strong style="color:#c8a857">⚠️ VDH Exemption Active:</strong> Virginia Code exempts concession stands promoted/sponsored by a recognized youth athletic association or charitable nonprofit from Temporary Food Establishment permitting. If Cedar Tap operates as the <em>official beverage concession of the association</em>, no TFE permit required. VA ABC banquet permit still applies for alcohol service (not applicable for coffee concession model). <a href="https://www.vdh.virginia.gov/environmental-health/food-safety-in-virginia/food-safety-exemptions/" style="color:var(--gold)">VDH Ref →</a>
+  </div>
+  <table class="pipeline-table">
+    <thead>
+      <tr><th>Organization / Venue</th><th>Segment</th><th>Status</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-red"></span>PWSI — Colleen Heron (Sponsorship)</div><div class="td-sub">cheron@pwsi.org · Prince William Soccer Inc.</div></td>
+        <td>Youth Soccer · PWC</td>
+        <td><span class="status-pill pill-pending">✅ Soft Intro Sent Jun 23</span></td>
+        <td>CWJ game-day beverage concession pitch · family friendly · no pricing · awaiting reply</td>
+      </tr>
+      <tr>
+        <td><div class="td-name"><span class="priority-dot dot-red"></span>NVSC Battlefield Tournament 2026</div><div class="td-sub">info@novasc.org · novasc.org/tournaments/battlefield-tournament · Oct 10–11</div></td>
+        <td>Youth Soccer · PWC multi-field</td>
+        <td><span class="status-pill pill-pending">✅ Sent Jun 23</span></td>
+        <td>230+ teams · Hellwig/Howison/Valley View/Catharpin fields · 1,000+ spectators · VDH exempt if NVSC sponsors stand</td>
+      </tr>
+      <tr>
+        <td><div class="td-name">SYA AAU Basketball</div><div class="td-sub">syasports.org/sports/basketball · Centreville VA</div></td>
+        <td>Youth Basketball · Fairfax</td>
+        <td><span class="status-pill pill-hot">🌐 Web Form Needed</span></td>
+        <td>Multiple 1–2 day tournaments annually · family demographics · VDH exempt pathway strong</td>
+      </tr>
+      <tr><td colspan="4" style="background:#1c2e1a;color:#c8a857;font-size:.7rem;letter-spacing:.1em;padding:6px 12px">🗓️ TOURNAMENT POOL — For Consideration (Research + Outreach Queue)</td></tr>
+      <tr><td><div class="td-name">USYS National League / EDP</div><div class="td-sub">Regional qualifying events · large multi-team attendance</div></td><td>Youth Soccer</td><td><span class="status-pill" style="background:#1a2a1a;color:#6b9e6b;border:1px solid #3a5a3a">🔍 In Research</span></td><td>High-volume weekends · traveling families · CWJ brand reach ideal</td></tr>
+      <tr><td><div class="td-name">USYS EDP/CCL Hosted Showcase</div><div class="td-sub">February showcase events</div></td><td>Youth Soccer · Feb</td><td><span class="status-pill" style="background:#1a2a1a;color:#6b9e6b;border:1px solid #3a5a3a">🔍 In Research</span></td><td>Cold-weather market · hot coffee + nitro cold brew both applicable</td></tr>
+      <tr><td><div class="td-name">Adidas Showcase</div><div class="td-sub">December showcase events</div></td><td>Youth Soccer · Dec</td><td><span class="status-pill" style="background:#1a2a1a;color:#6b9e6b;border:1px solid #3a5a3a">🔍 In Research</span></td><td>December event · warm beverages play · scout for NoVA hosting locations</td></tr>
+      <tr><td><div class="td-name">Loudoun Showcase</div><div class="td-sub">March · Loudoun County fields</div></td><td>Youth Soccer · Mar</td><td><span class="status-pill" style="background:#1a2a1a;color:#6b9e6b;border:1px solid #3a5a3a">🔍 In Research</span></td><td>Spring kickoff · Loudoun County fields · strong family attendance</td></tr>
+      <tr><td><div class="td-name">Adidas National Cup</div><div class="td-sub">February · regional host sites</div></td><td>Youth Soccer · Feb</td><td><span class="status-pill" style="background:#1a2a1a;color:#6b9e6b;border:1px solid #3a5a3a">🔍 In Research</span></td><td>National brand event · high visibility · premium activation opportunity</td></tr>
+      <tr><td><div class="td-name">WAGS (Oct) / Arlington (Feb/Mar)</div><div class="td-sub">Washington Area Girls Soccer / Arlington County</div></td><td>Youth Soccer</td><td><span class="status-pill" style="background:#1a2a1a;color:#6b9e6b;border:1px solid #3a5a3a">🔍 In Research</span></td><td>Girls soccer tournaments · strong parent sideline culture · high coffee potential</td></tr>
+      <tr><td><div class="td-name">Arlington ASIST (Mar) / Alexandria ASK (Mar)</div><div class="td-sub">Spring indoor tournament circuit</div></td><td>Youth Soccer · Mar</td><td><span class="status-pill" style="background:#1a2a1a;color:#6b9e6b;border:1px solid #3a5a3a">🔍 In Research</span></td><td>March indoor season · indoor venue concession partnership model</td></tr>
+      <tr><td><div class="td-name">PWSI ICE BREAKER (Mar)</div><div class="td-sub">Prince William Soccer Inc. · Spring season opener</div></td><td>Youth Soccer · PWC · Mar</td><td><span class="status-pill" style="background:#1a2a1a;color:#6b9e6b;border:1px solid #3a5a3a">🔍 In Research</span></td><td>PWSI-run event → VDH exempt pathway strongest here · follow Colleen Heron reply</td></tr>
+      <tr><td><div class="td-name">Stafford St. Patricks (Mar)</div><div class="td-sub">Stafford County · March tournament</div></td><td>Youth Soccer · Mar</td><td><span class="status-pill" style="background:#1a2a1a;color:#6b9e6b;border:1px solid #3a5a3a">🔍 In Research</span></td><td>St. Patrick's Day weekend · family event · seasonal branding opportunity</td></tr>
+      <tr><td><div class="td-name">VSA Cannon Cup (May)</div><div class="td-sub">Virginia Soccer Association · May</div></td><td>Youth Soccer · May</td><td><span class="status-pill" style="background:#1a2a1a;color:#6b9e6b;border:1px solid #3a5a3a">🔍 In Research</span></td><td>State-level tournament · large draw · VSA nonprofit status = VDH exempt pathway</td></tr>
+      <tr><td><div class="td-name">State Cup &amp; Presidents Cup</div><div class="td-sub">Virginia ODP / State Cup season · Spring</div></td><td>Youth Soccer · Spring</td><td><span class="status-pill" style="background:#1a2a1a;color:#6b9e6b;border:1px solid #3a5a3a">🔍 In Research</span></td><td>Highest-prestige youth tournaments · traveling teams from across state · premium placement</td></tr>
+    </tbody>
+  </table>
+
+  <!-- CHANGE LOG -->
+  <div class="section-label" style="margin-top:2rem">📋 CHANGE LOG</div>
+  <table class="pipeline-table">
+    <thead>
+      <tr><th>Date</th><th>Action</th><th>Detail</th><th>Impact</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Jun 23</td><td><span class="status-pill pill-active">✅ Deployed</span></td><td>cedartaps.com platform rebrand — "Mobile Beverage Dispensing Platform" · proprietary CedarTap cashless payment ecosystem · hero + services + payments sections rewritten</td><td>B2B positioning shift · revenue optimization language for brand partners</td></tr>
+      <tr><td>Jun 23</td><td><span class="status-pill pill-active">✅ Deployed</span></td><td>sponsors.html launched — full sponsorship + revenue models page · 4 tier cards · comparison table · platform specs · active partner grid · linked from animated logo marquee on homepage</td><td>First dedicated B2B sponsorship page live at cedartaps.com/sponsors.html</td></tr>
+      <tr><td>Jun 23</td><td><span class="status-pill pill-active">✅ Deployed</span></td><td>Animated partner logo marquee added to homepage sponsorship section — 3 scrolling rows at varying speeds/directions · CSS mask fade edges · CTA → /sponsors.html</td><td>Visual ecosystem marketing · signals active partner network to prospects</td></tr>
+      <tr><td>Jun 23</td><td><span class="status-pill pill-active">✅ Sent ×11</span></td><td>Bounce remediation — 14 total bounces identified via IMAP audit · 10 Life Time @lt.life bounces corrected → @lifetimefitness.com · Crooked Run re-sent to crookedrunfermentation.com (rebranded) · Gold's Gym + AA County Fair flagged as call-only</td><td>11 re-sent · 3 phone-only · all 14 logged to CRM</td></tr>
+      <tr><td>Jun 23</td><td><span class="status-pill pill-active">✅ Sent ×3</span></td><td>Sporting complex outreach — K Sports Complex (info@ksportsva.com) · FCPA Patriot Park / Tim Lander (FCPAFields@fairfaxcounty.gov) · NVSC Battlefield Tournament (info@novasc.org)</td><td>3 venues emailed · 4 venues queued for call/web form</td></tr>
+      <tr><td>Jun 23</td><td><span class="status-pill pill-active">✅ Sent</span></td><td>PWSI soft intro — Colleen Heron (cheron@pwsi.org) · CWJ game-day concession pitch · family friendly · VDH youth athletic exemption pathway identified</td><td>Youth athletic concession channel opened · no TFE permit required if PWSI sponsors stand</td></tr>
+      <tr><td>Jun 23</td><td><span class="status-pill" style="background:#1a1c2e;color:#a78bfa;border:1px solid #3a3a6e">📋 Logged</span></td><td>Virginia ABC banquet permit docs saved — application PDF + required documents URL stored in permitting-guide.md · fee corrected to $175/day · required docs checklist documented</td><td>PWC filing reference ready for next event</td></tr>
+      <tr><td>Jun 22</td><td><span class="status-pill pill-active">✅ Sent ×40+</span></td><td>Vineyard + brewery outreach — PWC, Fauquier, Shenandoah, Henrico, Fairfax, Spotsylvania, Loudoun segments · 40+ contacts across 7 counties</td><td>Full NoVA/regional winery + brewery coverage complete</td></tr>
+      <tr><td>Jun 22</td><td><span class="status-pill pill-active">✅ Replied</span></td><td>Bridget Mullins (PWC Fair) — replied with inline photos + CWJ/Murlarkey/beer menus + pricing · requested call for 8-day event quote</td><td>PWC Fair still active · high-value 8-day run opportunity</td></tr>
+      <tr><td>Jun 22</td><td><span class="status-pill pill-active">✅ Sent</span></td><td>Jeff Simon (CWJ) — 6-keg request for PW County Fair · meet invite Wed Jun 24 10am</td><td>Keg supply confirmation pending</td></tr>
+      <tr><td>Jun 17</td><td><span class="status-pill pill-active">✅ CONFIRMED</span></td><td>La Colombe partnership official — in-keg builds confirmed · corny keg quote in progress · sample delivery to 5299 Daybreak Ln · branded tap handles supplied · menu live at cedartaps.com/lacolombe</td><td>Active vendor partner #2</td></tr>
+      <tr><td>Jun 12</td><td><span class="status-pill" style="background:#2e1a1a;color:#e87070;border:1px solid #5e2a2a">❌ Closed</span></td><td>Dale City FM (Andy) — called to confirm unable to accommodate Cedar Tap this season</td><td>Farmers market channel closed for 2026 season</td></tr>
+      <tr><td>Jun 11</td><td><span class="status-pill pill-active">✅ CONFIRMED</span></td><td>Murlarkey partnership solid — kegged cocktails + private tasting events · Zanab + Nicole confirmed meeting Mon Jun 15 2:30pm · menu live at cedartaps.com/murlarkey</td><td>Active vendor partner #1 (cocktails)</td></tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top:48px;text-align:center;font-size:.7rem;color:var(--cream-dim);letter-spacing:.08em;">
+    CEDAR TAP · MOBILE BEVERAGE PLATFORM · NORTHERN VIRGINIA · <a href="mailto:tom@cedartaps.com" style="color:var(--gold);text-decoration:none">tom@cedartaps.com</a> · (202) 810-1861 · <span style="color:var(--gold)">Last updated Jun 23, 2026</span>
+  </div>
+
+</div>
+
+</body>
+</html>

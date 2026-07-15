@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cedar Tap Draft Bar</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #111111;
+      --black-card: #191919;
+      --amber: #d4a43a;
+      --amber-light: #e8c46a;
+      --amber-dim: rgba(212, 164, 58, 0.6);
+      --cream: #f0e8d8;
+      --cream-muted: rgba(240, 232, 216, 0.65);
+      --foam: #fdf5e0;
+    }
+
+    body {
+      background: var(--black);
+      color: var(--cream);
+      font-family: 'Source Sans 3', sans-serif;
+      min-height: 100vh;
+      background-image:
+        radial-gradient(circle at 50% 0%, rgba(212, 164, 58, 0.06) 0%, transparent 60%),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 40px,
+          rgba(255,255,255,0.01) 40px,
+          rgba(255,255,255,0.01) 41px
+        );
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(180deg, #0a0a0a 0%, transparent 100%);
+      text-align: center;
+      padding: 2.5rem 1.5rem 1.5rem;
+      position: relative;
+      border-bottom: 2px solid rgba(212, 164, 58, 0.25);
+    }
+
+    .cedar-wordmark {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--amber-dim);
+      margin-bottom: 0.5rem;
+    }
+
+    header h1 {
+      font-family: 'Oswald', sans-serif;
+      font-size: clamp(2.5rem, 7vw, 4.5rem);
+      font-weight: 700;
+      color: var(--amber);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      line-height: 0.95;
+    }
+
+    header h1 .sub {
+      display: block;
+      font-size: 0.35em;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      color: var(--cream-muted);
+      margin-top: 0.6rem;
+    }
+
+    .tap-count-badge {
+      display: inline-block;
+      margin-top: 1rem;
+      background: rgba(212, 164, 58, 0.1);
+      border: 1px solid rgba(212, 164, 58, 0.3);
+      border-radius: 3px;
+      padding: 0.3rem 1rem;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--amber);
+      text-transform: uppercase;
+    }
+
+    /* ── SAMPLER FEATURE ── */
+    .sampler-banner {
+      margin: 1.5rem auto 0;
+      max-width: 800px;
+      padding: 0 1.5rem;
+    }
+
+    .sampler-card {
+      background: linear-gradient(135deg, rgba(212, 164, 58, 0.15), rgba(212, 164, 58, 0.05));
+      border: 1px solid rgba(212, 164, 58, 0.4);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+    }
+
+    .sampler-icon { font-size: 1.8rem; }
+
+    .sampler-text { flex: 1; min-width: 180px; }
+    .sampler-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--amber);
+    }
+    .sampler-desc {
+      font-size: 0.82rem;
+      color: var(--cream-muted);
+      margin-top: 0.2rem;
+    }
+
+    .sampler-price {
+      font-family: 'Oswald', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--amber);
+    }
+
+    /* ── MAIN GRID ── */
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    .section-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--amber-dim);
+      text-align: center;
+      margin: 2rem 0 1.5rem;
+    }
+
+    .beer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .beer-card {
+      background: var(--black-card);
+      border: 1px solid rgba(212, 164, 58, 0.15);
+      border-left: 4px solid var(--amber);
+      border-radius: 6px;
+      padding: 1.4rem 1.6rem 1.6rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .beer-card:hover {
+      background: #1e1e1e;
+      border-color: rgba(212, 164, 58, 0.4);
+    }
+
+    .beer-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.8rem;
+    }
+
+    .tap-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--amber-dim);
+      text-transform: uppercase;
+    }
+
+    .beer-name {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--cream);
+      letter-spacing: 0.03em;
+      margin-top: 0.15rem;
+      line-height: 1.15;
+    }
+
+    .beer-meta {
+      font-size: 0.72rem;
+      color: var(--amber-dim);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 0.2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .style-badge {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .badge-ipa { background: rgba(255, 120, 30, 0.15); color: #ff9050; border: 1px solid rgba(255, 120, 30, 0.3); }
+    .badge-lager { background: rgba(200, 220, 50, 0.1); color: #c8e060; border: 1px solid rgba(200, 220, 50, 0.25); }
+    .badge-wheat { background: rgba(255, 220, 100, 0.1); color: #ffd878; border: 1px solid rgba(255, 220, 100, 0.25); }
+    .badge-porter { background: rgba(100, 60, 30, 0.4); color: #c89060; border: 1px solid rgba(150, 90, 40, 0.4); }
+    .badge-cider { background: rgba(100, 200, 80, 0.1); color: #80e060; border: 1px solid rgba(100, 200, 80, 0.25); }
+
+    .beer-description {
+      font-size: 0.85rem;
+      color: var(--cream-muted);
+      line-height: 1.5;
+      margin-bottom: 1.2rem;
+    }
+
+    /* Pour size selector */
+    .pour-selector {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .pour-option {
+      flex: 1;
+      min-width: 70px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(212, 164, 58, 0.2);
+      border-radius: 5px;
+      padding: 0.55rem 0.4rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .pour-option:hover, .pour-option.selected {
+      background: rgba(212, 164, 58, 0.15);
+      border-color: var(--amber);
+    }
+
+    .pour-option .po-size {
+      display: block;
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--amber-dim);
+    }
+
+    .pour-option .po-price {
+      display: block;
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.2rem;
+      color: var(--amber);
+      font-weight: 600;
+      margin-top: 0.1rem;
+    }
+
+    /* ── ORDER SECTION ── */
+    .order-section {
+      margin-top: 3rem;
+      padding: 2rem;
+      background: #141414;
+      border: 1px solid rgba(212, 164, 58, 0.2);
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .order-section h3 {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.4rem;
+    }
+
+    .order-section p {
+      font-size: 0.8rem;
+      color: var(--cream-muted);
+      margin-bottom: 1.2rem;
+    }
+
+    .pay-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .pay-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.8rem;
+      border-radius: 5px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .pay-btn-cashapp {
+      background: #00d632;
+      color: #000;
+    }
+    .pay-btn-cashapp:hover { background: #00b82b; transform: scale(1.02); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 1.5rem 1rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      color: rgba(240, 232, 216, 0.25);
+      border-top: 1px solid rgba(212, 164, 58, 0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="cedar-wordmark">Cedar Tap Trailers · Woodbridge, VA</div>
+    <h1>
+      Draft Bar
+      <span class="sub">Craft Beer on Tap</span>
+    </h1>
+    <div class="tap-count-badge">4 Taps · DC Kegs Sourced</div>
+  </header>
+
+  <div class="sampler-banner">
+    <div class="sampler-card">
+      <div class="sampler-icon">🍺</div>
+      <div class="sampler-text">
+        <div class="sampler-label">The Sampler Flight</div>
+        <div class="sampler-desc">5 oz pours from any 2 taps — taste before you commit</div>
+      </div>
+      <div class="sampler-price">$8.99</div>
+    </div>
+  </div>
+
+  <main>
+    <div class="section-label">— On Draft —</div>
+
+    <div class="beer-grid">
+
+      <!-- TAP 1 -->
+      <div class="beer-card">
+        <div class="beer-card-top">
+          <div>
+            <div class="tap-label">Tap 01</div>
+            <div class="beer-name">Goose Island IPA</div>
+            <div class="beer-meta">Chicago · India Pale Ale · 5.16-Gal Keg</div>
+          </div>
+          <span class="style-badge badge-ipa">IPA</span>
+        </div>
+        <div class="beer-description">
+          Bold citrus hop aroma with a clean bitter finish. One of the most iconic craft IPAs in the country — approachable for hop fans and curious newcomers alike.
+        </div>
+        <div class="pour-selector">
+          <div class="pour-option" onclick="selectPour(this)">
+            <span class="po-size">5 oz Taste</span>
+            <span class="po-price">$4.99</span>
+          </div>
+          <div class="pour-option" onclick="selectPour(this)">
+            <span class="po-size">12 oz</span>
+            <span class="po-price">$8.99</span>
+          </div>
+          <div class="pour-option" onclick="selectPour(this)">
+            <span class="po-size">16 oz Pint</span>
+            <span class="po-price">$11.99</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAP 2 -->
+      <div class="beer-card">
+        <div class="beer-card-top">
+          <div>
+            <div class="tap-label">Tap 02</div>
+            <div class="beer-name">DC Brau El Hefe!</div>
+            <div class="beer-meta">Washington DC · Hefeweizen · Local Craft</div>
+          </div>
+          <span class="style-badge badge-wheat">Wheat</span>
+        </div>
+        <div class="beer-description">
+          Unfiltered wheat beer bursting with banana esters and clove spice. A local DC favorite — hazy, smooth, and endlessly sessionable on a warm day.
+        </div>
+        <div class="pour-selector">
+          <div class="pour-option" onclick="selectPour(this)">
+            <span class="po-size">5 oz Taste</span>
+            <span class="po-price">$4.99</span>
+          </div>
+          <div class="pour-option" onclick="selectPour(this)">
+            <span class="po-size">12 oz</span>
+            <span class="po-price">$8.99</span>
+          </div>
+          <div class="pour-option" onclick="selectPour(this)">
+            <span class="po-size">16 oz Pint</span>
+            <span class="po-price">$11.99</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAP 3 -->
+      <div class="beer-card">
+        <div class="beer-card-top">
+          <div>
+            <div class="tap-label">Tap 03</div>
+            <div class="beer-name">Right Proper Haxan Porter</div>
+            <div class="beer-meta">Washington DC · Robust Porter · Local Craft</div>
+          </div>
+          <span class="style-badge badge-porter">Porter</span>
+        </div>
+        <div class="beer-description">
+          Rich and smooth with notes of roasted coffee, dark chocolate, and a hint of vanilla. Right Proper's flagship dark ale — complex but never heavy.
+        </div>
+        <div class="pour-selector">
+          <div class="pour-option" onclick="selectPour(this)">
+            <span class="po-size">5 oz Taste</span>
+            <span class="po-price">$4.99</span>
+          </div>
+          <div class="pour-option" onclick="selectPour(this)">
+            <span class="po-size">12 oz</span>
+            <span class="po-price">$8.99</span>
+          </div>
+          <div class="pour-option" onclick="selectPour(this)">
+            <span class="po-size">16 oz Pint</span>
+            <span class="po-price">$11.99</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAP 4 -->
+      <div class="beer-card">
+        <div class="beer-card-top">
+          <div>
+            <div class="tap-label">Tap 04</div>
+            <div class="beer-name">Angry Orchard Hard Cider</div>
+            <div class="beer-meta">Upstate NY · Hard Cider · Gluten-Free Option</div>
+          </div>
+          <span class="style-badge badge-cider">Cider</span>
+        </div>
+        <div class="beer-description">
+          Crisp apple with just the right sweetness and a refreshing dry finish. The crowd-pleaser for guests who prefer something lighter — and a natural gluten-free choice.
+        </div>
+        <div class="pour-selector">
+          <div class="pour-option" onclick="selectPour(this)">
+            <span class="po-size">5 oz Taste</span>
+            <span class="po-price">$4.99</span>
+          </div>
+          <div class="pour-option" onclick="selectPour(this)">
+            <span class="po-size">12 oz</span>
+            <span class="po-price">$8.99</span>
+          </div>
+          <div class="pour-option" onclick="selectPour(this)">
+            <span class="po-size">16 oz Pint</span>
+            <span class="po-price">$11.99</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.beer-grid -->
+
+    <!-- ORDER & PAY -->
+    <div class="order-section">
+      <h3>Order &amp; Pay</h3>
+      <p>Select your tap and size — your server will process payment at the tap.</p>
+    </div>
+
+  </main>
+
+  <footer>
+    Cedar Tap Trailers · Woodbridge, VA · tom@cedartaps.com · Sourced from DC Kegs<br>
+    Must be 21+ to purchase alcoholic beverages. Please drink responsibly.
+  </footer>
+
+  <script>
+    function selectPour(el) {
+      // Deselect siblings in same card
+      const card = el.closest('.pour-selector');
+      card.querySelectorAll('.pour-option').forEach(opt => opt.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+  </script>
+</body>
+</html>

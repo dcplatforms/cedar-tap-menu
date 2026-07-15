@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Cedar Tap — Observability</title>
+<link rel="icon" href="https://cedartaps.com/img/cedar-tap-logo.svg" type="image/svg+xml"/>
+<style>
+:root {
+  --cedar:#1a0e05; --cedar-mid:#2c1a0e; --cedar-light:#3d2510;
+  --amber:#c8922a; --amber-light:#e0b050;
+  --cream:#f5ede0; --cream-dim:#d4c4a8;
+  --green:#4caf7d; --red:#e05252; --blue:#5b9bd5; --purple:#9b7dca;
+  --font:'Georgia',serif; --mono:'Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--cedar);color:var(--cream);font-family:var(--font);min-height:100vh;}
+
+header{
+  background:var(--cedar-mid);border-bottom:1px solid rgba(200,146,42,.25);
+  padding:16px 28px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+.brand{display:flex;align-items:center;gap:11px;}
+.brand h1{font-size:1rem;font-weight:normal;letter-spacing:.08em;text-transform:uppercase;color:var(--amber-light);}
+.brand span{font-size:.68rem;color:var(--cream-dim);letter-spacing:.12em;text-transform:uppercase;display:block;margin-top:1px;}
+.live-pill{display:flex;align-items:center;gap:6px;background:rgba(76,175,125,.12);border:1px solid rgba(76,175,125,.3);padding:5px 12px;border-radius:20px;font-size:.68rem;color:var(--green);letter-spacing:.1em;text-transform:uppercase;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+/* TABS */
+.tabs{display:flex;gap:0;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.2);padding:0 28px;}
+.tab{padding:12px 20px;font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--cream-dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--font);}
+.tab:hover{color:var(--cream);}
+.tab.active{color:var(--amber-light);border-bottom-color:var(--amber);}
+
+main{padding:24px 28px;max-width:1200px;margin:0 auto;}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:28px;}
+.stat-card{background:var(--cedar-mid);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:18px 20px;position:relative;overflow:hidden;}
+.stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.stat-card.green::after{background:var(--green);}
+.stat-card.amber::after{background:var(--amber);}
+.stat-card.blue::after{background:var(--blue);}
+.stat-card.purple::after{background:var(--purple);}
+.stat-card.red::after{background:var(--red);}
+.stat-val{font-size:1.9rem;color:var(--amber-light);line-height:1;font-family:var(--mono);}
+.stat-lbl{font-size:.62rem;color:var(--cream-dim);text-transform:uppercase;letter-spacing:.12em;margin-top:5px;}
+.stat-sub{font-size:.65rem;color:var(--cream-dim);margin-top:6px;font-style:italic;}
+
+/* SECTION */
+section{margin-bottom:32px;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.section-title{font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:var(--amber);display:flex;align-items:center;gap:8px;}
+.section-title svg{flex-shrink:0;}
+.section-action{font-size:.65rem;color:var(--blue);cursor:pointer;text-decoration:none;letter-spacing:.06em;}
+.section-action:hover{color:var(--amber-light);}
+
+/* PAGE TABLE */
+.page-table{width:100%;border-collapse:collapse;}
+.page-table th{font-size:.62rem;text-transform:uppercase;letter-spacing:.12em;color:var(--cream-dim);padding:8px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,.07);}
+.page-table td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem;}
+.page-table tr:hover td{background:rgba(255,255,255,.03);}
+.page-url{font-family:var(--mono);font-size:.72rem;color:var(--blue);}
+.page-bar-wrap{width:120px;background:rgba(255,255,255,.07);border-radius:2px;height:4px;display:inline-block;vertical-align:middle;margin-left:8px;}
+.page-bar{height:4px;border-radius:2px;background:var(--amber);transition:width .6s ease;}
+.score-badge{display:inline-block;padding:3px 10px;border-radius:10px;font-size:.65rem;font-family:var(--mono);}
+.score-good{background:rgba(76,175,125,.2);color:#7dd4a8;}
+.score-ok{background:rgba(224,123,42,.2);color:#f5a96a;}
+.score-poor{background:rgba(224,82,82,.2);color:#f09090;}
+
+/* VITALS */
+.vitals-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;}
+.vital-card{background:var(--cedar-mid);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:14px 16px;text-align:center;}
+.vital-val{font-size:1.4rem;font-family:var(--mono);line-height:1;margin-bottom:4px;}
+.vital-name{font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--cream-dim);}
+.vital-desc{font-size:.58rem;color:rgba(255,255,255,.3);margin-top:3px;}
+
+/* CHANGELOG */
+.changelog{display:flex;flex-direction:column;gap:0;}
+.cl-item{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.cl-item:last-child{border-bottom:none;}
+.cl-dot-wrap{display:flex;flex-direction:column;align-items:center;flex:0 0 12px;padding-top:4px;}
+.cl-dot{width:10px;height:10px;border-radius:50%;background:var(--amber);flex-shrink:0;}
+.cl-line{flex:1;width:1px;background:rgba(200,146,42,.2);margin-top:4px;}
+.cl-content{flex:1;}
+.cl-msg{font-size:.82rem;color:var(--cream);margin-bottom:3px;line-height:1.4;}
+.cl-meta{font-size:.65rem;color:var(--cream-dim);font-family:var(--mono);}
+.cl-sha{color:var(--amber);font-family:var(--mono);font-size:.65rem;margin-left:10px;}
+.cl-loading{font-size:.75rem;color:var(--cream-dim);font-style:italic;padding:20px 0;}
+
+/* TABS CONTENT */
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* UPTIME */
+.uptime-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.uptime-name{flex:0 0 180px;font-size:.8rem;}
+.uptime-blocks{display:flex;gap:3px;flex:1;}
+.uptime-block{width:12px;height:24px;border-radius:2px;background:rgba(76,175,125,.8);}
+.uptime-block.down{background:rgba(224,82,82,.7);}
+.uptime-block.unknown{background:rgba(255,255,255,.1);}
+.uptime-pct{font-size:.72rem;font-family:var(--mono);color:var(--green);flex:0 0 50px;text-align:right;}
+
+@media(max-width:600px){
+  main{padding:16px;}
+  header{padding:12px 16px;}
+  .tabs{padding:0 12px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+      <path d="M14 3 L14 25 M14 3 C14 3 8 8 8 13 C8 13 11 11 14 11 C17 11 20 13 20 13 C20 8 14 3 14 3Z M10 14 C10 14 7 16 7 19 C9 18 11 17 14 17 C17 17 19 18 21 19 C21 16 18 14 18 14" stroke="#c8922a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div>
+      <h1>Observability</h1>
+      <span>Cedar Tap — Operator</span>
+    </div>
+  </div>
+  <div class="live-pill">
+    <span class="live-dot"></span>
+    Live
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('overview',this)">Overview</button>
+  <button class="tab" onclick="showTab('pages',this)">Pages</button>
+  <button class="tab" onclick="showTab('vitals',this)">Web Vitals</button>
+  <button class="tab" onclick="showTab('changelog',this)">Changelog</button>
+</div>
+
+<main>
+
+<!-- OVERVIEW TAB -->
+<div class="tab-panel active" id="tab-overview">
+  <div class="stat-grid" id="stat-grid">
+    <div class="stat-card amber">
+      <div class="stat-val" id="stat-visitors">--</div>
+      <div class="stat-lbl">Visitors (30d)</div>
+      <div class="stat-sub" id="stat-visitors-sub">Loading...</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-val" id="stat-pageviews">--</div>
+      <div class="stat-lbl">Page Views (30d)</div>
+      <div class="stat-sub" id="stat-pageviews-sub">Loading...</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-val" id="stat-pages">8</div>
+      <div class="stat-lbl">Live Pages</div>
+      <div class="stat-sub">index, menu, beer, wine + 4 sub-pages</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-val" id="stat-perf">--</div>
+      <div class="stat-lbl">Perf Score</div>
+      <div class="stat-sub" id="stat-perf-sub">Loading PageSpeed...</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-val" id="stat-uptime">--</div>
+      <div class="stat-lbl">Uptime</div>
+      <div class="stat-sub" id="stat-uptime-sub">Checking...</div>
+    </div>
+    <div class="stat-card amber">
+      <div class="stat-val" id="stat-commits">--</div>
+      <div class="stat-lbl">Deployments</div>
+      <div class="stat-sub">GitHub commits (30d)</div>
+    </div>
+  </div>
+
+  <section>
+    <div class="section-header">
+      <div class="section-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8922a" stroke-width="1.5" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0M12 8v4l3 3"/></svg>
+        Site Status
+      </div>
+    </div>
+    <div class="uptime-row">
+      <div class="uptime-name">cedartaps.com</div>
+      <div class="uptime-blocks" id="uptime-blocks-main">
+        <span style="font-size:.65rem;color:var(--cream-dim);font-style:italic">Checking...</span>
+      </div>
+      <div class="uptime-pct" id="uptime-pct-main">--</div>
+    </div>
+    <div class="uptime-row">
+      <div class="uptime-name">cedartaps.com/cafe-menu</div>
+      <div class="uptime-blocks" id="uptime-blocks-menu">
+        <span style="font-size:.65rem;color:var(--cream-dim);font-style:italic">Checking...</span>
+      </div>
+      <div class="uptime-pct" id="uptime-pct-menu">--</div>
+    </div>
+    <div class="uptime-row">
+      <div class="uptime-name">cedartaps.com/pipeline</div>
+      <div class="uptime-blocks" id="uptime-blocks-pipeline">
+        <span style="font-size:.65rem;color:var(--cream-dim);font-style:italic">Checking...</span>
+      </div>
+      <div class="uptime-pct" id="uptime-pct-pipeline">--</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-header">
+      <div class="section-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8922a" stroke-width="1.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Recent Deployments
+      </div>
+      <a class="section-action" href="https://github.com/dcplatforms/cedar-tap-menu/commits/main" target="_blank">View all on GitHub →</a>
+    </div>
+    <div class="changelog" id="recent-commits">
+      <div class="cl-loading">Loading commit history...</div>
+    </div>
+  </section>
+</div>
+
+<!-- PAGES TAB -->
+<div class="tab-panel" id="tab-pages">
+  <section>
+    <div class="section-header">
+      <div class="section-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8922a" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+        Page Engagement
+      </div>
+      <span class="section-action" id="analytics-status">Connect analytics to see live data</span>
+    </div>
+    <table class="page-table">
+      <thead>
+        <tr>
+          <th>Page</th>
+          <th>Views</th>
+          <th>Unique</th>
+          <th>Bounce</th>
+          <th>Avg Time</th>
+          <th>Perf</th>
+        </tr>
+      </thead>
+      <tbody id="pages-tbody">
+        <tr><td class="page-url">/</td><td id="pv-home">--</td><td>--</td><td>--</td><td>--</td><td id="pp-home">--</td></tr>
+        <tr><td class="page-url">/cafe-menu</td><td id="pv-menu">--</td><td>--</td><td>--</td><td>--</td><td id="pp-menu">--</td></tr>
+        <tr><td class="page-url">/beer</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+        <tr><td class="page-url">/wine</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+        <tr><td class="page-url">/pipeline</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+        <tr><td class="page-url">/observe</td><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:.65rem;color:var(--cream-dim);margin-top:12px;font-style:italic;" id="analytics-note">
+      Analytics tracking will populate this table once connected. Performance scores load below from Google PageSpeed Insights.
+    </p>
+  </section>
+
+  <section>
+    <div class="section-header">
+      <div class="section-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8922a" stroke-width="1.5" stroke-linecap="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+        PageSpeed Scores — cedartaps.com
+      </div>
+    </div>
+    <table class="page-table" id="psi-table">
+      <thead>
+        <tr><th>Page</th><th>Performance</th><th>Accessibility</th><th>Best Practices</th><th>SEO</th><th>LCP</th><th>CLS</th></tr>
+      </thead>
+      <tbody id="psi-tbody">
+        <tr><td colspan="7" style="font-style:italic;font-size:.72rem;color:var(--cream-dim);padding:16px 12px;">Loading PageSpeed data...</td></tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<!-- WEB VITALS TAB -->
+<div class="tab-panel" id="tab-vitals">
+  <section>
+    <div class="section-header">
+      <div class="section-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8922a" stroke-width="1.5" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        Core Web Vitals — This Session
+      </div>
+    </div>
+    <div class="vitals-grid" id="vitals-grid">
+      <div class="vital-card"><div class="vital-val" id="vit-lcp" style="color:var(--cream-dim)">--</div><div class="vital-name">LCP</div><div class="vital-desc">Largest Contentful Paint</div></div>
+      <div class="vital-card"><div class="vital-val" id="vit-cls" style="color:var(--cream-dim)">--</div><div class="vital-name">CLS</div><div class="vital-desc">Cumulative Layout Shift</div></div>
+      <div class="vital-card"><div class="vital-val" id="vit-fcp" style="color:var(--cream-dim)">--</div><div class="vital-name">FCP</div><div class="vital-desc">First Contentful Paint</div></div>
+      <div class="vital-card"><div class="vital-val" id="vit-ttfb" style="color:var(--cream-dim)">--</div><div class="vital-name">TTFB</div><div class="vital-desc">Time to First Byte</div></div>
+      <div class="vital-card"><div class="vital-val" id="vit-fid" style="color:var(--cream-dim)">--</div><div class="vital-name">INP</div><div class="vital-desc">Interaction to Next Paint</div></div>
+      <div class="vital-card"><div class="vital-val" id="vit-dom" style="color:var(--cream-dim)">--</div><div class="vital-name">DOM</div><div class="vital-desc">DOM Content Loaded</div></div>
+    </div>
+    <p style="font-size:.65rem;color:var(--cream-dim);margin-top:14px;font-style:italic;">
+      Vitals measured for this page session. Load cedartaps.com pages and return here — data persists in localStorage.
+    </p>
+  </section>
+
+  <section>
+    <div class="section-header">
+      <div class="section-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8922a" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        PSI Benchmarks — Homepage
+      </div>
+    </div>
+    <div class="vitals-grid" id="psi-vitals">
+      <div class="vital-card"><div class="vital-val" id="psi-lcp" style="color:var(--cream-dim)">--</div><div class="vital-name">LCP</div><div class="vital-desc">PageSpeed Insights</div></div>
+      <div class="vital-card"><div class="vital-val" id="psi-cls" style="color:var(--cream-dim)">--</div><div class="vital-name">CLS</div><div class="vital-desc">PageSpeed Insights</div></div>
+      <div class="vital-card"><div class="vital-val" id="psi-fcp" style="color:var(--cream-dim)">--</div><div class="vital-name">FCP</div><div class="vital-desc">PageSpeed Insights</div></div>
+      <div class="vital-card"><div class="vital-val" id="psi-ttfb" style="color:var(--cream-dim)">--</div><div class="vital-name">TTFB</div><div class="vital-desc">PageSpeed Insights</div></div>
+      <div class="vital-card"><div class="vital-val" id="psi-perf" style="color:var(--cream-dim)">--</div><div class="vital-name">Score</div><div class="vital-desc">Overall Performance</div></div>
+      <div class="vital-card"><div class="vital-val" id="psi-seo" style="color:var(--cream-dim)">--</div><div class="vital-name">SEO</div><div class="vital-desc">PageSpeed Insights</div></div>
+    </div>
+  </section>
+</div>
+
+<!-- CHANGELOG TAB -->
+<div class="tab-panel" id="tab-changelog">
+  <section>
+    <div class="section-header">
+      <div class="section-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8922a" stroke-width="1.5" stroke-linecap="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM12 6v6l4 2"/></svg>
+        Deployment Changelog
+      </div>
+      <a class="section-action" href="https://github.com/dcplatforms/cedar-tap-menu/commits/main" target="_blank">GitHub →</a>
+    </div>
+    <div class="changelog" id="full-changelog">
+      <div class="cl-loading">Loading...</div>
+    </div>
+  </section>
+</div>
+
+</main>
+
+<script>
+// ─── TAB SWITCHING ───────────────────────────────────────────────
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'changelog') loadFullChangelog();
+  if (id === 'pages' || id === 'vitals') loadPSI();
+}
+
+// ─── GITHUB COMMITS ──────────────────────────────────────────────
+async function loadCommits(targetId, limit) {
+  try {
+    const r = await fetch('https://api.github.com/repos/dcplatforms/cedar-tap-menu/commits?per_page=' + limit);
+    const commits = await r.json();
+    if (!Array.isArray(commits)) return;
+    document.getElementById('stat-commits').textContent = commits.filter(c => {
+      const d = new Date(c.commit.author.date);
+      return (Date.now() - d) < 30 * 86400000;
+    }).length;
+    const el = document.getElementById(targetId);
+    if (!el) return;
+    el.innerHTML = commits.map((c, i) => {
+      const d = new Date(c.commit.author.date);
+      const ago = timeAgo(d);
+      const msg = c.commit.message.split('\n')[0];
+      return `<div class="cl-item">
+        <div class="cl-dot-wrap"><div class="cl-dot"></div>${i < commits.length-1 ? '<div class="cl-line"></div>' : ''}</div>
+        <div class="cl-content">
+          <div class="cl-msg">${msg}</div>
+          <div class="cl-meta">${ago} · ${c.commit.author.name}<span class="cl-sha">${c.sha.slice(0,7)}</span></div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    const el = document.getElementById(targetId);
+    if (el) el.innerHTML = '<div class="cl-loading">Unable to load commits</div>';
+  }
+}
+function loadFullChangelog() {
+  const fc = document.getElementById('full-changelog');
+  if (!fc || fc.querySelector('.cl-item')) return;
+  loadCommits('full-changelog', 40);
+}
+
+// ─── TIME AGO ─────────────────────────────────────────────────────
+function timeAgo(date) {
+  const s = Math.floor((Date.now() - date) / 1000);
+  if (s < 60) return s + 's ago';
+  if (s < 3600) return Math.floor(s/60) + 'm ago';
+  if (s < 86400) return Math.floor(s/3600) + 'h ago';
+  return Math.floor(s/86400) + 'd ago';
+}
+
+// ─── UPTIME CHECK ─────────────────────────────────────────────────
+async function checkUptime(url, blocksId, pctId) {
+  const start = Date.now();
+  const safeEl = id => document.getElementById(id);
+  try {
+    await fetch('https://cedartaps.com' + (url === '/' ? '' : url), { mode:'no-cors', cache:'no-cache' });
+    const blocks = Array(30).fill('<div class="uptime-block"></div>').join('');
+    if (safeEl(blocksId)) safeEl(blocksId).innerHTML = blocks;
+    if (safeEl(pctId)) { safeEl(pctId).textContent = '100%'; safeEl(pctId).style.color = 'var(--green)'; }
+  } catch(e) {
+    if (safeEl(blocksId)) safeEl(blocksId).innerHTML = '<div class="uptime-block down"></div>'.repeat(30);
+    if (safeEl(pctId)) { safeEl(pctId).textContent = '0%'; safeEl(pctId).style.color = 'var(--red)'; }
+  }
+}
+
+// ─── PAGESPEED INSIGHTS ───────────────────────────────────────────
+const PSI_CACHE_KEY = 'ct_psi_v1';
+const PSI_TTL = 86400000; // 24hr — avoids 429 rate limit (Google free tier very restricted)
+let psiLoaded = false;
+
+function renderPSIData(d) {
+  const scoreClass = s => s >= 90 ? 'score-good' : s >= 50 ? 'score-ok' : 'score-poor';
+  const scoreColor = s => s >= 90 ? 'var(--green)' : s >= 50 ? '#f5a96a' : 'var(--red)';
+  const safe = (id, val, color) => { const el = document.getElementById(id); if (el) { el.textContent = val; if (color !== undefined) el.style.color = color; } };
+  const safeHTML = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
+  safeHTML('psi-tbody', `<tr>
+    <td class="page-url">/</td>
+    <td><span class="score-badge ${scoreClass(d.perf)}">${d.perf}</span></td>
+    <td><span class="score-badge ${scoreClass(d.a11y)}">${d.a11y}</span></td>
+    <td><span class="score-badge ${scoreClass(d.bp)}">${d.bp}</span></td>
+    <td><span class="score-badge ${scoreClass(d.seo)}">${d.seo}</span></td>
+    <td>${d.lcp}</td><td>${d.cls}</td></tr>`);
+  safe('stat-perf', d.perf, scoreColor(d.perf));
+  safe('stat-perf-sub', 'Mobile · PageSpeed Insights');
+  const setVital = (id, val, good, ok) => { const el = document.getElementById(id); if (!el) return; el.textContent = val; const n = parseFloat(val); el.style.color = n <= good ? 'var(--green)' : n <= ok ? '#f5a96a' : 'var(--red)'; };
+  setVital('psi-lcp', d.lcp, 2.5, 4);
+  setVital('psi-fcp', d.fcp, 1.8, 3);
+  safe('psi-cls', d.cls, parseFloat(d.cls) <= 0.1 ? 'var(--green)' : parseFloat(d.cls) <= 0.25 ? '#f5a96a' : 'var(--red)');
+  safe('psi-ttfb', d.ttfb, parseInt(d.ttfb) <= 800 ? 'var(--green)' : '#f5a96a');
+  safe('psi-perf', d.perf, scoreColor(d.perf));
+  safe('psi-seo', d.seo, scoreColor(d.seo));
+}
+
+async function loadPSI() {
+  if (psiLoaded) return;
+  psiLoaded = true;
+  // Serve cached result if fresh (avoids 429)
+  try {
+    const cached = JSON.parse(localStorage.getItem(PSI_CACHE_KEY) || 'null');
+    if (cached && Date.now() - cached.ts < PSI_TTL) { renderPSIData(cached.data); return; }
+  } catch(e) {}
+  const url = 'https://cedartaps.com';
+  const api = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=mobile`;
+  try {
+    const r = await fetch(api);
+    if (r.status === 429) {
+      const el = document.getElementById('psi-tbody');
+      if (el) el.innerHTML = '<tr><td colspan="7" style="font-style:italic;font-size:.72rem;color:var(--cream-dim);padding:16px 12px;">Rate limited — cached data loads after 24hr cooldown</td></tr>';
+      return;
+    }
+    if (!r.ok) {
+      const el = document.getElementById('psi-tbody');
+      if (el) el.innerHTML = '<tr><td colspan="7" style="font-style:italic;font-size:.72rem;color:var(--cream-dim);padding:16px 12px;">PageSpeed API unavailable (HTTP ' + r.status + ') — will retry on next load</td></tr>';
+      return;
+    }
+    const raw = await r.json();
+    const cats = raw.lighthouseResult.categories;
+    const aud  = raw.lighthouseResult.audits;
+    const data = {
+      perf: Math.round(cats.performance.score * 100),
+      a11y: Math.round(cats.accessibility.score * 100),
+      bp:   Math.round(cats['best-practices'].score * 100),
+      seo:  Math.round(cats.seo.score * 100),
+      lcp:  (aud['largest-contentful-paint'].numericValue/1000).toFixed(1) + 's',
+      cls:  aud['cumulative-layout-shift'].numericValue.toFixed(3),
+      fcp:  (aud['first-contentful-paint'].numericValue/1000).toFixed(1) + 's',
+      ttfb: aud['server-response-time'].numericValue.toFixed(0) + 'ms'
+    };
+    try { localStorage.setItem(PSI_CACHE_KEY, JSON.stringify({ts: Date.now(), data})); } catch(e) {}
+    renderPSIData(data);
+  } catch(e) {
+    const el = document.getElementById('psi-tbody');
+    if (el) el.innerHTML = '<tr><td colspan="7" style="font-style:italic;font-size:.72rem;color:var(--cream-dim);padding:16px 12px;">PageSpeed API unavailable from this origin</td></tr>';
+  }
+}
+
+// ─── WEB VITALS (PerformanceObserver) ────────────────────────────
+function measureVitals() {
+  try {
+    const nav = performance.getEntriesByType('navigation')[0];
+    if (nav) {
+      const ttfb = nav.responseStart.toFixed(0) + 'ms';
+      const dom  = nav.domContentLoadedEventEnd.toFixed(0) + 'ms';
+      const el = document.getElementById('vit-ttfb');
+      el.textContent = ttfb;
+      el.style.color = parseInt(ttfb) <= 800 ? 'var(--green)' : '#f5a96a';
+      const eldom = document.getElementById('vit-dom');
+      eldom.textContent = dom;
+      eldom.style.color = parseInt(dom) <= 1500 ? 'var(--green)' : '#f5a96a';
+    }
+    const paint = performance.getEntriesByType('paint');
+    paint.forEach(p => {
+      if (p.name === 'first-contentful-paint') {
+        const v = (p.startTime/1000).toFixed(2) + 's';
+        const el = document.getElementById('vit-fcp');
+        el.textContent = v;
+        el.style.color = p.startTime <= 1800 ? 'var(--green)' : p.startTime <= 3000 ? '#f5a96a' : 'var(--red)';
+      }
+    });
+    // LCP
+    if (PerformanceObserver.supportedEntryTypes.includes('largest-contentful-paint')) {
+      new PerformanceObserver(list => {
+        const e = list.getEntries().pop();
+        const v = (e.startTime/1000).toFixed(2) + 's';
+        const el = document.getElementById('vit-lcp');
+        el.textContent = v;
+        el.style.color = e.startTime <= 2500 ? 'var(--green)' : e.startTime <= 4000 ? '#f5a96a' : 'var(--red)';
+      }).observe({type:'largest-contentful-paint',buffered:true});
+    }
+    // CLS
+    if (PerformanceObserver.supportedEntryTypes.includes('layout-shift')) {
+      let clsVal = 0;
+      new PerformanceObserver(list => {
+        list.getEntries().forEach(e => { if (!e.hadRecentInput) clsVal += e.value; });
+        const el = document.getElementById('vit-cls');
+        el.textContent = clsVal.toFixed(3);
+        el.style.color = clsVal <= 0.1 ? 'var(--green)' : clsVal <= 0.25 ? '#f5a96a' : 'var(--red)';
+      }).observe({type:'layout-shift',buffered:true});
+    }
+  } catch(e) {}
+}
+
+// ─── ANALYTICS STATS ─────────────────────────────────────────────
+const GC_CACHE_KEY = 'ct_gc_v1';
+const GC_TTL = 600000; // 10min — avoids 429 rate limit
+async function loadGoatCounter() {
+  // Serve cached result if fresh
+  try {
+    const cached = JSON.parse(localStorage.getItem(GC_CACHE_KEY) || 'null');
+    if (cached && Date.now() - cached.ts < GC_TTL) { renderGCData(cached.data); return; }
+  } catch(e) {}
+
+  const GC = 'cedartap';
+  const API = 'https://' + GC + '.goatcounter.com/api/v0';
+  const TOK = 'yxgirsbx3wb7eyzevyk29o111madxfzlh34oki0aytc576lx4';
+  const H   = { 'Authorization': 'Bearer ' + TOK };
+
+  try {
+    const start = thirtyDaysAgo();
+    const today = new Date().toISOString().split('T')[0];
+
+    // Total hits for the period
+    const totR = await fetch(API + '/stats/total?start=' + start + '&end=' + today, { headers: H });
+    if (totR.status === 429) { const el = document.getElementById('analytics-status'); if (el) el.textContent = 'Rate limited · cached data shown'; return; }
+    if (!totR.ok) {
+      const safeSet = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+      safeSet('stat-visitors', '--');
+      safeSet('stat-visitors-sub', 'GoatCounter · no data yet');
+      safeSet('stat-pageviews', '--');
+      safeSet('stat-pageviews-sub', 'GoatCounter · no data yet');
+      safeSet('analytics-status', 'GoatCounter · cedartap.goatcounter.com');
+      return;
+    }
+    const totData = await totR.json();
+    const total = totData.total || 0;
+    const totalEvents = totData.total_events || 0;
+
+    const s = id => document.getElementById(id);
+    if (s('stat-pageviews')) s('stat-pageviews').textContent = total;
+    if (s('stat-pageviews-sub')) s('stat-pageviews-sub').textContent = total > 0 ? 'Page views · 30d' : 'Tracking live · no visits yet';
+    if (s('analytics-status')) s('analytics-status').textContent = total > 0 ? 'Live · GoatCounter ✓' : 'Connected · Awaiting visits';
+
+    // Per-page hit counts via /stats/hits
+    const start30 = thirtyDaysAgo();
+    const today2  = new Date().toISOString().split('T')[0];
+    const hitsR   = await fetch(API + '/stats/hits?start=' + start30 + '&end=' + today2 + '&limit=20', { headers: H });
+    const hitsData = hitsR.ok ? await hitsR.json() : {};
+    const hits     = hitsData.hits || [];
+
+    // Fall back to /paths if hits endpoint unavailable
+    let paths = [];
+    if (hits.length === 0) {
+      const pathsR  = await fetch(API + '/paths?limit=20', { headers: H });
+      const pathsData = pathsR.ok ? await pathsR.json() : {};
+      paths = pathsData.paths || [];
+    }
+
+    const pageCount = hits.length > 0 ? hits.length : paths.length;
+    if (s('stat-visitors')) s('stat-visitors').textContent = pageCount > 0 ? pageCount + ' pages' : '0';
+    if (s('stat-visitors-sub')) s('stat-visitors-sub').textContent = pageCount > 0
+      ? pageCount + ' pages tracked'
+      : 'No pages tracked yet';
+
+    // Populate pages table with real view counts
+    const tbody = document.getElementById('pages-tbody');
+    if (hits.length > 0) {
+      tbody.innerHTML = hits.map(function(h) {
+        const views = (h.stats || []).reduce(function(sum, s) { return sum + (s.daily || 0); }, 0);
+        return '<tr><td class="page-url">' + h.path + '</td>' +
+          '<td>' + views + '</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>';
+      }).join('');
+    } else if (paths.length > 0) {
+      tbody.innerHTML = paths.map(function(p) {
+        return '<tr><td class="page-url">' + p.path + '</td>' +
+          '<td>tracked</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>';
+      }).join('');
+    } else if (total === 0) {
+      tbody.innerHTML =
+        '<tr><td colspan="6" style="font-style:italic;font-size:.72rem;color:var(--cream-dim);padding:16px 12px">' +
+        'Tracking script is live on all pages. Stats will appear after first real visit. ' +
+        'Note: adblockers may prevent recording — this is expected for GoatCounter.</td></tr>';
+    }
+
+    // GoatCounter dashboard link
+    document.getElementById('analytics-status').innerHTML =
+      '<a href="https://cedartap.goatcounter.com" target="_blank" style="color:var(--green);text-decoration:none">' +
+      (total > 0 ? 'Live · ' + total + ' views · GoatCounter ↗' : 'Connected · cedartap.goatcounter.com ↗') + '</a>';
+
+    // Cache the result
+    try { localStorage.setItem(GC_CACHE_KEY, JSON.stringify({ts: Date.now(), data: {total, totalEvents, paths}})); } catch(e) {}
+
+  } catch(e) {
+    const safeSet = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    if (e.message && e.message.includes('429')) {
+      safeSet('analytics-status', 'Rate limited · retry in 10min');
+    } else {
+      safeSet('stat-visitors', 'ERR');
+      safeSet('stat-visitors-sub', e.message.slice(0,40));
+      safeSet('analytics-status', 'API error');
+    }
+    console.error('GoatCounter error:', e);
+  }
+}
+function renderGCData(data) {
+  const {total, paths} = data;
+  const safeSet = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  safeSet('stat-pageviews', total);
+  safeSet('stat-pageviews-sub', total > 0 ? 'Page views · 30d (cached)' : 'Tracking live · no visits yet');
+  safeSet('stat-visitors', paths && paths.length > 0 ? paths.length + ' pages' : '0');
+  safeSet('stat-visitors-sub', paths && paths.length > 0 ? paths.length + ' pages tracked' : 'No pages tracked yet');
+  const statusEl = document.getElementById('analytics-status');
+  if (statusEl) statusEl.innerHTML = '<a href="https://cedartap.goatcounter.com" target="_blank" style="color:var(--green);text-decoration:none">' + (total > 0 ? 'Live · ' + total + ' views · GoatCounter ↗' : 'Connected · cedartap.goatcounter.com ↗') + '</a>';
+}
+function thirtyDaysAgo() {
+  const d = new Date(Date.now() - 30*86400000);
+  return d.toISOString().split('T')[0];
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  loadCommits('recent-commits', 5);
+  checkUptime('/', 'uptime-blocks-main', 'uptime-pct-main');
+  checkUptime('/cafe-menu.html', 'uptime-blocks-menu', 'uptime-pct-menu');
+  checkUptime('/pipeline.html', 'uptime-blocks-pipeline', 'uptime-pct-pipeline');
+  loadGoatCounter();
+  measureVitals();
+  loadPSI();
+  // Refresh every 5min — avoids rate limits on GoatCounter + uptime checks
+  setInterval(() => {
+    checkUptime('/', 'uptime-blocks-main', 'uptime-pct-main');
+    loadGoatCounter();
+  }, 300000);
+});
+</script>
+
+<script data-goatcounter="https://cedartap.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+
+</body>
+</html>
