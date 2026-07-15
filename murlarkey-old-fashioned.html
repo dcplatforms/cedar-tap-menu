@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MurLarkey Old Fashioned | Cedar Tap</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Playfair Display', serif; background: #1a0a0a; color: #f8f5f0; line-height: 1.6; }
+    .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; text-align: center; }
+    h1 { font-size: 48px; margin-bottom: 20px; color: #c8941a; font-weight: 700; }
+    .badge { display: inline-block; padding: 8px 16px; background: #c8941a; color: #1a0a0a; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; border-radius: 4px; }
+    .subtitle { font-size: 24px; color: #c9a07d; margin-bottom: 30px; font-style: italic; }
+    .description { font-size: 18px; line-height: 1.8; margin-bottom: 40px; color: #e8e2d8; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .pricing { background: rgba(200, 148, 26, 0.2); padding: 30px; border-radius: 8px; margin-bottom: 40px; border: 2px solid #c8941a; }
+    .price-label { font-size: 14px; color: #c9a07d; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+    .price-value { font-size: 42px; font-weight: 700; color: #c8941a; margin-bottom: 20px; }
+    .pour-options { display: flex; gap: 20px; justify-content: center; margin-top: 20px; }
+    .pour-btn { padding: 12px 24px; background: #8B1A1A; color: #f8f5f0; border: 2px solid #c8941a; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s; }
+    .pour-btn:hover { background: #a82020; }
+    .pour-btn.sel { background: #c8941a; color: #1a0a0a; }
+    .keg-info { background: rgba(200, 148, 26, 0.1); padding: 20px; border-radius: 8px; margin-bottom: 40px; font-size: 14px; color: #c9a07d; }
+    .qr-section { margin-top: 60px; padding-top: 40px; border-top: 1px solid rgba(200, 148, 26, 0.3); }
+    .qr-label { font-size: 12px; color: #c9a07d; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
+    svg { display: inline-block; width: 180px; height: 180px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="badge">Premium Selection</div>
+    <h1>Old Fashioned</h1>
+    <p class="subtitle">Classic or Smoked Variant</p>
+
+    <p class="description">
+      A timeless craft cocktail made with premium MurLarkey whiskey, crafted sugar, bitters, and a twist.
+      Choose the classic or ask for the smoked variant with oak smoke for an elevated experience.
+    </p>
+
+    <div class="pricing">
+      <div class="price-label">Pour Price</div>
+      <div class="price-value">$18–22</div>
+      <div class="pour-options">
+        <button class="pour-btn sel" onclick="sel(this, '4oz')">4oz — $18</button>
+        <button class="pour-btn" onclick="sel(this, '6oz')">6oz — $22</button>
+      </div>
+    </div>
+
+    <div class="keg-info">
+      <strong>5.1 Gallon Keg Pricing (Premium):</strong><br>
+      Cost: $1,122.00 | Yield: ~82 drinks (4oz) | Cost/Drink: $13.68<br>
+      <strong>Event Gross Profit:</strong> $354–682 per keg
+    </div>
+
+    <div style="margin-top: 40px;">
+      <a href="https://cedartaps.com/murlarkey" style="color: #c8941a; text-decoration: none; font-size: 16px;">← Back to MurLarkey Menu</a>
+    </div>
+
+    <div class="qr-section">
+      <div class="qr-label">Order This Cocktail</div>
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="200" height="200" fill="#f8f5f0"/>
+        <g fill="#1a0a0a">
+          <!-- QR pattern placeholder -->
+          <rect x="20" y="20" width="160" height="160" fill="none" stroke="#1a0a0a" stroke-width="2"/>
+          <text x="100" y="110" font-size="12" text-anchor="middle" fill="#c8941a">Old Fashioned</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>
