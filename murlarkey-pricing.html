@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+  <meta name="theme-color" content="#1a0a0a"/>
+  <meta name="description" content="Cedar Tap × Murlarkey — Event Pricing & Economics"/>
+  <title>Cedar Tap × Murlarkey · Event Pricing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #f8f5f0;
+      color: #1a0a0a;
+      padding: 40px 20px;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+
+    .header {
+      text-align: center;
+      margin-bottom: 60px;
+      border-bottom: 3px solid #8B1A1A;
+      padding-bottom: 30px;
+    }
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 48px;
+      font-weight: 700;
+      color: #8B1A1A;
+      margin-bottom: 10px;
+    }
+    .header p { font-size: 18px; color: #666; }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+
+    .pricing-card {
+      background: white;
+      border: 2px solid #b28564;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .pricing-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+
+    .cocktail-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #8B1A1A;
+      margin-bottom: 20px;
+    }
+
+    .pricing-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #e8e2d8;
+      font-size: 15px;
+    }
+    .pricing-row:last-child { border-bottom: none; }
+    .pricing-row .label { color: #666; font-weight: 500; }
+    .pricing-row .value { color: #1a0a0a; font-weight: 600; }
+
+    .highlight {
+      background: #fefaf5;
+      padding: 15px;
+      margin-top: 20px;
+      border-left: 4px solid #c8941a;
+      border-radius: 4px;
+    }
+    .highlight .metric { font-weight: 600; color: #8B1A1A; }
+    .highlight .amount { font-size: 24px; font-weight: 700; color: #8B1A1A; }
+
+    .qr-section {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #e8e2d8;
+    }
+    .qr-code {
+      display: inline-block;
+      width: 120px;
+      height: 120px;
+      background: white;
+      border: 2px solid #b28564;
+      padding: 8px;
+      margin-top: 10px;
+      text-align: center;
+      font-size: 11px;
+      color: #666;
+    }
+    .qr-code img { width: 100%; height: auto; }
+    .qr-label { font-size: 12px; color: #666; margin-top: 8px; }
+
+    .summary {
+      background: #1a0a0a;
+      color: #f8f5f0;
+      padding: 40px;
+      border-radius: 8px;
+      margin-top: 60px;
+    }
+    .summary h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      margin-bottom: 30px;
+      color: #c8941a;
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+      margin-bottom: 20px;
+    }
+    .summary-item { }
+    .summary-item .metric {
+      font-size: 12px;
+      color: #b28564;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .summary-item .value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #f8f5f0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Murlarkey × Cedar Tap</h1>
+      <p>Event Pricing Economics — 5.1 Gallon Kegs</p>
+    </div>
+
+    <div class="pricing-grid">
+      <!-- Irish Tea -->
+      <div class="pricing-card">
+        <div class="cocktail-name">Irish Tea</div>
+        <div class="pricing-row">
+          <span class="label">Keg Cost (5.1 gal)</span>
+          <span class="value">$349.32</span>
+        </div>
+        <div class="pricing-row">
+          <span class="label">Yield (8 oz pours)</span>
+          <span class="value">~82 drinks</span>
+        </div>
+        <div class="pricing-row">
+          <span class="label">Cost per drink</span>
+          <span class="value">$4.26</span>
+        </div>
+        <div class="pricing-row">
+          <span class="label">Retail price (8 oz)</span>
+          <span class="value">$12–$15</span>
+        </div>
+        <div class="pricing-row">
+          <span class="label">Profit per drink</span>
+          <span class="value">$7.74–$10.74</span>
+        </div>
+        <div class="highlight">
+          <div class="metric">Gross Revenue per Keg</div>
+          <div class="amount">$633–$880</div>
+        </div>
+        <div class="qr-section">
+          <div class="qr-label">Product Page</div>
+          <a href="/murlarkey-irish-tea" style="text-decoration: none;">View Irish Tea Details →</a>
+        </div>
+      </div>
+
+      <!-- Strawberry Fields -->
+      <div class="pricing-card">
+        <div class="cocktail-name">Strawberry Fields</div>
+        <div class="pricing-row">
+          <span class="label">Keg Cost (5.1 gal)</span>
+          <span class="value">$349.32</span>
+        </div>
+        <div class="pricing-row">
+          <span class="label">Yield (8 oz pours)</span>
+          <span class="value">~82 drinks</span>
+        </div>
+        <div class="pricing-row">
+          <span class="label">Cost per drink</span>
+          <span class="value">$4.26</span>
+        </div>
+        <div class="pricing-row">
+          <span class="label">Retail price (8 oz)</span>
+          <span class="value">$12–$15</span>
+        </div>
+        <div class="pricing-row">
+          <span class="label">Profit per drink</span>
+          <span class="value">$7.74–$10.74</span>
+        </div>
+        <div class="highlight">
+          <div class="metric">Gross Revenue per Keg</div>
+          <div class="amount">$633–$880</div>
+        </div>
+        <div class="qr-section">
+          <div class="qr-label">Product Page</div>
+          <a href="/murlarkey-strawberry-fields" style="text-decoration: none;">View Strawberry Fields Details →</a>
+        </div>
+      </div>
+
+      <!-- Peach Cobbler -->
+      <div class="pricing-card">
+        <div class="cocktail-name">Peach Cobbler</div>
+        <div class="pricing-row">
+          <span class="label">Keg Cost (5.1 gal)</span>
+          <span class="value">$349.32</span>
+        </div>
+        <div class="pricing-row">
+          <span class="label">Yield (8 oz pours)</span>
+          <span class="value">~82 drinks</span>
+        </div>
+        <div class="pricing-row">
+          <span class="label">Cost per drink</span>
+          <span class="value">$4.26</span>
+        </div>
+        <div class="pricing-row">
+          <span class="label">Retail price (8 oz)</span>
+          <span class="value">$12–$15</span>
+        </div>
+        <div class="pricing-row">
+          <span class="label">Profit per drink</span>
+          <span class="value">$7.74–$10.74</span>
+        </div>
+        <div class="highlight">
+          <div class="metric">Gross Revenue per Keg</div>
+          <div class="amount">$633–$880</div>
+        </div>
+        <div class="qr-section">
+          <div class="qr-label">Product Page</div>
+          <a href="/murlarkey-peach-cobbler" style="text-decoration: none;">View Peach Cobbler Details →</a>
+        </div>
+      </div>
+
+      <!-- Old Fashioned (Premium) -->
+      <div class="pricing-card" style="border-color: #c8941a; background: #fefaf5;">
+        <div class="cocktail-name" style="color: #c8941a;">Old Fashioned (Smoked)</div>
+        <div class="pricing-row">
+          <span class="label">Keg Cost (5.1 gal)</span>
+          <span class="value" style="color: #c8941a;">$1,122.00</span>
+        </div>
+        <div class="pricing-row">
+          <span class="label">Yield (8 oz pours)</span>
+          <span class="value">~82 drinks</span>
+        </div>
+        <div class="pricing-row">
+          <span class="label">Cost per drink</span>
+          <span class="value">$13.68</span>
+        </div>
+        <div class="pricing-row">
+          <span class="label">Retail price (8 oz)</span>
+          <span class="value">$18–$22</span>
+        </div>
+        <div class="pricing-row">
+          <span class="label">Profit per drink</span>
+          <span class="value">$4.32–$8.32</span>
+        </div>
+        <div class="highlight" style="border-left-color: #c8941a;">
+          <div class="metric">Gross Revenue per Keg</div>
+          <div class="amount" style="color: #c8941a;">$354–$682</div>
+        </div>
+        <div class="qr-section">
+          <div class="qr-label">Product Page</div>
+          <a href="/murlarkey-old-fashioned" style="text-decoration: none;">View Old Fashioned Details →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary">
+      <h2>Event Economics: 4-Tap Cedar Tap Setup</h2>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <div class="metric">Total Keg Investment</div>
+          <div class="value">$2,169.96</div>
+        </div>
+        <div class="summary-item">
+          <div class="metric">Total Drinks (All 4 kegs)</div>
+          <div class="value">~328 drinks</div>
+        </div>
+        <div class="summary-item">
+          <div class="metric">Conservative Revenue</div>
+          <div class="value">$3,936</div>
+        </div>
+        <div class="summary-item">
+          <div class="metric">Aggressive Revenue</div>
+          <div class="value">$5,240</div>
+        </div>
+      </div>
+      <div style="border-top: 1px solid #b28564; padding-top: 20px; margin-top: 30px;">
+        <div class="summary-item">
+          <div class="metric">Net Profit Range</div>
+          <div class="value" style="color: #c8941a; font-size: 32px;">$1,766–$3,070</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
