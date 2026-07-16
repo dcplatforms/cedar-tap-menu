@@ -7,10 +7,10 @@ redirects = []
 [functions."*"]
 
 [build]
-publish = "/workspace/group/data/cedar-tap/menu/public"
+publish = "."
 publishOrigin = "ui"
 commandOrigin = "ui"
-command = "hugo"
+command = ""
 
 [build.environment]
 
