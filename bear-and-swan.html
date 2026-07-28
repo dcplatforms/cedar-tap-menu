@@ -124,11 +124,14 @@
       background: white;
       border: var(--border-width) solid var(--bear-swan-teal-light);
       border-radius: var(--radius);
-      padding: 40px 28px;
+      padding: 0;
       text-align: center;
       transition: all 0.35s ease;
       box-shadow: 0 1px 4px rgba(125, 188, 201, 0.08);
       position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
 
     .drink-card::before {
@@ -139,6 +142,21 @@
       right: 0;
       height: 1px;
       background: linear-gradient(to right, transparent, var(--bear-swan-teal-light), transparent);
+      z-index: 2;
+    }
+
+    .drink-image {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      background: linear-gradient(135deg, var(--cream) 0%, var(--cream-dark) 100%);
+    }
+
+    .drink-content {
+      padding: 32px 28px 28px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
 
     .drink-card:hover {
@@ -148,9 +166,9 @@
     }
 
     .drink-icon {
-      width: 48px;
-      height: 48px;
-      margin: 0 auto 20px;
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 16px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -459,70 +477,76 @@
 
     <!-- Lavender Honey Cold Brew -->
     <div class="drink-card">
-      <div class="drink-icon">
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none">
-          <!-- Lavender stems -->
-          <line x1="50" y1="90" x2="50" y2="30" stroke="#5a9ba9" stroke-width="1.5"/>
-          <line x1="40" y1="85" x2="38" y2="45" stroke="#5a9ba9" stroke-width="1"/>
-          <line x1="60" y1="85" x2="62" y2="45" stroke="#5a9ba9" stroke-width="1"/>
-          <!-- Lavender flowers (5 clusters) -->
-          <g id="flower">
-            <circle cx="50" cy="35" r="2.5" fill="#7DBCC9" opacity="0.9"/>
-            <circle cx="48" cy="38" r="2" fill="#7DBCC9"/>
-            <circle cx="52" cy="38" r="2" fill="#7DBCC9"/>
-            <circle cx="47" cy="32" r="2" fill="#7DBCC9"/>
-            <circle cx="53" cy="32" r="2" fill="#7DBCC9"/>
-          </g>
-          <!-- Repeat flower clusters -->
-          <g transform="translate(0, 8)"><circle cx="50" cy="35" r="2.5" fill="#7DBCC9" opacity="0.8"/><circle cx="48" cy="38" r="2" fill="#7DBCC9"/><circle cx="52" cy="38" r="2" fill="#7DBCC9"/><circle cx="47" cy="32" r="2" fill="#7DBCC9"/><circle cx="53" cy="32" r="2" fill="#7DBCC9"/></g>
-          <g transform="translate(0, 16)"><circle cx="50" cy="35" r="2.5" fill="#7DBCC9" opacity="0.7"/><circle cx="48" cy="38" r="2" fill="#7DBCC9"/><circle cx="52" cy="38" r="2" fill="#7DBCC9"/><circle cx="47" cy="32" r="2" fill="#7DBCC9"/><circle cx="53" cy="32" r="2" fill="#7DBCC9"/></g>
-          <g transform="translate(0, 24)"><circle cx="50" cy="35" r="2.5" fill="#7DBCC9" opacity="0.6"/><circle cx="48" cy="38" r="2" fill="#7DBCC9"/><circle cx="52" cy="38" r="2" fill="#7DBCC9"/><circle cx="47" cy="32" r="2" fill="#7DBCC9"/><circle cx="53" cy="32" r="2" fill="#7DBCC9"/></g>
-        </svg>
+      <img src="https://www.bearandswancoffee.com/cdn/shop/products/Lavender_Honey_Syrup_600x.jpg?v=1649713689" alt="Bear and Swan Lavender Honey Syrup" class="drink-image" loading="lazy"/>
+      <div class="drink-content">
+        <div class="drink-icon">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <!-- Lavender stems -->
+            <line x1="50" y1="90" x2="50" y2="30" stroke="#5a9ba9" stroke-width="1.5"/>
+            <line x1="40" y1="85" x2="38" y2="45" stroke="#5a9ba9" stroke-width="1"/>
+            <line x1="60" y1="85" x2="62" y2="45" stroke="#5a9ba9" stroke-width="1"/>
+            <!-- Lavender flowers (5 clusters) -->
+            <g id="flower">
+              <circle cx="50" cy="35" r="2.5" fill="#7DBCC9" opacity="0.9"/>
+              <circle cx="48" cy="38" r="2" fill="#7DBCC9"/>
+              <circle cx="52" cy="38" r="2" fill="#7DBCC9"/>
+              <circle cx="47" cy="32" r="2" fill="#7DBCC9"/>
+              <circle cx="53" cy="32" r="2" fill="#7DBCC9"/>
+            </g>
+            <!-- Repeat flower clusters -->
+            <g transform="translate(0, 8)"><circle cx="50" cy="35" r="2.5" fill="#7DBCC9" opacity="0.8"/><circle cx="48" cy="38" r="2" fill="#7DBCC9"/><circle cx="52" cy="38" r="2" fill="#7DBCC9"/><circle cx="47" cy="32" r="2" fill="#7DBCC9"/><circle cx="53" cy="32" r="2" fill="#7DBCC9"/></g>
+            <g transform="translate(0, 16)"><circle cx="50" cy="35" r="2.5" fill="#7DBCC9" opacity="0.7"/><circle cx="48" cy="38" r="2" fill="#7DBCC9"/><circle cx="52" cy="38" r="2" fill="#7DBCC9"/><circle cx="47" cy="32" r="2" fill="#7DBCC9"/><circle cx="53" cy="32" r="2" fill="#7DBCC9"/></g>
+            <g transform="translate(0, 24)"><circle cx="50" cy="35" r="2.5" fill="#7DBCC9" opacity="0.6"/><circle cx="48" cy="38" r="2" fill="#7DBCC9"/><circle cx="52" cy="38" r="2" fill="#7DBCC9"/><circle cx="47" cy="32" r="2" fill="#7DBCC9"/><circle cx="53" cy="32" r="2" fill="#7DBCC9"/></g>
+          </svg>
+        </div>
+        <h2 class="drink-name">Lavender Honey</h2>
+        <p class="drink-desc">Commonwealth Joe cold brew infused with Bear and Swan's signature Lavender Honey Syrup</p>
+        <div class="drink-details">
+          <strong>Available sizes:</strong><br/>
+          10 oz · 14 oz · 16 oz
+        </div>
+        <div class="drink-pricing">
+          <span class="price-label">Base + Syrup</span><br/>
+          $5.99–$7.99
+        </div>
+        <a href="https://www.bearandswancoffee.com/shop" class="btn btn-primary" target="_blank">View Syrup</a>
       </div>
-      <h2 class="drink-name">Lavender Honey</h2>
-      <p class="drink-desc">Commonwealth Joe cold brew infused with Bear and Swan's signature Lavender Honey Syrup</p>
-      <div class="drink-details">
-        <strong>Available sizes:</strong><br/>
-        10 oz · 14 oz · 16 oz
-      </div>
-      <div class="drink-pricing">
-        <span class="price-label">Base + Syrup</span><br/>
-        $5.99–$7.99
-      </div>
-      <a href="https://www.bearandswancoffee.com/shop" class="btn btn-primary" target="_blank">View Syrup</a>
     </div>
 
     <!-- Vanilla Bean Latte -->
     <div class="drink-card">
-      <div class="drink-icon">
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none">
-          <!-- Vanilla pod outline -->
-          <path d="M 45 15 Q 40 35 42 55 Q 43 75 50 85 Q 57 75 58 55 Q 60 35 55 15 Z" stroke="#5a9ba9" stroke-width="2" stroke-linecap="round"/>
-          <!-- Curved accent lines for texture -->
-          <path d="M 48 25 Q 47 45 48 65" stroke="#7DBCC9" stroke-width="1" opacity="0.6"/>
-          <path d="M 50 20 Q 50 45 51 70" stroke="#7DBCC9" stroke-width="1" opacity="0.6"/>
-          <path d="M 52 25 Q 53 45 52 65" stroke="#7DBCC9" stroke-width="1" opacity="0.6"/>
-          <!-- Bean specks inside -->
-          <circle cx="48" cy="40" r="1" fill="#7DBCC9" opacity="0.5"/>
-          <circle cx="51" cy="50" r="1" fill="#7DBCC9" opacity="0.5"/>
-          <circle cx="49" cy="60" r="1" fill="#7DBCC9" opacity="0.5"/>
-          <circle cx="53" cy="45" r="1" fill="#7DBCC9" opacity="0.5"/>
-          <!-- Stem -->
-          <path d="M 50 15 Q 48 10 50 5" stroke="#5a9ba9" stroke-width="1.5" stroke-linecap="round"/>
-          <circle cx="50" cy="3" r="1.5" fill="#5a9ba9"/>
-        </svg>
+      <img src="https://www.bearandswancoffee.com/cdn/shop/products/Vanilla_Bean_Syrup_600x.jpg?v=1649713689" alt="Bear and Swan Vanilla Bean Syrup" class="drink-image" loading="lazy"/>
+      <div class="drink-content">
+        <div class="drink-icon">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <!-- Vanilla pod outline -->
+            <path d="M 45 15 Q 40 35 42 55 Q 43 75 50 85 Q 57 75 58 55 Q 60 35 55 15 Z" stroke="#5a9ba9" stroke-width="2" stroke-linecap="round"/>
+            <!-- Curved accent lines for texture -->
+            <path d="M 48 25 Q 47 45 48 65" stroke="#7DBCC9" stroke-width="1" opacity="0.6"/>
+            <path d="M 50 20 Q 50 45 51 70" stroke="#7DBCC9" stroke-width="1" opacity="0.6"/>
+            <path d="M 52 25 Q 53 45 52 65" stroke="#7DBCC9" stroke-width="1" opacity="0.6"/>
+            <!-- Bean specks inside -->
+            <circle cx="48" cy="40" r="1" fill="#7DBCC9" opacity="0.5"/>
+            <circle cx="51" cy="50" r="1" fill="#7DBCC9" opacity="0.5"/>
+            <circle cx="49" cy="60" r="1" fill="#7DBCC9" opacity="0.5"/>
+            <circle cx="53" cy="45" r="1" fill="#7DBCC9" opacity="0.5"/>
+            <!-- Stem -->
+            <path d="M 50 15 Q 48 10 50 5" stroke="#5a9ba9" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="50" cy="3" r="1.5" fill="#5a9ba9"/>
+          </svg>
+        </div>
+        <h2 class="drink-name">Vanilla Bean</h2>
+        <p class="drink-desc">CWJ nitro-infused latte with Bear and Swan's creamy Vanilla Bean Syrup</p>
+        <div class="drink-details">
+          <strong>Available sizes:</strong><br/>
+          10 oz · 14 oz · 16 oz
+        </div>
+        <div class="drink-pricing">
+          <span class="price-label">Base + Syrup</span><br/>
+          $5.99–$7.99
+        </div>
+        <a href="https://www.bearandswancoffee.com/shop" class="btn btn-primary" target="_blank">View Syrup</a>
       </div>
-      <h2 class="drink-name">Vanilla Bean</h2>
-      <p class="drink-desc">CWJ nitro-infused latte with Bear and Swan's creamy Vanilla Bean Syrup</p>
-      <div class="drink-details">
-        <strong>Available sizes:</strong><br/>
-        10 oz · 14 oz · 16 oz
-      </div>
-      <div class="drink-pricing">
-        <span class="price-label">Base + Syrup</span><br/>
-        $5.99–$7.99
-      </div>
-      <a href="https://www.bearandswancoffee.com/shop" class="btn btn-primary" target="_blank">View Syrup</a>
     </div>
 
   </section>
