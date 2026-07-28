@@ -21,7 +21,8 @@
       --text-muted: #5a4a3a;
       --cedar-gold: #d4a43a;
       --cedar-amber: #c8832a;
-      --radius: 6px;
+      --radius: 8px;
+      --border-width: 1.5px;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -37,12 +38,13 @@
 
     /* ──── HEADER / BRANDING ──── */
     header {
-      background: linear-gradient(135deg, var(--bear-swan-teal) 0%, var(--bear-swan-teal-dark) 100%);
+      background: var(--bear-swan-teal);
       color: white;
-      padding: 40px 24px;
+      padding: 56px 24px;
       text-align: center;
       position: relative;
       overflow: hidden;
+      border-bottom: var(--border-width) solid rgba(90, 155, 169, 0.5);
     }
 
     header::before {
@@ -50,31 +52,40 @@
       position: absolute;
       inset: 0;
       background-image:
-        repeating-linear-gradient(90deg, transparent, transparent 12px, rgba(255,255,255,0.03) 12px, rgba(255,255,255,0.03) 13px);
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.02) 2px, rgba(255,255,255,0.02) 3px);
       pointer-events: none;
     }
 
     .header-content { position: relative; z-index: 1; }
 
     .header-logo {
-      font-size: 48px;
-      margin-bottom: 8px;
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 16px;
+    }
+
+    .header-logo svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
     }
 
     .header-title {
       font-family: 'Playfair Display', serif;
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 600;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       letter-spacing: -0.02em;
+      font-style: italic;
     }
 
     .header-subtitle {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 300;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      opacity: 0.92;
+      opacity: 0.88;
+      font-style: normal;
     }
 
     /* ──── CONTAINER ──── */
@@ -104,60 +115,81 @@
     /* ──── MENU GRID ──── */
     .menu-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 28px;
-      margin-bottom: 48px;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 32px;
+      margin-bottom: 56px;
     }
 
     .drink-card {
       background: white;
-      border: 2px solid var(--bear-swan-teal-light);
+      border: var(--border-width) solid var(--bear-swan-teal-light);
       border-radius: var(--radius);
-      padding: 32px 24px;
+      padding: 40px 28px;
       text-align: center;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 8px rgba(125, 188, 201, 0.12);
+      transition: all 0.35s ease;
+      box-shadow: 0 1px 4px rgba(125, 188, 201, 0.08);
+      position: relative;
+    }
+
+    .drink-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--bear-swan-teal-light), transparent);
     }
 
     .drink-card:hover {
       border-color: var(--bear-swan-teal);
-      box-shadow: 0 6px 16px rgba(125, 188, 201, 0.2);
-      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(125, 188, 201, 0.16);
+      transform: translateY(-4px);
     }
 
     .drink-icon {
-      font-size: 36px;
-      margin-bottom: 16px;
-      display: block;
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .drink-icon svg {
+      width: 100%;
+      height: 100%;
     }
 
     .drink-name {
       font-family: 'Playfair Display', serif;
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       font-weight: 600;
       color: var(--bear-swan-teal-dark);
-      margin-bottom: 8px;
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
     }
 
     .drink-desc {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       color: var(--text-muted);
-      margin-bottom: 16px;
-      line-height: 1.6;
+      margin-bottom: 20px;
+      line-height: 1.7;
     }
 
     .drink-details {
-      background: rgba(125, 188, 201, 0.08);
-      padding: 12px;
-      border-radius: 4px;
-      margin-bottom: 16px;
-      font-size: 0.9rem;
+      background: transparent;
+      padding: 14px 0;
+      border-top: var(--border-width) solid var(--bear-swan-teal-light);
+      border-bottom: var(--border-width) solid var(--bear-swan-teal-light);
+      margin-bottom: 20px;
+      font-size: 0.85rem;
       color: var(--charcoal);
     }
 
     .drink-pricing {
-      margin: 16px 0;
-      font-size: 1.1rem;
+      margin: 20px 0;
+      font-size: 1.15rem;
       font-weight: 600;
       color: var(--cedar-amber);
     }
@@ -165,11 +197,12 @@
     .price-label {
       display: inline-block;
       font-family: 'Inter', sans-serif;
-      font-size: 0.75rem;
-      letter-spacing: 0.06em;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--text-muted);
       margin-right: 4px;
+      font-weight: 500;
     }
 
     /* ──── CTA SECTION ──── */
@@ -239,102 +272,133 @@
 
     /* ──── PRODUCT CARDS (Store Links) ──── */
     .products-section {
-      margin-bottom: 48px;
+      margin-bottom: 56px;
+      padding-top: 24px;
+      border-top: var(--border-width) solid var(--cream-dark);
     }
 
     .section-title {
       font-family: 'Playfair Display', serif;
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       color: var(--charcoal);
-      margin-bottom: 28px;
+      margin-bottom: 32px;
       text-align: center;
-      border-bottom: 2px solid var(--bear-swan-teal-light);
-      padding-bottom: 16px;
+      letter-spacing: -0.01em;
     }
 
     .products-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 28px;
     }
 
     .product-card {
       background: white;
-      border: 1px solid var(--cream-dark);
+      border: var(--border-width) solid var(--cream-dark);
       border-radius: var(--radius);
-      padding: 24px;
+      padding: 28px;
       text-align: center;
-      transition: all 0.3s ease;
+      transition: all 0.35s ease;
+      position: relative;
+    }
+
+    .product-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--bear-swan-teal-light), transparent);
     }
 
     .product-card:hover {
       border-color: var(--bear-swan-teal);
-      box-shadow: 0 4px 12px rgba(125, 188, 201, 0.15);
-      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(125, 188, 201, 0.12);
+      transform: translateY(-4px);
     }
 
     .product-icon {
-      font-size: 48px;
-      margin-bottom: 12px;
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .product-icon svg {
+      width: 100%;
+      height: 100%;
     }
 
     .product-name {
       font-family: 'Playfair Display', serif;
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       color: var(--bear-swan-teal-dark);
       margin-bottom: 8px;
       font-weight: 600;
+      letter-spacing: -0.01em;
     }
 
     .product-price {
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       font-weight: 600;
-      color: var(--cedar-gold);
+      color: var(--cedar-amber);
       margin-bottom: 12px;
     }
 
     .product-desc {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: var(--text-muted);
-      margin-bottom: 16px;
-      line-height: 1.6;
+      margin-bottom: 20px;
+      line-height: 1.7;
     }
 
     .btn-product {
       display: inline-block;
       background: var(--bear-swan-teal);
       color: white;
-      padding: 10px 20px;
+      padding: 11px 24px;
       border-radius: 4px;
       text-decoration: none;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 600;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-      transition: background 0.2s ease;
+      transition: all 0.2s ease;
+      border: var(--border-width) solid var(--bear-swan-teal);
     }
 
     .btn-product:hover {
-      background: var(--bear-swan-teal-dark);
+      background: transparent;
+      color: var(--bear-swan-teal-dark);
+      border-color: var(--bear-swan-teal-dark);
     }
 
     /* ──── FOOTER ──── */
     footer {
       background: var(--charcoal);
       color: white;
-      padding: 28px 24px;
+      padding: 36px 24px;
       text-align: center;
-      font-size: 0.85rem;
-      margin-top: 48px;
+      font-size: 0.82rem;
+      margin-top: 56px;
+      border-top: var(--border-width) solid rgba(255,255,255,0.1);
+    }
+
+    footer p {
+      line-height: 1.8;
     }
 
     footer a {
       color: var(--bear-swan-teal-light);
       text-decoration: none;
+      transition: color 0.2s ease;
     }
 
     footer a:hover {
-      text-decoration: underline;
+      color: var(--cedar-amber);
     }
 
     /* ──── RESPONSIVE ──── */
@@ -362,7 +426,18 @@
 <!-- HEADER -->
 <header>
   <div class="header-content">
-    <div class="header-logo">☕🦢</div>
+    <div class="header-logo">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <!-- Coffee cup -->
+        <path d="M25 30 L25 70 Q25 80 35 80 L65 80 Q75 80 75 70 L75 30 Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Cup handle -->
+        <path d="M75 40 Q90 40 90 55 Q90 70 75 70" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <!-- Swan neck -->
+        <path d="M45 25 Q40 15 45 10 Q48 8 50 10 Q52 8 55 10 Q60 15 55 25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="white" stroke="currentColor"/>
+        <!-- Swan head -->
+        <circle cx="50" cy="8" r="3" fill="currentColor"/>
+      </svg>
+    </div>
     <h1 class="header-title">Bear and Swan</h1>
     <p class="header-subtitle">Premium Syrup-Infused Nitro Cold Brew</p>
   </div>
@@ -384,7 +459,26 @@
 
     <!-- Lavender Honey Cold Brew -->
     <div class="drink-card">
-      <span class="drink-icon">🌸</span>
+      <div class="drink-icon">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <!-- Lavender stems -->
+          <line x1="50" y1="90" x2="50" y2="30" stroke="#5a9ba9" stroke-width="1.5"/>
+          <line x1="40" y1="85" x2="38" y2="45" stroke="#5a9ba9" stroke-width="1"/>
+          <line x1="60" y1="85" x2="62" y2="45" stroke="#5a9ba9" stroke-width="1"/>
+          <!-- Lavender flowers (5 clusters) -->
+          <g id="flower">
+            <circle cx="50" cy="35" r="2.5" fill="#7DBCC9" opacity="0.9"/>
+            <circle cx="48" cy="38" r="2" fill="#7DBCC9"/>
+            <circle cx="52" cy="38" r="2" fill="#7DBCC9"/>
+            <circle cx="47" cy="32" r="2" fill="#7DBCC9"/>
+            <circle cx="53" cy="32" r="2" fill="#7DBCC9"/>
+          </g>
+          <!-- Repeat flower clusters -->
+          <g transform="translate(0, 8)"><circle cx="50" cy="35" r="2.5" fill="#7DBCC9" opacity="0.8"/><circle cx="48" cy="38" r="2" fill="#7DBCC9"/><circle cx="52" cy="38" r="2" fill="#7DBCC9"/><circle cx="47" cy="32" r="2" fill="#7DBCC9"/><circle cx="53" cy="32" r="2" fill="#7DBCC9"/></g>
+          <g transform="translate(0, 16)"><circle cx="50" cy="35" r="2.5" fill="#7DBCC9" opacity="0.7"/><circle cx="48" cy="38" r="2" fill="#7DBCC9"/><circle cx="52" cy="38" r="2" fill="#7DBCC9"/><circle cx="47" cy="32" r="2" fill="#7DBCC9"/><circle cx="53" cy="32" r="2" fill="#7DBCC9"/></g>
+          <g transform="translate(0, 24)"><circle cx="50" cy="35" r="2.5" fill="#7DBCC9" opacity="0.6"/><circle cx="48" cy="38" r="2" fill="#7DBCC9"/><circle cx="52" cy="38" r="2" fill="#7DBCC9"/><circle cx="47" cy="32" r="2" fill="#7DBCC9"/><circle cx="53" cy="32" r="2" fill="#7DBCC9"/></g>
+        </svg>
+      </div>
       <h2 class="drink-name">Lavender Honey</h2>
       <p class="drink-desc">Commonwealth Joe cold brew infused with Bear and Swan's signature Lavender Honey Syrup</p>
       <div class="drink-details">
@@ -400,7 +494,24 @@
 
     <!-- Vanilla Bean Latte -->
     <div class="drink-card">
-      <span class="drink-icon">🥨</span>
+      <div class="drink-icon">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <!-- Vanilla pod outline -->
+          <path d="M 45 15 Q 40 35 42 55 Q 43 75 50 85 Q 57 75 58 55 Q 60 35 55 15 Z" stroke="#5a9ba9" stroke-width="2" stroke-linecap="round"/>
+          <!-- Curved accent lines for texture -->
+          <path d="M 48 25 Q 47 45 48 65" stroke="#7DBCC9" stroke-width="1" opacity="0.6"/>
+          <path d="M 50 20 Q 50 45 51 70" stroke="#7DBCC9" stroke-width="1" opacity="0.6"/>
+          <path d="M 52 25 Q 53 45 52 65" stroke="#7DBCC9" stroke-width="1" opacity="0.6"/>
+          <!-- Bean specks inside -->
+          <circle cx="48" cy="40" r="1" fill="#7DBCC9" opacity="0.5"/>
+          <circle cx="51" cy="50" r="1" fill="#7DBCC9" opacity="0.5"/>
+          <circle cx="49" cy="60" r="1" fill="#7DBCC9" opacity="0.5"/>
+          <circle cx="53" cy="45" r="1" fill="#7DBCC9" opacity="0.5"/>
+          <!-- Stem -->
+          <path d="M 50 15 Q 48 10 50 5" stroke="#5a9ba9" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="50" cy="3" r="1.5" fill="#5a9ba9"/>
+        </svg>
+      </div>
       <h2 class="drink-name">Vanilla Bean</h2>
       <p class="drink-desc">CWJ nitro-infused latte with Bear and Swan's creamy Vanilla Bean Syrup</p>
       <div class="drink-details">
@@ -435,7 +546,22 @@
 
       <!-- Lavender Honey Syrup -->
       <div class="product-card">
-        <div class="product-icon">🌸</div>
+        <div class="product-icon">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <!-- Bottle outline -->
+            <path d="M 40 20 L 38 35 L 35 70 Q 35 85 50 90 Q 65 85 65 70 L 62 35 L 60 20 Z" stroke="#5a9ba9" stroke-width="2" stroke-linejoin="round"/>
+            <!-- Bottle cap -->
+            <rect x="42" y="15" width="16" height="6" rx="1" stroke="#5a9ba9" stroke-width="1.5"/>
+            <!-- Liquid level -->
+            <path d="M 38 55 Q 38 70 50 75 Q 62 70 62 55 Z" fill="#7DBCC9" opacity="0.3"/>
+            <!-- Lavender flowers inside bottle -->
+            <circle cx="45" cy="50" r="1.5" fill="#7DBCC9"/>
+            <circle cx="50" cy="45" r="1.5" fill="#7DBCC9"/>
+            <circle cx="55" cy="50" r="1.5" fill="#7DBCC9"/>
+            <circle cx="48" cy="60" r="1" fill="#7DBCC9" opacity="0.7"/>
+            <circle cx="52" cy="60" r="1" fill="#7DBCC9" opacity="0.7"/>
+          </svg>
+        </div>
         <h3 class="product-name">Lavender Honey Syrup</h3>
         <p class="product-price">$15.00</p>
         <p class="product-desc">
@@ -446,7 +572,22 @@
 
       <!-- Vanilla Bean Syrup -->
       <div class="product-card">
-        <div class="product-icon">🥨</div>
+        <div class="product-icon">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <!-- Bottle outline -->
+            <path d="M 40 20 L 38 35 L 35 70 Q 35 85 50 90 Q 65 85 65 70 L 62 35 L 60 20 Z" stroke="#5a9ba9" stroke-width="2" stroke-linejoin="round"/>
+            <!-- Bottle cap -->
+            <rect x="42" y="15" width="16" height="6" rx="1" stroke="#5a9ba9" stroke-width="1.5"/>
+            <!-- Liquid level -->
+            <path d="M 38 55 Q 38 70 50 75 Q 62 70 62 55 Z" fill="#7DBCC9" opacity="0.25"/>
+            <!-- Vanilla pod inside -->
+            <path d="M 48 45 Q 47 58 50 68" stroke="#7DBCC9" stroke-width="2" opacity="0.8" stroke-linecap="round"/>
+            <path d="M 52 45 Q 53 58 50 68" stroke="#7DBCC9" stroke-width="2" opacity="0.8" stroke-linecap="round"/>
+            <!-- Bean specks -->
+            <circle cx="49" cy="55" r="0.8" fill="#7DBCC9" opacity="0.6"/>
+            <circle cx="51" cy="60" r="0.8" fill="#7DBCC9" opacity="0.6"/>
+          </svg>
+        </div>
         <h3 class="product-name">Vanilla Bean Syrup</h3>
         <p class="product-price">$15.00</p>
         <p class="product-desc">
