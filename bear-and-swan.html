@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+  <meta name="theme-color" content="#7DBCC9"/>
+  <meta name="description" content="Cedar Tap × Bear and Swan Coffee — Premium syrup-infused nitro cold brew and specialty lattes"/>
+  <title>Cedar Tap × Bear and Swan · Premium Coffee Syrups</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --bear-swan-teal: #7DBCC9;
+      --bear-swan-teal-dark: #5a9ba9;
+      --bear-swan-teal-light: #a8d4dd;
+      --cream: #f5ede0;
+      --cream-dark: #e8dccb;
+      --charcoal: #2c2416;
+      --text-muted: #5a4a3a;
+      --cedar-gold: #d4a43a;
+      --cedar-amber: #c8832a;
+      --radius: 6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--cream);
+      color: var(--charcoal);
+      min-height: 100dvh;
+      line-height: 1.6;
+    }
+
+    /* ──── HEADER / BRANDING ──── */
+    header {
+      background: linear-gradient(135deg, var(--bear-swan-teal) 0%, var(--bear-swan-teal-dark) 100%);
+      color: white;
+      padding: 40px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(90deg, transparent, transparent 12px, rgba(255,255,255,0.03) 12px, rgba(255,255,255,0.03) 13px);
+      pointer-events: none;
+    }
+
+    .header-content { position: relative; z-index: 1; }
+
+    .header-logo {
+      font-size: 48px;
+      margin-bottom: 8px;
+    }
+
+    .header-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .header-subtitle {
+      font-size: 0.95rem;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.92;
+    }
+
+    /* ──── CONTAINER ──── */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    .intro {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .intro-text {
+      font-size: 1.05rem;
+      color: var(--charcoal);
+      margin-bottom: 12px;
+      line-height: 1.8;
+    }
+
+    .intro-highlight {
+      font-weight: 600;
+      color: var(--bear-swan-teal-dark);
+    }
+
+    /* ──── MENU GRID ──── */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 28px;
+      margin-bottom: 48px;
+    }
+
+    .drink-card {
+      background: white;
+      border: 2px solid var(--bear-swan-teal-light);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      text-align: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(125, 188, 201, 0.12);
+    }
+
+    .drink-card:hover {
+      border-color: var(--bear-swan-teal);
+      box-shadow: 0 6px 16px rgba(125, 188, 201, 0.2);
+      transform: translateY(-3px);
+    }
+
+    .drink-icon {
+      font-size: 36px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .drink-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--bear-swan-teal-dark);
+      margin-bottom: 8px;
+    }
+
+    .drink-desc {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .drink-details {
+      background: rgba(125, 188, 201, 0.08);
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+      color: var(--charcoal);
+    }
+
+    .drink-pricing {
+      margin: 16px 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--cedar-amber);
+    }
+
+    .price-label {
+      display: inline-block;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-right: 4px;
+    }
+
+    /* ──── CTA SECTION ──── */
+    .cta-section {
+      background: var(--bear-swan-teal);
+      color: white;
+      padding: 36px 28px;
+      border-radius: var(--radius);
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .cta-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .cta-text {
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+      opacity: 0.95;
+      line-height: 1.7;
+    }
+
+    .cta-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 28px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: all 0.2s ease;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--cedar-amber);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #d9942e;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--bear-swan-teal-dark);
+      border: 2px solid white;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.9);
+    }
+
+    /* ──── PRODUCT CARDS (Store Links) ──── */
+    .products-section {
+      margin-bottom: 48px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: var(--charcoal);
+      margin-bottom: 28px;
+      text-align: center;
+      border-bottom: 2px solid var(--bear-swan-teal-light);
+      padding-bottom: 16px;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .product-card {
+      background: white;
+      border: 1px solid var(--cream-dark);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .product-card:hover {
+      border-color: var(--bear-swan-teal);
+      box-shadow: 0 4px 12px rgba(125, 188, 201, 0.15);
+      transform: translateY(-3px);
+    }
+
+    .product-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .product-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--bear-swan-teal-dark);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .product-price {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--cedar-gold);
+      margin-bottom: 12px;
+    }
+
+    .product-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .btn-product {
+      display: inline-block;
+      background: var(--bear-swan-teal);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: background 0.2s ease;
+    }
+
+    .btn-product:hover {
+      background: var(--bear-swan-teal-dark);
+    }
+
+    /* ──── FOOTER ──── */
+    footer {
+      background: var(--charcoal);
+      color: white;
+      padding: 28px 24px;
+      text-align: center;
+      font-size: 0.85rem;
+      margin-top: 48px;
+    }
+
+    footer a {
+      color: var(--bear-swan-teal-light);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* ──── RESPONSIVE ──── */
+    @media (max-width: 768px) {
+      .header-title {
+        font-size: 1.6rem;
+      }
+
+      .menu-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .products-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-content">
+    <div class="header-logo">☕🦢</div>
+    <h1 class="header-title">Bear and Swan</h1>
+    <p class="header-subtitle">Premium Syrup-Infused Nitro Cold Brew</p>
+  </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<div class="container">
+
+  <!-- INTRO -->
+  <section class="intro">
+    <p class="intro-text">
+      Cedar Tap partners with <span class="intro-highlight">Bear and Swan Coffee</span> to bring you premium, craft-quality syrups that elevate every pour.
+      Discover the difference that small-batch craftsmanship makes.
+    </p>
+  </section>
+
+  <!-- SIGNATURE DRINKS -->
+  <section class="menu-grid">
+
+    <!-- Lavender Honey Cold Brew -->
+    <div class="drink-card">
+      <span class="drink-icon">🌸</span>
+      <h2 class="drink-name">Lavender Honey</h2>
+      <p class="drink-desc">Commonwealth Joe cold brew infused with Bear and Swan's signature Lavender Honey Syrup</p>
+      <div class="drink-details">
+        <strong>Available sizes:</strong><br/>
+        10 oz · 14 oz · 16 oz
+      </div>
+      <div class="drink-pricing">
+        <span class="price-label">Base + Syrup</span><br/>
+        $5.99–$7.99
+      </div>
+      <a href="https://www.bearandswancoffee.com/shop" class="btn btn-primary" target="_blank">View Syrup</a>
+    </div>
+
+    <!-- Vanilla Bean Latte -->
+    <div class="drink-card">
+      <span class="drink-icon">🥨</span>
+      <h2 class="drink-name">Vanilla Bean</h2>
+      <p class="drink-desc">CWJ nitro-infused latte with Bear and Swan's creamy Vanilla Bean Syrup</p>
+      <div class="drink-details">
+        <strong>Available sizes:</strong><br/>
+        10 oz · 14 oz · 16 oz
+      </div>
+      <div class="drink-pricing">
+        <span class="price-label">Base + Syrup</span><br/>
+        $5.99–$7.99
+      </div>
+      <a href="https://www.bearandswancoffee.com/shop" class="btn btn-primary" target="_blank">View Syrup</a>
+    </div>
+
+  </section>
+
+  <!-- CTA SECTION -->
+  <section class="cta-section">
+    <h2 class="cta-title">Discover Bear and Swan</h2>
+    <p class="cta-text">
+      Handcrafted syrups, thoughtfully sourced ingredients, and a commitment to quality that shows in every cup.
+    </p>
+    <div class="cta-buttons">
+      <a href="https://www.bearandswancoffee.com/shop" class="btn btn-secondary" target="_blank">Browse Full Shop</a>
+      <a href="https://www.bearandswancoffee.com/" class="btn btn-secondary" target="_blank">Visit Bear and Swan</a>
+    </div>
+  </section>
+
+  <!-- PRODUCT STOREFRONT -->
+  <section class="products-section">
+    <h2 class="section-title">Premium Syrups</h2>
+    <div class="products-grid">
+
+      <!-- Lavender Honey Syrup -->
+      <div class="product-card">
+        <div class="product-icon">🌸</div>
+        <h3 class="product-name">Lavender Honey Syrup</h3>
+        <p class="product-price">$15.00</p>
+        <p class="product-desc">
+          Floral sweetness meets golden honey in this delicate syrup. Perfect for cold brew, espresso, or sparkling water.
+        </p>
+        <a href="https://www.bearandswancoffee.com/shop" class="btn-product" target="_blank">Shop Now</a>
+      </div>
+
+      <!-- Vanilla Bean Syrup -->
+      <div class="product-card">
+        <div class="product-icon">🥨</div>
+        <h3 class="product-name">Vanilla Bean Syrup</h3>
+        <p class="product-price">$15.00</p>
+        <p class="product-desc">
+          Creamy, aromatic vanilla with real bean specks. Elevates lattes, cold brew, and specialty coffee drinks.
+        </p>
+        <a href="https://www.bearandswancoffee.com/shop" class="btn-product" target="_blank">Shop Now</a>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>
+    Cedar Tap × Bear and Swan Coffee
+    <br/>
+    Springfield, VA · <a href="tel:571-249-3383">571-249-3383</a> · <a href="mailto:bearandswancoffee@gmail.com">bearandswancoffee@gmail.com</a>
+  </p>
+  <p style="margin-top: 12px; opacity: 0.8;">
+    <a href="/">Back to Cedar Tap</a>
+  </p>
+</footer>
+
+</body>
+</html>
